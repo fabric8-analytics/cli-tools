@@ -62,16 +62,23 @@ type DirectDependency struct {
 }
 
 // ManifestTransitive ... Transitive details in final manifest
-type ManifestTransitive struct {
-	Name        string          `json:"name"`
-	Version     string          `json:"version"`
+type ManifestDependency struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+}
+
+// MainfestDirectDeps ... Direct dependency details.
+type MainfestDirectDeps struct {
+	Name         string               `json:"name"`
+	Version      string               `json:"version"`
+	Dependencies []ManifestDependency `json:"dependencies"`
 }
 
 // Manifest ... Final manifest file structure
 type Manifest struct {
-	Version 	 string 			`json:"version"`
-	Main         string             `json:"main"`
-	Dependencies []DirectDependency `json:"dependencies"`
+	Version  string               `json:"version"`
+	Main     string               `json:"main"`
+	Packages []MainfestDirectDeps `json:"packages"`
 }
 
 // Source root folder, set via command line ARGS
@@ -246,10 +253,33 @@ func buildTransitiveDeps() {
 	fmt.Println("Total transitive dependencies:", totalTransitivesDependencies)
 }
 
+func getDependencies(transtivies []Transitive) []ManifestDependency {
+	var manifestDependency []ManifestDependency
+	for _, t := range transtivies {
+		if t.Included {
+			manifestDependency = append(manifestDependency, ManifestDependency{t.Name, t.Version})
+		}
+
+		for _, p := range t.Packages {
+			manifestDependency = append(manifestDependency, ManifestDependency{p + "@" + t.Name, t.Version})
+		}
+	}
+
+	return manifestDependency
+}
+
 func buildManifest() {
-	var manifest Manifest = Manifest{manifestVersion, mainModule, make([]DirectDependency, 0)}
-	for mk := range directDependencies {
-		manifest.Dependencies = append(manifest.Dependencies, directDependencies[mk])
+	var manifest Manifest = Manifest{manifestVersion, mainModule, make([]MainfestDirectDeps, 0)}
+	for _, mod := range directDependencies {
+		if mod.Included {
+			manifest.Packages = append(manifest.Packages,
+				MainfestDirectDeps{mod.Name, mod.Version, getDependencies(mod.Transitives)})
+		}
+
+		for _, pckg := range mod.Packages {
+			manifest.Packages = append(manifest.Packages,
+				MainfestDirectDeps{pckg.Name + "@" + mod.Name, mod.Version, getDependencies(pckg.Transitives)})
+		}
 	}
 
 	d, err := json.Marshal(manifest)
@@ -263,85 +293,18 @@ func buildManifest() {
 	f.Sync()
 
 	defer f.Close()
-	fmt.Println("Success :: Manifest generated & stored at", manifestFilePath)
-}
-
-func flatenTransitives(transtivies []Transitive) string {
-	var returnString = ""
-	var firstEntry = true
-	for _, t := range transtivies {
-		if t.Included {
-			if !firstEntry {
-				returnString = returnString + ","
-			} else {
-				firstEntry = false
-			}
-			//returnString = returnString + "{ \"" + t.Name + "\": {\"name\": \"" + t.Name + "\", \"version\": \"" + t.Version + "\"} }"
-			returnString = returnString + "{\"name\": \"" + t.Name + "\", \"version\": \"" + t.Version + "\"}"
-		}
-
-		for _, p := range t.Packages {
-			if !firstEntry {
-				returnString = returnString + ","
-			} else {
-				firstEntry = false
-			}
-			//returnString = returnString + "{ \"" + p + "@" + t.Name + "\": {\"name\": \"" + p + "@" + t.Name + "\", \"version\": \"" + t.Version + "\"} }"
-			returnString = returnString + "{\"name\": \"" + p + "@" + t.Name + "\", \"version\": \"" + t.Version + "\"}"
-		}
-	}
-
-	return "[" + returnString + "]"
-}
-
-func buildManifest2() {
-	var directDependenciesJSON string = "{\"version\": \"" + manifestVersion + "\", \"main\": \"" + mainModule + "\", \"packages\": ["
-
-	var firstEntry = true
-	for _, mod := range directDependencies {
-		if mod.Included {
-			if !firstEntry {
-				directDependenciesJSON = directDependenciesJSON + ","
-			} else {
-				firstEntry = false
-			}
-			directDependenciesJSON = directDependenciesJSON + "{\"name\": \"" + mod.Name + "\", \"version\": \"" + mod.Version + "\","
-			directDependenciesJSON = directDependenciesJSON + "\"dependencies\": " + flatenTransitives(mod.Transitives)
-			directDependenciesJSON = directDependenciesJSON + "}"
-		}
-
-		for _, pckg := range mod.Packages {
-			if !firstEntry {
-				directDependenciesJSON = directDependenciesJSON + ","
-			} else {
-				firstEntry = false
-			}
-			directDependenciesJSON = directDependenciesJSON + "{\"name\": \"" + pckg.Name + "@" + mod.Name + "\", \"version\": \"" + mod.Version + "\","
-			directDependenciesJSON = directDependenciesJSON + "\"dependencies\": " + flatenTransitives(pckg.Transitives)
-			directDependenciesJSON = directDependenciesJSON + "}"
-		}
-	}
-	directDependenciesJSON = directDependenciesJSON + "]}"
-
-	f, err := os.Create(manifestFilePath)
-	check(err)
-	_, err = f.WriteString(string(directDependenciesJSON))
-	check(err)
-	f.Sync()
-
-	defer f.Close()
 	fmt.Println("Success :: Manifest generated and stored at", manifestFilePath)
 }
 
 func main() {
-	if (len(os.Args) != 3) {
+	if len(os.Args) != 3 {
 		fmt.Println("Error :: Invalid arguments for the command.")
 		fmt.Println("Usage :: go run github.com/dgpatelgit/gobuildmanifest <Absolute source root folder path containing go.mod> <Output file path>.json")
 		fmt.Println("")
 		fmt.Println("Example :: go run github.com/dgpatelgit/gobuildmanifest /home/user/goproject/root/folder /home/user/gomanifest.json")
 	} else {
 		_, err := os.Stat(os.Args[1])
-		if (err != nil) {
+		if err != nil {
 			fmt.Println("Invalid source folder path ::", os.Args[1])
 		} else {
 			fmt.Println("Building manifest file for ::", os.Args[1])
@@ -351,7 +314,7 @@ func main() {
 				if processDepsData() == 0 {
 					buildDirectDependencies()
 					buildTransitiveDeps()
-					buildManifest2()
+					buildManifest()
 				}
 			}
 		}
