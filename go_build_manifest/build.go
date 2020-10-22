@@ -61,6 +61,12 @@ type DirectDependency struct {
 	Transitives []Transitive    `json:"transitives"`
 }
 
+// ManifestTransitive ... Transitive details in final manifest
+type ManifestTransitive struct {
+	Name        string          `json:"name"`
+	Version     string          `json:"version"`
+}
+
 // Manifest ... Final manifest file structure
 type Manifest struct {
 	Version 	 string 			`json:"version"`
