@@ -48,14 +48,6 @@ run_all_checkers() {
     run_checker check-bashscripts
     check_results $? check-bashscripts
 
-    echo "  Check documentation strings in all Python source file"
-    run_checker check-docstyle
-    check_results $? check-docstyle
-
-    echo "  Detect common errors in all Python source file"
-    run_checker detect-common-errors
-    check_results $? detect-common-errors
-
     echo "  Detect dead code in all Python source file"
     run_checker detect-dead-code
     check_results $? detect-dead-code

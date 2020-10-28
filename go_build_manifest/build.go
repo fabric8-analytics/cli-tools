@@ -63,15 +63,15 @@ type DirectDependency struct {
 
 // ManifestDependency ... Transitive details in final manifest
 type ManifestDependency struct {
-	Name    string `json:"name"`
+	Name    string `json:"package"`
 	Version string `json:"version"`
 }
 
 // MainfestDirectDeps ... Direct dependency details.
 type MainfestDirectDeps struct {
-	Name         string               `json:"name"`
+	Name         string               `json:"package"`
 	Version      string               `json:"version"`
-	Dependencies []ManifestDependency `json:"dependencies"`
+	Dependencies []ManifestDependency `json:"deps"`
 }
 
 // Manifest ... Final manifest file structure
@@ -97,62 +97,75 @@ var totalImports = 0
 var totalDirectDependencies = 0
 var totalTransitivesDependencies = 0
 
-func contains(s []string, searchterm string) bool {
+// executeCommand ... Global to point to execute command runnable.
+var executeCommand = exec.Command
+
+// listContains ... Return true if given string is present in the list of strings, otherwise false.
+func listContains(s []string, searchterm string) bool {
 	sort.Strings(s)
 	i := sort.SearchStrings(s, searchterm)
 	return i < len(s) && s[i] == searchterm
 }
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
+// transformVersion ... Converts the golang version string into semver without 'v' and appended text after '+'
+func transformVersion(inVersion string) string {
+	var outVersion string = strings.Replace(inVersion, "v", "", 1)
+
+	return strings.Split(outVersion, "+")[0]
 }
 
+// processGraphData ... Executes go graph command and process it to get direct dependencies.
 func processGraphData() int {
 	// Get graph data
-	cmdGoModGraph := exec.Command("go", "mod", "graph")
+	cmdGoModGraph := executeCommand("go", "mod", "graph")
 	cmdGoModGraph.Dir = sourceRootFolder
-	if output, err := cmdGoModGraph.Output(); err != nil {
+	output, err := cmdGoModGraph.Output()
+
+	if err != nil {
 		fmt.Printf("ERROR :: Command `go mod graph` failed, resolve project build errors. %s\n", err)
 		return -1
-	} else {
-		for _, value := range strings.Split(string(output), "\n") {
-			if len(value) > 0 {
-				// Extract direct dependency from go.mod
-				pc := strings.Split(value, " ")
-				if !strings.Contains(pc[0], "@") {
-					mainModule = pc[0]
-					mv := strings.Split(pc[1], "@")
-					directDependencies[mv[0]] = DirectDependency{mv[0], mv[1], false, make([]DirectPackage, 0), make([]Transitive, 0)}
-					totalDirectModuleDependencies++
-				}
+	}
+
+	for _, value := range strings.Split(string(output), "\n") {
+		if len(value) > 0 {
+			// Extract direct dependency from go.mod
+			pc := strings.Split(value, " ")
+			if !strings.Contains(pc[0], "@") {
+				mainModule = pc[0]
+				mv := strings.Split(pc[1], "@")
+				directDependencies[mv[0]] = DirectDependency{mv[0], mv[1], false, make([]DirectPackage, 0), make([]Transitive, 0)}
+				totalDirectModuleDependencies++
 			}
 		}
-		fmt.Println("Direct module dependencies:", totalDirectModuleDependencies)
 	}
+	fmt.Println("Direct module dependencies:", totalDirectModuleDependencies)
 
 	return 0
 }
 
+// processDepsData ... Get deps data through go list deps command and converts json into objects.
 func processDepsData() int {
 	// Switch to code directory and get graph
-	cmdGoListDeps := exec.Command("go", "list", "-json", "-deps", "./...")
+	cmdGoListDeps := executeCommand("go", "list", "-json", "-deps", "./...")
 	cmdGoListDeps.Dir = sourceRootFolder
-	if output, err := cmdGoListDeps.Output(); err != nil {
+	output, err := cmdGoListDeps.Output()
+
+	if err != nil {
 		fmt.Println("ERROR :: Command `go list -json -deps ./...` failed, resolve project build errors.", err)
 		return -1
-	} else {
-		goListDepsData := string(output)
-		goListDepsData = "{\"Packages\": [" + strings.ReplaceAll(goListDepsData, "}\n{", "},\n{") + "]}"
-
-		json.Unmarshal([]byte(goListDepsData), &goPackages)
-		totalDependencyPackages = len(goPackages.Packages)
-		fmt.Println("Packages in deps:", totalDependencyPackages)
 	}
+
+	goListDepsData := string(output)
+	goListDepsData = "{\"Packages\": [" + strings.ReplaceAll(goListDepsData, "}\n{", "},\n{") + "]}"
+
+	json.Unmarshal([]byte(goListDepsData), &goPackages)
+	totalDependencyPackages = len(goPackages.Packages)
+	fmt.Println("Packages in deps:", totalDependencyPackages)
+
 	return 0
 }
 
+// buildDirectDependencies ... Build direct dependencies from graph data.
 func buildDirectDependencies() {
 	// Get direct imports from current source.
 	var sourceImports []string
@@ -160,7 +173,7 @@ func buildDirectDependencies() {
 		// Exclude standard packages and include only packages with project ROOT
 		if goPackages.Packages[i].Standard == false && !strings.Contains(goPackages.Packages[i].Root, "@") {
 			for _, imp := range goPackages.Packages[i].Imports {
-				if !contains(sourceImports, imp) {
+				if !listContains(sourceImports, imp) {
 					sourceImports = append(sourceImports, imp)
 				}
 			}
@@ -186,6 +199,7 @@ func buildDirectDependencies() {
 	fmt.Println("Direct dependencies from imports:", totalDirectDependencies)
 }
 
+// findAndAddTransitive ... Find and add transitives for a given import path.
 func findAndAddTransitive(importPath string, transitivies []Transitive) []Transitive {
 	for i := 0; i < len(goPackages.Packages); i++ {
 		if goPackages.Packages[i].Standard == false && goPackages.Packages[i].ImportPath == importPath {
@@ -205,7 +219,7 @@ func findAndAddTransitive(importPath string, transitivies []Transitive) []Transi
 			if !foundModule {
 				var newTrans = Transitive{
 					goPackages.Packages[i].Module.Path,
-					goPackages.Packages[i].Module.Version,
+					transformVersion(goPackages.Packages[i].Module.Version),
 					importPath == goPackages.Packages[i].Module.Path,
 					make([]string, 0)}
 				if importPath != goPackages.Packages[i].Module.Path {
@@ -219,6 +233,7 @@ func findAndAddTransitive(importPath string, transitivies []Transitive) []Transi
 	return transitivies
 }
 
+// getTransitiveDetails ... Add transitives for given module and import path.
 func getTransitiveDetails(modPath string, importPath string) []Transitive {
 	var transitivies = make([]Transitive, 0)
 	for i := 0; i < len(goPackages.Packages); i++ {
@@ -236,6 +251,7 @@ func getTransitiveDetails(modPath string, importPath string) []Transitive {
 	return transitivies
 }
 
+// buildTransitiveDeps ... Build transitives for all direct deps.
 func buildTransitiveDeps() {
 	for k, ddeps := range directDependencies {
 		var dm = directDependencies[k]
@@ -253,47 +269,66 @@ func buildTransitiveDeps() {
 	fmt.Println("Total transitive dependencies:", totalTransitivesDependencies)
 }
 
+// getDependencies ... Build manifest transitive dependencies.
 func getDependencies(transtivies []Transitive) []ManifestDependency {
 	var manifestDependency []ManifestDependency
 	for _, t := range transtivies {
 		if t.Included {
-			manifestDependency = append(manifestDependency, ManifestDependency{t.Name, t.Version})
+			manifestDependency = append(manifestDependency, ManifestDependency{t.Name, transformVersion(t.Version)})
 		}
 
 		for _, p := range t.Packages {
-			manifestDependency = append(manifestDependency, ManifestDependency{p + "@" + t.Name, t.Version})
+			manifestDependency = append(manifestDependency, ManifestDependency{p + "@" + t.Name, transformVersion(t.Version)})
 		}
 	}
 
 	return manifestDependency
 }
 
+// buildManifest ... Build manifest data.
 func buildManifest() {
 	var manifest Manifest = Manifest{manifestVersion, mainModule, make([]MainfestDirectDeps, 0)}
 	for _, mod := range directDependencies {
 		if mod.Included {
 			manifest.Packages = append(manifest.Packages,
-				MainfestDirectDeps{mod.Name, mod.Version, getDependencies(mod.Transitives)})
+				MainfestDirectDeps{mod.Name, transformVersion(mod.Version), getDependencies(mod.Transitives)})
 		}
 
 		for _, pckg := range mod.Packages {
 			manifest.Packages = append(manifest.Packages,
-				MainfestDirectDeps{pckg.Name + "@" + mod.Name, mod.Version, getDependencies(pckg.Transitives)})
+				MainfestDirectDeps{pckg.Name + "@" + mod.Name, transformVersion(mod.Version), getDependencies(pckg.Transitives)})
 		}
 	}
 
 	d, err := json.Marshal(manifest)
-	check(err)
+	if err != nil {
+		panic(err)
+	}
 	var directDependenciesJSON string = string(d)
 
 	f, err := os.Create(manifestFilePath)
-	check(err)
+	if err != nil {
+		panic(err)
+	}
 	_, err = f.WriteString(string(directDependenciesJSON))
-	check(err)
+	if err != nil {
+		panic(err)
+	}
 	f.Sync()
 
 	defer f.Close()
 	fmt.Println("Success :: Manifest generated and stored at", manifestFilePath)
+}
+
+// generateManifest ... Generate manifest file.
+func generateManifest() {
+	if processGraphData() == 0 {
+		if processDepsData() == 0 {
+			buildDirectDependencies()
+			buildTransitiveDeps()
+			buildManifest()
+		}
+	}
 }
 
 func main() {
@@ -310,13 +345,7 @@ func main() {
 			fmt.Println("Building manifest file for ::", os.Args[1])
 			sourceRootFolder = os.Args[1]
 			manifestFilePath = os.Args[2]
-			if processGraphData() == 0 {
-				if processDepsData() == 0 {
-					buildDirectDependencies()
-					buildTransitiveDeps()
-					buildManifest()
-				}
-			}
+			generateManifest()
 		}
 	}
 }

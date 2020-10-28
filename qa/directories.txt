@@ -1,3 +1,1 @@
-f8a_utils
-tests
-tools
+go_build_manifest
