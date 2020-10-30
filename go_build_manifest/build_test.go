@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-const dataFolder = "./../test/data/"
+const dataFolder = "./../testdata/"
 const outputManifest = "test_manifest.json"
 
 func TestListContainsPositive(t *testing.T) {
