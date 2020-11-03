@@ -212,8 +212,8 @@ func buildManifest(manifestFilePath string) {
 func main() {
 	if len(os.Args) != 3 {
 		log.Println("Error :: Invalid arguments for the command.")
-		log.Println("Usage :: go run github.com/dgpatelgit/gobuildmanifest <Absolute source root folder path containing go.mod> <Output file path>.json")
-		log.Println("Example :: go run github.com/dgpatelgit/gobuildmanifest /home/user/goproject/root/folder /home/user/gomanifest.json")
+		log.Println("Usage :: go run github.com/fabric8-analytics/cli-tools/gomanifest <Absolute source root folder path containing go.mod> <Output file path>.json")
+		log.Println("Example :: go run github.com/fabric8-analytics/cli-tools/gomanifest /home/user/goproject/root/folder /home/user/gomanifest.json")
 	} else {
 		_, err := os.Stat(os.Args[1])
 		if err != nil {
