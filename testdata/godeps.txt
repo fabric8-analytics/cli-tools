@@ -892,255 +892,6 @@
 	]
 }
 {
-	"Dir": "/usr/local/go/src/math/bits",
-	"ImportPath": "math/bits",
-	"Name": "bits",
-	"Doc": "Package bits implements bit counting and manipulation functions for the predeclared unsigned integer types.",
-	"Target": "/usr/local/go/pkg/linux_amd64/math/bits.a",
-	"Root": "/usr/local/go",
-	"Goroot": true,
-	"Standard": true,
-	"DepOnly": true,
-	"GoFiles": [
-		"bits.go",
-		"bits_errors.go",
-		"bits_tables.go"
-	],
-	"IgnoredGoFiles": [
-		"bits_errors_bootstrap.go",
-		"make_examples.go",
-		"make_tables.go"
-	],
-	"Imports": [
-		"unsafe"
-	],
-	"Deps": [
-		"unsafe"
-	],
-	"TestGoFiles": [
-		"export_test.go"
-	],
-	"XTestGoFiles": [
-		"bits_test.go",
-		"example_test.go"
-	],
-	"XTestImports": [
-		"fmt",
-		"math/bits",
-		"runtime",
-		"testing",
-		"unsafe"
-	]
-}
-{
-	"Dir": "/usr/local/go/src/math",
-	"ImportPath": "math",
-	"Name": "math",
-	"Doc": "Package math provides basic constants and mathematical functions.",
-	"Target": "/usr/local/go/pkg/linux_amd64/math.a",
-	"Root": "/usr/local/go",
-	"Goroot": true,
-	"Standard": true,
-	"DepOnly": true,
-	"GoFiles": [
-		"abs.go",
-		"acosh.go",
-		"asin.go",
-		"asinh.go",
-		"atan.go",
-		"atan2.go",
-		"atanh.go",
-		"bits.go",
-		"cbrt.go",
-		"const.go",
-		"copysign.go",
-		"dim.go",
-		"erf.go",
-		"erfinv.go",
-		"exp.go",
-		"exp_asm.go",
-		"expm1.go",
-		"floor.go",
-		"fma.go",
-		"frexp.go",
-		"gamma.go",
-		"hypot.go",
-		"j0.go",
-		"j1.go",
-		"jn.go",
-		"ldexp.go",
-		"lgamma.go",
-		"log.go",
-		"log10.go",
-		"log1p.go",
-		"logb.go",
-		"mod.go",
-		"modf.go",
-		"nextafter.go",
-		"pow.go",
-		"pow10.go",
-		"remainder.go",
-		"signbit.go",
-		"sin.go",
-		"sincos.go",
-		"sinh.go",
-		"sqrt.go",
-		"tan.go",
-		"tanh.go",
-		"trig_reduce.go",
-		"unsafe.go"
-	],
-	"IgnoredGoFiles": [
-		"arith_s390x.go",
-		"arith_s390x_test.go",
-		"export_s390x_test.go"
-	],
-	"SFiles": [
-		"dim_amd64.s",
-		"exp_amd64.s",
-		"floor_amd64.s",
-		"hypot_amd64.s",
-		"log_amd64.s",
-		"sqrt_amd64.s",
-		"stubs_amd64.s"
-	],
-	"Imports": [
-		"internal/cpu",
-		"math/bits",
-		"unsafe"
-	],
-	"Deps": [
-		"internal/cpu",
-		"math/bits",
-		"unsafe"
-	],
-	"TestGoFiles": [
-		"export_test.go"
-	],
-	"XTestGoFiles": [
-		"all_test.go",
-		"example_test.go",
-		"huge_test.go"
-	],
-	"XTestImports": [
-		"fmt",
-		"math",
-		"testing",
-		"unsafe"
-	]
-}
-{
-	"Dir": "/usr/local/go/src/unicode/utf8",
-	"ImportPath": "unicode/utf8",
-	"Name": "utf8",
-	"Doc": "Package utf8 implements functions and constants to support text encoded in UTF-8.",
-	"Target": "/usr/local/go/pkg/linux_amd64/unicode/utf8.a",
-	"Root": "/usr/local/go",
-	"Goroot": true,
-	"Standard": true,
-	"DepOnly": true,
-	"GoFiles": [
-		"utf8.go"
-	],
-	"XTestGoFiles": [
-		"example_test.go",
-		"utf8_test.go"
-	],
-	"XTestImports": [
-		"bytes",
-		"fmt",
-		"testing",
-		"unicode",
-		"unicode/utf8"
-	]
-}
-{
-	"Dir": "/usr/local/go/src/strconv",
-	"ImportPath": "strconv",
-	"Name": "strconv",
-	"Doc": "Package strconv implements conversions to and from string representations of basic data types.",
-	"Target": "/usr/local/go/pkg/linux_amd64/strconv.a",
-	"Root": "/usr/local/go",
-	"Goroot": true,
-	"Standard": true,
-	"DepOnly": true,
-	"GoFiles": [
-		"atob.go",
-		"atoc.go",
-		"atof.go",
-		"atoi.go",
-		"ctoa.go",
-		"decimal.go",
-		"doc.go",
-		"extfloat.go",
-		"ftoa.go",
-		"isprint.go",
-		"itoa.go",
-		"quote.go"
-	],
-	"IgnoredGoFiles": [
-		"makeisprint.go"
-	],
-	"Imports": [
-		"errors",
-		"internal/bytealg",
-		"math",
-		"math/bits",
-		"unicode/utf8"
-	],
-	"Deps": [
-		"errors",
-		"internal/bytealg",
-		"internal/cpu",
-		"internal/reflectlite",
-		"internal/unsafeheader",
-		"math",
-		"math/bits",
-		"runtime",
-		"runtime/internal/atomic",
-		"runtime/internal/math",
-		"runtime/internal/sys",
-		"unicode/utf8",
-		"unsafe"
-	],
-	"TestGoFiles": [
-		"export_test.go",
-		"internal_test.go"
-	],
-	"XTestGoFiles": [
-		"atob_test.go",
-		"atoc_test.go",
-		"atof_test.go",
-		"atoi_test.go",
-		"decimal_test.go",
-		"example_test.go",
-		"fp_test.go",
-		"ftoa_test.go",
-		"itoa_test.go",
-		"quote_test.go",
-		"strconv_test.go"
-	],
-	"XTestImports": [
-		"bufio",
-		"bytes",
-		"errors",
-		"fmt",
-		"log",
-		"math",
-		"math/cmplx",
-		"math/rand",
-		"os",
-		"reflect",
-		"runtime",
-		"strconv",
-		"strings",
-		"sync",
-		"testing",
-		"time",
-		"unicode"
-	]
-}
-{
 	"Dir": "/usr/local/go/src/internal/race",
 	"ImportPath": "internal/race",
 	"Name": "race",
@@ -1285,6 +1036,62 @@
 	]
 }
 {
+	"Dir": "/usr/local/go/src/io",
+	"ImportPath": "io",
+	"Name": "io",
+	"Doc": "Package io provides basic interfaces to I/O primitives.",
+	"Target": "/usr/local/go/pkg/linux_amd64/io.a",
+	"Root": "/usr/local/go",
+	"Goroot": true,
+	"Standard": true,
+	"DepOnly": true,
+	"GoFiles": [
+		"io.go",
+		"multi.go",
+		"pipe.go"
+	],
+	"Imports": [
+		"errors",
+		"sync"
+	],
+	"Deps": [
+		"errors",
+		"internal/bytealg",
+		"internal/cpu",
+		"internal/race",
+		"internal/reflectlite",
+		"internal/unsafeheader",
+		"runtime",
+		"runtime/internal/atomic",
+		"runtime/internal/math",
+		"runtime/internal/sys",
+		"sync",
+		"sync/atomic",
+		"unsafe"
+	],
+	"XTestGoFiles": [
+		"example_test.go",
+		"io_test.go",
+		"multi_test.go",
+		"pipe_test.go"
+	],
+	"XTestImports": [
+		"bytes",
+		"crypto/sha1",
+		"errors",
+		"fmt",
+		"io",
+		"io/ioutil",
+		"log",
+		"os",
+		"runtime",
+		"sort",
+		"strings",
+		"testing",
+		"time"
+	]
+}
+{
 	"Dir": "/usr/local/go/src/unicode",
 	"ImportPath": "unicode",
 	"Name": "unicode",
@@ -1315,6 +1122,325 @@
 		"sort",
 		"strings",
 		"testing",
+		"unicode"
+	]
+}
+{
+	"Dir": "/usr/local/go/src/unicode/utf8",
+	"ImportPath": "unicode/utf8",
+	"Name": "utf8",
+	"Doc": "Package utf8 implements functions and constants to support text encoded in UTF-8.",
+	"Target": "/usr/local/go/pkg/linux_amd64/unicode/utf8.a",
+	"Root": "/usr/local/go",
+	"Goroot": true,
+	"Standard": true,
+	"DepOnly": true,
+	"GoFiles": [
+		"utf8.go"
+	],
+	"XTestGoFiles": [
+		"example_test.go",
+		"utf8_test.go"
+	],
+	"XTestImports": [
+		"bytes",
+		"fmt",
+		"testing",
+		"unicode",
+		"unicode/utf8"
+	]
+}
+{
+	"Dir": "/usr/local/go/src/bytes",
+	"ImportPath": "bytes",
+	"Name": "bytes",
+	"Doc": "Package bytes implements functions for the manipulation of byte slices.",
+	"Target": "/usr/local/go/pkg/linux_amd64/bytes.a",
+	"Root": "/usr/local/go",
+	"Goroot": true,
+	"Standard": true,
+	"DepOnly": true,
+	"GoFiles": [
+		"buffer.go",
+		"bytes.go",
+		"reader.go"
+	],
+	"Imports": [
+		"errors",
+		"internal/bytealg",
+		"io",
+		"unicode",
+		"unicode/utf8"
+	],
+	"Deps": [
+		"errors",
+		"internal/bytealg",
+		"internal/cpu",
+		"internal/race",
+		"internal/reflectlite",
+		"internal/unsafeheader",
+		"io",
+		"runtime",
+		"runtime/internal/atomic",
+		"runtime/internal/math",
+		"runtime/internal/sys",
+		"sync",
+		"sync/atomic",
+		"unicode",
+		"unicode/utf8",
+		"unsafe"
+	],
+	"TestGoFiles": [
+		"export_test.go"
+	],
+	"XTestGoFiles": [
+		"boundary_test.go",
+		"buffer_test.go",
+		"bytes_test.go",
+		"compare_test.go",
+		"example_test.go",
+		"reader_test.go"
+	],
+	"XTestImports": [
+		"bytes",
+		"encoding/base64",
+		"fmt",
+		"internal/testenv",
+		"io",
+		"io/ioutil",
+		"math/rand",
+		"os",
+		"reflect",
+		"sort",
+		"strings",
+		"sync",
+		"syscall",
+		"testing",
+		"unicode",
+		"unicode/utf8"
+	]
+}
+{
+	"Dir": "/usr/local/go/src/math/bits",
+	"ImportPath": "math/bits",
+	"Name": "bits",
+	"Doc": "Package bits implements bit counting and manipulation functions for the predeclared unsigned integer types.",
+	"Target": "/usr/local/go/pkg/linux_amd64/math/bits.a",
+	"Root": "/usr/local/go",
+	"Goroot": true,
+	"Standard": true,
+	"DepOnly": true,
+	"GoFiles": [
+		"bits.go",
+		"bits_errors.go",
+		"bits_tables.go"
+	],
+	"IgnoredGoFiles": [
+		"bits_errors_bootstrap.go",
+		"make_examples.go",
+		"make_tables.go"
+	],
+	"Imports": [
+		"unsafe"
+	],
+	"Deps": [
+		"unsafe"
+	],
+	"TestGoFiles": [
+		"export_test.go"
+	],
+	"XTestGoFiles": [
+		"bits_test.go",
+		"example_test.go"
+	],
+	"XTestImports": [
+		"fmt",
+		"math/bits",
+		"runtime",
+		"testing",
+		"unsafe"
+	]
+}
+{
+	"Dir": "/usr/local/go/src/math",
+	"ImportPath": "math",
+	"Name": "math",
+	"Doc": "Package math provides basic constants and mathematical functions.",
+	"Target": "/usr/local/go/pkg/linux_amd64/math.a",
+	"Root": "/usr/local/go",
+	"Goroot": true,
+	"Standard": true,
+	"DepOnly": true,
+	"GoFiles": [
+		"abs.go",
+		"acosh.go",
+		"asin.go",
+		"asinh.go",
+		"atan.go",
+		"atan2.go",
+		"atanh.go",
+		"bits.go",
+		"cbrt.go",
+		"const.go",
+		"copysign.go",
+		"dim.go",
+		"erf.go",
+		"erfinv.go",
+		"exp.go",
+		"exp_asm.go",
+		"expm1.go",
+		"floor.go",
+		"fma.go",
+		"frexp.go",
+		"gamma.go",
+		"hypot.go",
+		"j0.go",
+		"j1.go",
+		"jn.go",
+		"ldexp.go",
+		"lgamma.go",
+		"log.go",
+		"log10.go",
+		"log1p.go",
+		"logb.go",
+		"mod.go",
+		"modf.go",
+		"nextafter.go",
+		"pow.go",
+		"pow10.go",
+		"remainder.go",
+		"signbit.go",
+		"sin.go",
+		"sincos.go",
+		"sinh.go",
+		"sqrt.go",
+		"tan.go",
+		"tanh.go",
+		"trig_reduce.go",
+		"unsafe.go"
+	],
+	"IgnoredGoFiles": [
+		"arith_s390x.go",
+		"arith_s390x_test.go",
+		"export_s390x_test.go"
+	],
+	"SFiles": [
+		"dim_amd64.s",
+		"exp_amd64.s",
+		"floor_amd64.s",
+		"hypot_amd64.s",
+		"log_amd64.s",
+		"sqrt_amd64.s",
+		"stubs_amd64.s"
+	],
+	"Imports": [
+		"internal/cpu",
+		"math/bits",
+		"unsafe"
+	],
+	"Deps": [
+		"internal/cpu",
+		"math/bits",
+		"unsafe"
+	],
+	"TestGoFiles": [
+		"export_test.go"
+	],
+	"XTestGoFiles": [
+		"all_test.go",
+		"example_test.go",
+		"huge_test.go"
+	],
+	"XTestImports": [
+		"fmt",
+		"math",
+		"testing",
+		"unsafe"
+	]
+}
+{
+	"Dir": "/usr/local/go/src/strconv",
+	"ImportPath": "strconv",
+	"Name": "strconv",
+	"Doc": "Package strconv implements conversions to and from string representations of basic data types.",
+	"Target": "/usr/local/go/pkg/linux_amd64/strconv.a",
+	"Root": "/usr/local/go",
+	"Goroot": true,
+	"Standard": true,
+	"DepOnly": true,
+	"GoFiles": [
+		"atob.go",
+		"atoc.go",
+		"atof.go",
+		"atoi.go",
+		"ctoa.go",
+		"decimal.go",
+		"doc.go",
+		"extfloat.go",
+		"ftoa.go",
+		"isprint.go",
+		"itoa.go",
+		"quote.go"
+	],
+	"IgnoredGoFiles": [
+		"makeisprint.go"
+	],
+	"Imports": [
+		"errors",
+		"internal/bytealg",
+		"math",
+		"math/bits",
+		"unicode/utf8"
+	],
+	"Deps": [
+		"errors",
+		"internal/bytealg",
+		"internal/cpu",
+		"internal/reflectlite",
+		"internal/unsafeheader",
+		"math",
+		"math/bits",
+		"runtime",
+		"runtime/internal/atomic",
+		"runtime/internal/math",
+		"runtime/internal/sys",
+		"unicode/utf8",
+		"unsafe"
+	],
+	"TestGoFiles": [
+		"export_test.go",
+		"internal_test.go"
+	],
+	"XTestGoFiles": [
+		"atob_test.go",
+		"atoc_test.go",
+		"atof_test.go",
+		"atoi_test.go",
+		"decimal_test.go",
+		"example_test.go",
+		"fp_test.go",
+		"ftoa_test.go",
+		"itoa_test.go",
+		"quote_test.go",
+		"strconv_test.go"
+	],
+	"XTestImports": [
+		"bufio",
+		"bytes",
+		"errors",
+		"fmt",
+		"log",
+		"math",
+		"math/cmplx",
+		"math/rand",
+		"os",
+		"reflect",
+		"runtime",
+		"strconv",
+		"strings",
+		"sync",
+		"testing",
+		"time",
 		"unicode"
 	]
 }
@@ -1520,62 +1646,6 @@
 		"reflect",
 		"strings",
 		"testing"
-	]
-}
-{
-	"Dir": "/usr/local/go/src/io",
-	"ImportPath": "io",
-	"Name": "io",
-	"Doc": "Package io provides basic interfaces to I/O primitives.",
-	"Target": "/usr/local/go/pkg/linux_amd64/io.a",
-	"Root": "/usr/local/go",
-	"Goroot": true,
-	"Standard": true,
-	"DepOnly": true,
-	"GoFiles": [
-		"io.go",
-		"multi.go",
-		"pipe.go"
-	],
-	"Imports": [
-		"errors",
-		"sync"
-	],
-	"Deps": [
-		"errors",
-		"internal/bytealg",
-		"internal/cpu",
-		"internal/race",
-		"internal/reflectlite",
-		"internal/unsafeheader",
-		"runtime",
-		"runtime/internal/atomic",
-		"runtime/internal/math",
-		"runtime/internal/sys",
-		"sync",
-		"sync/atomic",
-		"unsafe"
-	],
-	"XTestGoFiles": [
-		"example_test.go",
-		"io_test.go",
-		"multi_test.go",
-		"pipe_test.go"
-	],
-	"XTestImports": [
-		"bytes",
-		"crypto/sha1",
-		"errors",
-		"fmt",
-		"io",
-		"io/ioutil",
-		"log",
-		"os",
-		"runtime",
-		"sort",
-		"strings",
-		"testing",
-		"time"
 	]
 }
 {
@@ -2549,89 +2619,20 @@
 	]
 }
 {
-	"Dir": "/usr/local/go/src/bytes",
-	"ImportPath": "bytes",
-	"Name": "bytes",
-	"Doc": "Package bytes implements functions for the manipulation of byte slices.",
-	"Target": "/usr/local/go/pkg/linux_amd64/bytes.a",
-	"Root": "/usr/local/go",
-	"Goroot": true,
-	"Standard": true,
-	"DepOnly": true,
-	"GoFiles": [
-		"buffer.go",
-		"bytes.go",
-		"reader.go"
-	],
-	"Imports": [
-		"errors",
-		"internal/bytealg",
-		"io",
-		"unicode",
-		"unicode/utf8"
-	],
-	"Deps": [
-		"errors",
-		"internal/bytealg",
-		"internal/cpu",
-		"internal/race",
-		"internal/reflectlite",
-		"internal/unsafeheader",
-		"io",
-		"runtime",
-		"runtime/internal/atomic",
-		"runtime/internal/math",
-		"runtime/internal/sys",
-		"sync",
-		"sync/atomic",
-		"unicode",
-		"unicode/utf8",
-		"unsafe"
-	],
-	"TestGoFiles": [
-		"export_test.go"
-	],
-	"XTestGoFiles": [
-		"boundary_test.go",
-		"buffer_test.go",
-		"bytes_test.go",
-		"compare_test.go",
-		"example_test.go",
-		"reader_test.go"
-	],
-	"XTestImports": [
-		"bytes",
-		"encoding/base64",
-		"fmt",
-		"internal/testenv",
-		"io",
-		"io/ioutil",
-		"math/rand",
-		"os",
-		"reflect",
-		"sort",
-		"strings",
-		"sync",
-		"syscall",
-		"testing",
-		"unicode",
-		"unicode/utf8"
-	]
-}
-{
-	"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2/cmp/internal/flags",
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp/internal/flags",
 	"ImportPath": "github.com/google/go-cmp/cmp/internal/flags",
 	"Name": "flags",
-	"Root": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 	"Module": {
 		"Path": "github.com/google/go-cmp",
-		"Version": "v0.5.2",
-		"Time": "2020-08-18T19:37:11Z",
-		"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
-		"GoMod": "/home/dhpatel/go/pkg/mod/cache/download/github.com/google/go-cmp/@v/v0.5.2.mod",
+		"Main": true,
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
 		"GoVersion": "1.8"
 	},
-	"DepOnly": true,
+	"Match": [
+		"./..."
+	],
 	"Stale": true,
 	"StaleReason": "not installed but available in build cache",
 	"GoFiles": [
@@ -2713,20 +2714,21 @@
 	]
 }
 {
-	"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2/cmp/internal/diff",
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp/internal/diff",
 	"ImportPath": "github.com/google/go-cmp/cmp/internal/diff",
 	"Name": "diff",
 	"Doc": "Package diff implements an algorithm for producing edit-scripts.",
-	"Root": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 	"Module": {
 		"Path": "github.com/google/go-cmp",
-		"Version": "v0.5.2",
-		"Time": "2020-08-18T19:37:11Z",
-		"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
-		"GoMod": "/home/dhpatel/go/pkg/mod/cache/download/github.com/google/go-cmp/@v/v0.5.2.mod",
+		"Main": true,
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
 		"GoVersion": "1.8"
 	},
-	"DepOnly": true,
+	"Match": [
+		"./..."
+	],
 	"Stale": true,
 	"StaleReason": "not installed but available in build cache",
 	"GoFiles": [
@@ -2995,20 +2997,21 @@
 	]
 }
 {
-	"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2/cmp/internal/function",
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp/internal/function",
 	"ImportPath": "github.com/google/go-cmp/cmp/internal/function",
 	"Name": "function",
 	"Doc": "Package function provides functionality for identifying function types.",
-	"Root": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 	"Module": {
 		"Path": "github.com/google/go-cmp",
-		"Version": "v0.5.2",
-		"Time": "2020-08-18T19:37:11Z",
-		"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
-		"GoMod": "/home/dhpatel/go/pkg/mod/cache/download/github.com/google/go-cmp/@v/v0.5.2.mod",
+		"Main": true,
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
 		"GoVersion": "1.8"
 	},
-	"DepOnly": true,
+	"Match": [
+		"./..."
+	],
 	"Stale": true,
 	"StaleReason": "not installed but available in build cache",
 	"GoFiles": [
@@ -3057,19 +3060,20 @@
 	]
 }
 {
-	"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2/cmp/internal/value",
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp/internal/value",
 	"ImportPath": "github.com/google/go-cmp/cmp/internal/value",
 	"Name": "value",
-	"Root": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 	"Module": {
 		"Path": "github.com/google/go-cmp",
-		"Version": "v0.5.2",
-		"Time": "2020-08-18T19:37:11Z",
-		"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
-		"GoMod": "/home/dhpatel/go/pkg/mod/cache/download/github.com/google/go-cmp/@v/v0.5.2.mod",
+		"Main": true,
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
 		"GoVersion": "1.8"
 	},
-	"DepOnly": true,
+	"Match": [
+		"./..."
+	],
 	"Stale": true,
 	"StaleReason": "not installed but available in build cache",
 	"GoFiles": [
@@ -3145,20 +3149,21 @@
 	]
 }
 {
-	"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2/cmp",
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp",
 	"ImportPath": "github.com/google/go-cmp/cmp",
 	"Name": "cmp",
 	"Doc": "Package cmp determines equality of values.",
-	"Root": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 	"Module": {
 		"Path": "github.com/google/go-cmp",
-		"Version": "v0.5.2",
-		"Time": "2020-08-18T19:37:11Z",
-		"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
-		"GoMod": "/home/dhpatel/go/pkg/mod/cache/download/github.com/google/go-cmp/@v/v0.5.2.mod",
+		"Main": true,
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
 		"GoVersion": "1.8"
 	},
-	"DepOnly": true,
+	"Match": [
+		"./..."
+	],
 	"Stale": true,
 	"StaleReason": "not installed but available in build cache",
 	"GoFiles": [
@@ -3180,7 +3185,6 @@
 	"Imports": [
 		"bytes",
 		"fmt",
-		"github.com/google/go-cmp/cmp",
 		"github.com/google/go-cmp/cmp/internal/diff",
 		"github.com/google/go-cmp/cmp/internal/flags",
 		"github.com/google/go-cmp/cmp/internal/function",
@@ -3290,7 +3294,6 @@
 		"Path": "golang.org/x/xerrors",
 		"Version": "v0.0.0-20191204190536-9bdfabe68543",
 		"Time": "2019-12-04T19:05:36Z",
-		"Indirect": true,
 		"Dir": "/home/dhpatel/go/pkg/mod/golang.org/x/xerrors@v0.0.0-20191204190536-9bdfabe68543",
 		"GoMod": "/home/dhpatel/go/pkg/mod/cache/download/golang.org/x/xerrors/@v/v0.0.0-20191204190536-9bdfabe68543.mod",
 		"GoVersion": "1.11"
@@ -3312,7 +3315,6 @@
 		"Path": "golang.org/x/xerrors",
 		"Version": "v0.0.0-20191204190536-9bdfabe68543",
 		"Time": "2019-12-04T19:05:36Z",
-		"Indirect": true,
 		"Dir": "/home/dhpatel/go/pkg/mod/golang.org/x/xerrors@v0.0.0-20191204190536-9bdfabe68543",
 		"GoMod": "/home/dhpatel/go/pkg/mod/cache/download/golang.org/x/xerrors/@v/v0.0.0-20191204190536-9bdfabe68543.mod",
 		"GoVersion": "1.11"
@@ -3412,22 +3414,23 @@
 	]
 }
 {
-	"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2/cmp/cmpopts",
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp/cmpopts",
 	"ImportPath": "github.com/google/go-cmp/cmp/cmpopts",
 	"Name": "cmpopts",
 	"Doc": "Package cmpopts provides common options for the cmp package.",
-	"Root": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 	"Module": {
 		"Path": "github.com/google/go-cmp",
-		"Version": "v0.5.2",
-		"Time": "2020-08-18T19:37:11Z",
-		"Dir": "/home/dhpatel/go/pkg/mod/github.com/google/go-cmp@v0.5.2",
-		"GoMod": "/home/dhpatel/go/pkg/mod/cache/download/github.com/google/go-cmp/@v/v0.5.2.mod",
+		"Main": true,
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
 		"GoVersion": "1.8"
 	},
-	"DepOnly": true,
+	"Match": [
+		"./..."
+	],
 	"Stale": true,
-	"StaleReason": "not installed but available in build cache",
+	"StaleReason": "stale dependency: github.com/google/go-cmp/cmp",
 	"GoFiles": [
 		"equate.go",
 		"ignore.go",
@@ -3509,20 +3512,30 @@
 		"sync",
 		"testing",
 		"time"
+	],
+	"XTestGoFiles": [
+		"example_test.go"
+	],
+	"XTestImports": [
+		"fmt",
+		"github.com/google/go-cmp/cmp",
+		"github.com/google/go-cmp/cmp/cmpopts",
+		"github.com/google/go-cmp/cmp/internal/flags",
+		"net",
+		"time"
 	]
 }
 {
-	"Dir": "/home/dhpatel/Documents/code/go-learn/sample",
-	"ImportPath": "dgp.com/hello",
-	"Name": "main",
-	"Target": "/home/dhpatel/go/bin/hello",
-	"Root": "/home/dhpatel/Documents/code/go-learn/sample",
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp/internal/testprotos",
+	"ImportPath": "github.com/google/go-cmp/cmp/internal/testprotos",
+	"Name": "testprotos",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 	"Module": {
-		"Path": "dgp.com/hello",
+		"Path": "github.com/google/go-cmp",
 		"Main": true,
-		"Dir": "/home/dhpatel/Documents/code/go-learn/sample",
-		"GoMod": "/home/dhpatel/Documents/code/go-learn/sample/go.mod",
-		"GoVersion": "1.15"
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
+		"GoVersion": "1.8"
 	},
 	"Match": [
 		"./..."
@@ -3530,58 +3543,99 @@
 	"Stale": true,
 	"StaleReason": "not installed but available in build cache",
 	"GoFiles": [
-		"main.go"
+		"protos.go"
+	]
+}
+{
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp/internal/teststructs",
+	"ImportPath": "github.com/google/go-cmp/cmp/internal/teststructs",
+	"Name": "teststructs",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+	"Module": {
+		"Path": "github.com/google/go-cmp",
+		"Main": true,
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
+		"GoVersion": "1.8"
+	},
+	"Match": [
+		"./..."
+	],
+	"Stale": true,
+	"StaleReason": "not installed but available in build cache",
+	"GoFiles": [
+		"project1.go",
+		"project2.go",
+		"project3.go",
+		"project4.go",
+		"structs.go"
 	],
 	"Imports": [
-		"fmt",
-		"github.com/google/go-cmp",
-		"github.com/google/go-cmp/cmp",
-		"github.com/google/go-cmp/cmp/cmpopts"
+		"github.com/google/go-cmp/cmp/internal/testprotos",
+		"sync",
+		"time"
 	],
 	"Deps": [
-		"bytes",
 		"errors",
-		"fmt",
-		"github.com/google/go-cmp/cmp",
-		"github.com/google/go-cmp/cmp/cmpopts",
-		"github.com/google/go-cmp/cmp/internal/diff",
-		"github.com/google/go-cmp/cmp/internal/flags",
-		"github.com/google/go-cmp/cmp/internal/function",
-		"github.com/google/go-cmp/cmp/internal/value",
-		"golang.org/x/xerrors",
-		"golang.org/x/xerrors/internal",
+		"github.com/google/go-cmp/cmp/internal/testprotos",
 		"internal/bytealg",
 		"internal/cpu",
-		"internal/fmtsort",
 		"internal/oserror",
-		"internal/poll",
 		"internal/race",
 		"internal/reflectlite",
-		"internal/syscall/execenv",
-		"internal/syscall/unix",
-		"internal/testlog",
 		"internal/unsafeheader",
-		"io",
-		"math",
-		"math/bits",
-		"math/rand",
-		"os",
-		"reflect",
-		"regexp",
-		"regexp/syntax",
 		"runtime",
 		"runtime/internal/atomic",
 		"runtime/internal/math",
 		"runtime/internal/sys",
-		"sort",
-		"strconv",
-		"strings",
 		"sync",
 		"sync/atomic",
 		"syscall",
 		"time",
-		"unicode",
-		"unicode/utf8",
 		"unsafe"
+	]
+}
+{
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp/internal/teststructs/foo1",
+	"ImportPath": "github.com/google/go-cmp/cmp/internal/teststructs/foo1",
+	"Name": "foo",
+	"Doc": "Package foo is deliberately named differently than the parent directory.",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+	"Module": {
+		"Path": "github.com/google/go-cmp",
+		"Main": true,
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
+		"GoVersion": "1.8"
+	},
+	"Match": [
+		"./..."
+	],
+	"Stale": true,
+	"StaleReason": "not installed but available in build cache",
+	"GoFiles": [
+		"foo.go"
+	]
+}
+{
+	"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/cmp/internal/teststructs/foo2",
+	"ImportPath": "github.com/google/go-cmp/cmp/internal/teststructs/foo2",
+	"Name": "foo",
+	"Doc": "Package foo is deliberately named differently than the parent directory.",
+	"Root": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+	"Module": {
+		"Path": "github.com/google/go-cmp",
+		"Main": true,
+		"Dir": "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
+		"GoMod": "/home/dhpatel/Documents/code/go-learn/src/go-cmp/go.mod",
+		"GoVersion": "1.8"
+	},
+	"Match": [
+		"./..."
+	],
+	"Stale": true,
+	"StaleReason": "not installed but available in build cache",
+	"GoFiles": [
+		"foo.go"
 	]
 }
