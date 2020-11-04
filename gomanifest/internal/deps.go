@@ -79,10 +79,10 @@ func (goList *GoList) Get() (map[string]GoPackage, error) {
 	var depsPackages = make(map[string]GoPackage)
 
 	// Preprocess and remove all standard packages.
-	for i := 0; i < len(goPackages.Packages); i++ {
+	for _, pckg := range goPackages.Packages {
 		// Exclude standard packages
-		if goPackages.Packages[i].Standard == false {
-			depsPackages[goPackages.Packages[i].ImportPath] = goPackages.Packages[i]
+		if pckg.Standard == false {
+			depsPackages[pckg.ImportPath] = pckg
 		}
 	}
 	log.Info().Msgf("Filter package count: %d", len(depsPackages))

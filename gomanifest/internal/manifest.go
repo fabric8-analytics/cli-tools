@@ -45,8 +45,8 @@ func getPackageName(depPackage GoPackage) string {
 // getTransitives ... Returns a clean list of deps
 func getTransitives(deps []string, depsPackages map[string]GoPackage) []Dependency {
 	var dependencies = make([]Dependency, 0)
-	for i := 0; i < len(deps); i++ {
-		if depPackage, ok := depsPackages[deps[i]]; ok {
+	for _, dep := range deps {
+		if depPackage, ok := depsPackages[dep]; ok {
 			if depPackage.Module.Main == false {
 				dependencies = append(dependencies, Dependency{
 					getPackageName(depPackage),
