@@ -29,10 +29,10 @@ func main() {
 
 			goListCmd := &internal.GoListCmd{CWD: os.Args[1]}
 			goList := &internal.GoList{Command: goListCmd}
-			if depsPackages, err := goList.Get(); err != nil {
+			if depPackages, err := goList.Get(); err != nil {
 				log.Error().Msgf("Exception raised: %v", err)
 			} else {
-				if err := internal.SaveManifestFile(internal.BuildManifest(depsPackages), os.Args[2]); err != nil {
+				if err := internal.SaveManifestFile(internal.BuildManifest(depPackages), os.Args[2]); err != nil {
 					log.Error().Msgf("Exception raised: %v", err)
 				} else {
 					log.Info().Msgf("Manifest file generated and stored at %s", os.Args[2])

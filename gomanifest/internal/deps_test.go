@@ -47,7 +47,7 @@ func TestProcessDepsDataHappyCase(t *testing.T) {
 	fakeGoListCmd.On("Run").Return(goDepsTestData, nil)
 
 	goList := &GoList{Command: fakeGoListCmd}
-	depsPackages, err := goList.Get()
+	depPackages, err := goList.Get()
 	assert.Equal(t, nil, err, "Expect to handle go list command failure")
-	assert.Equal(t, 12, len(depsPackages), "Package count check failed")
+	assert.Equal(t, 12, len(depPackages), "Package count check failed")
 }

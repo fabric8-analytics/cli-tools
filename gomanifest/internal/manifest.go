@@ -33,7 +33,7 @@ func transformVersion(inVersion string) string {
 }
 
 // getPackageName ... Utility function to convert package + module data into package name used by manifest.
-func getPackageName(depPackage GoPackage) string {
+func getPackageName(depPackage DepPackage) string {
 	// Get module / package@module
 	if depPackage.ImportPath != depPackage.Module.Path {
 		return depPackage.ImportPath + "@" + depPackage.Module.Path
@@ -42,17 +42,32 @@ func getPackageName(depPackage GoPackage) string {
 	return depPackage.ImportPath
 }
 
+// newDirectDependency ... Return a new direct depenency for a given go package.
+func newDirectDependency(depPackage DepPackage, depPackages map[string]DepPackage) Dependency {
+	return Dependency{
+		getPackageName(depPackage),
+		transformVersion(depPackage.Module.Version),
+		getTransitives(depPackage.Deps, depPackages),
+	}
+}
+
+// newTransitiveDependency ... Build and returns a new transitive dependency for a go package.
+func newTransitiveDependency(depPackage DepPackage) Dependency {
+	return Dependency{
+		getPackageName(depPackage),
+		transformVersion(depPackage.Module.Version),
+		nil,
+	}
+}
+
 // getTransitives ... Returns a clean list of deps
-func getTransitives(deps []string, depsPackages map[string]GoPackage) []Dependency {
+func getTransitives(deps []string, depPackages map[string]DepPackage) []Dependency {
 	var dependencies = make([]Dependency, 0)
 	for _, dep := range deps {
-		if depPackage, ok := depsPackages[dep]; ok {
+		if depPackage, ok := depPackages[dep]; ok {
 			if depPackage.Module.Main == false {
-				dependencies = append(dependencies, Dependency{
-					getPackageName(depPackage),
-					transformVersion(depPackage.Module.Version),
-					nil,
-				})
+				dependencies = append(dependencies,
+					newTransitiveDependency(depPackage))
 			}
 		}
 	}
@@ -60,12 +75,12 @@ func getTransitives(deps []string, depsPackages map[string]GoPackage) []Dependen
 }
 
 // BuildManifest ... Build direct & transitive dependencies.
-func BuildManifest(depsPackages map[string]GoPackage) Manifest {
+func BuildManifest(depPackages map[string]DepPackage) Manifest {
 	var manifest Manifest = Manifest{manifestVersion, "", make([]Dependency, 0)}
 
 	// Get direct imports from current source.
 	var sourceImports = make(map[string]bool, 0)
-	for _, pckg := range depsPackages {
+	for _, pckg := range depPackages {
 		// Include only packages with project ROOT
 		if pckg.Module.Main {
 			// Set main module if not set.
@@ -79,14 +94,10 @@ func BuildManifest(depsPackages map[string]GoPackage) Manifest {
 				if _, ok := sourceImports[imp]; !ok {
 					// Added imports that are non-standard (or present in deps packages) and
 					// which are having main module as 'false'
-					if depPackage, ok := depsPackages[imp]; ok {
+					if depPackage, ok := depPackages[imp]; ok {
 						if depPackage.Module.Main == false {
 							manifest.Packages = append(manifest.Packages,
-								Dependency{
-									getPackageName(depPackage),
-									transformVersion(depPackage.Module.Version),
-									getTransitives(depPackage.Deps, depsPackages),
-								})
+								newDirectDependency(depPackage, depPackages))
 						}
 					}
 

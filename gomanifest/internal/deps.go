@@ -10,27 +10,27 @@ import (
 
 /* Structure required for parsing `go list -deps -json ./...` json parsing */
 
-// GoPackages ... Package list structure from deps json
-type GoPackages struct {
-	Packages []GoPackage `json:"Packages"`
+// DepPackages ... Package list structure from deps json
+type DepPackages struct {
+	Packages []DepPackage `json:"Packages"`
 }
 
-// GoModule ... Module structure from deps json
-type GoModule struct {
-	Path    string    `json:"Path"`
-	Main    bool      `json:"Main"`
-	Version string    `json:"Version"`
-	Replace *GoModule `json:"Replace"`
+// DepModule ... Module structure from deps json
+type DepModule struct {
+	Path    string     `json:"Path"`
+	Main    bool       `json:"Main"`
+	Version string     `json:"Version"`
+	Replace *DepModule `json:"Replace"`
 }
 
-// GoPackage ... Package structure from deps json
-type GoPackage struct {
-	Root       string   `json:"Root"`
-	ImportPath string   `json:"ImportPath"`
-	Module     GoModule `json:"Module"`
-	Standard   bool     `json:"Standard"`
-	Imports    []string `json:"Imports"`
-	Deps       []string `json:"Deps"`
+// DepPackage ... Package structure from deps json
+type DepPackage struct {
+	Root       string    `json:"Root"`
+	ImportPath string    `json:"ImportPath"`
+	Module     DepModule `json:"Module"`
+	Standard   bool      `json:"Standard"`
+	Imports    []string  `json:"Imports"`
+	Deps       []string  `json:"Deps"`
 }
 
 // GoListCmd ... Go list command structure.
@@ -61,7 +61,7 @@ type GoList struct {
 }
 
 // Get ... Get deps data through go list deps command and converts json into objects.
-func (goList *GoList) Get() (map[string]GoPackage, error) {
+func (goList *GoList) Get() (map[string]DepPackage, error) {
 	output, err := goList.Command.Run()
 
 	if err != nil {
@@ -72,20 +72,20 @@ func (goList *GoList) Get() (map[string]GoPackage, error) {
 	goListDepsData := string(output)
 	goListDepsData = `{"Packages": [` + strings.ReplaceAll(goListDepsData, "}\n{", "},\n{") + "]}"
 
-	var goPackages GoPackages
-	json.Unmarshal([]byte(goListDepsData), &goPackages)
-	log.Info().Msgf("Packages in deps: %d", len(goPackages.Packages))
+	var depPackages DepPackages
+	json.Unmarshal([]byte(goListDepsData), &depPackages)
+	log.Info().Msgf("Packages in deps: %d", len(depPackages.Packages))
 
-	var depsPackages = make(map[string]GoPackage)
+	var depPackagesMap = make(map[string]DepPackage)
 
 	// Preprocess and remove all standard packages.
-	for _, pckg := range goPackages.Packages {
+	for _, pckg := range depPackages.Packages {
 		// Exclude standard packages
 		if pckg.Standard == false {
-			depsPackages[pckg.ImportPath] = pckg
+			depPackagesMap[pckg.ImportPath] = pckg
 		}
 	}
-	log.Info().Msgf("Filter package count: %d", len(depsPackages))
+	log.Info().Msgf("Filter package count: %d", len(depPackagesMap))
 
-	return depsPackages, nil
+	return depPackagesMap, nil
 }

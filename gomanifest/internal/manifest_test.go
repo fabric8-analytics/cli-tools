@@ -7,11 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var testDepsPackages = map[string]GoPackage{
-	"github.com/google/go-cmp/cmp": GoPackage{
+var testDepPackagesMap = map[string]DepPackage{
+	"github.com/google/go-cmp/cmp": DepPackage{
 		Root:       "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 		ImportPath: "github.com/google/go-cmp/cmp",
-		Module: GoModule{
+		Module: DepModule{
 			Path:    "github.com/google/go-cmp",
 			Main:    true,
 			Version: "",
@@ -52,10 +52,10 @@ var testDepsPackages = map[string]GoPackage{
 			"unsafe",
 		},
 	},
-	"github.com/google/go-cmp/cmp/cmpopts": GoPackage{
+	"github.com/google/go-cmp/cmp/cmpopts": DepPackage{
 		Root:       "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 		ImportPath: "github.com/google/go-cmp/cmp/cmpopts",
-		Module: GoModule{
+		Module: DepModule{
 			Path:    "github.com/google/go-cmp",
 			Main:    true,
 			Version: "",
@@ -82,10 +82,10 @@ var testDepsPackages = map[string]GoPackage{
 			"internal/cpu",
 		},
 	},
-	"github.com/google/go-cmp/cmp/internal/diff": GoPackage{
+	"github.com/google/go-cmp/cmp/internal/diff": DepPackage{
 		Root:       "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 		ImportPath: "github.com/google/go-cmp/cmp/internal/diff",
-		Module: GoModule{
+		Module: DepModule{
 			Path:    "github.com/google/go-cmp",
 			Main:    true,
 			Version: "",
@@ -103,10 +103,10 @@ var testDepsPackages = map[string]GoPackage{
 			"internal/bytealg",
 		},
 	},
-	"github.com/google/go-cmp/cmp/internal/flags": GoPackage{
+	"github.com/google/go-cmp/cmp/internal/flags": DepPackage{
 		Root:       "/home/dhpatel/Documents/code/go-learn/src/go-cmp",
 		ImportPath: "github.com/google/go-cmp/cmp/internal/flags",
-		Module: GoModule{
+		Module: DepModule{
 			Path:    "github.com/google/go-cmp",
 			Main:    true,
 			Version: "",
@@ -116,10 +116,10 @@ var testDepsPackages = map[string]GoPackage{
 		Imports:  []string{},
 		Deps:     []string{},
 	},
-	"golang.org/x/xerrors": GoPackage{
+	"golang.org/x/xerrors": DepPackage{
 		Root:       "/home/dhpatel/go/pkg/mod/golang.org/x/xerrors@v0.0.0-20191204190536-9bdfabe68543",
 		ImportPath: "golang.org/x/xerrors",
-		Module: GoModule{
+		Module: DepModule{
 			Path:    "golang.org/x/xerrors",
 			Main:    false,
 			Version: "v0.0.0-20191204190536-9bdfabe68543",
@@ -150,13 +150,13 @@ func TestTransformationVerionSemVer(t *testing.T) {
 }
 
 func TestBuildManifest(t *testing.T) {
-	manifest := BuildManifest(testDepsPackages)
+	manifest := BuildManifest(testDepPackagesMap)
 	assert.Equal(t, 1, len(manifest.Packages), "Expected number of deps not found")
 }
 
 func TestSaveManifest(t *testing.T) {
 	manifestFilePath := testDataFolder + testOutputManifest
-	SaveManifestFile(BuildManifest(testDepsPackages), manifestFilePath)
+	SaveManifestFile(BuildManifest(testDepPackagesMap), manifestFilePath)
 
 	// Read output json and check for its size
 	output := readFileContentForTesting(testOutputManifest)
