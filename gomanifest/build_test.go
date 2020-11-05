@@ -1,59 +1,39 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
+	"os/exec"
 	"testing"
 
-	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 )
 
 const testDataFolder = "./../testdata/"
-const testOutputManifest = "test_manifest.json"
-
-func readFileContentForTesting(fileName string) string {
-	content, err := ioutil.ReadFile(testDataFolder + fileName)
-	if err != nil {
-		log.Fatal().Msgf("Exception: %v", err)
-	}
-
-	return string(content)
-}
+const testOutputManifest = "test_golist.json"
 
 func TestMainWithInvalidNumOfArgs(t *testing.T) {
-	manifestFilePath := testDataFolder + testOutputManifest
+	cmd := exec.Command("go", "run", "build.go")
+	cmd.Dir, _ = os.Getwd()
+	err := cmd.Run()
 
-	defer os.Remove(manifestFilePath)
-
-	os.Args = []string{"go_build_manifest/"}
-	main()
-
-	_, err := os.Stat(manifestFilePath)
-	assert.NotEqual(t, nil, err, "Output manifest file size missmatch")
+	assert.Equal(t, "exit status 1", err.Error(), "Expecting error upon missing arguments")
 }
 
 func TestMainWithInvalidFolder(t *testing.T) {
-	manifestFilePath := testDataFolder + testOutputManifest
+	cmd := exec.Command("go", "run", "build.go", testDataFolder+"dummy", "/temp/go.list")
+	cmd.Dir, _ = os.Getwd()
+	err := cmd.Run()
 
-	defer os.Remove(manifestFilePath)
-
-	os.Args = []string{"go_build_manifest/", testDataFolder + "dummy", manifestFilePath}
-	main()
-
-	_, err := os.Stat(manifestFilePath)
-	assert.NotEqual(t, nil, err, "Output manifest file size missmatch")
+	assert.Equal(t, "exit status 1", err.Error(), "Expecting error upon wrong source folder")
 }
 
 func TestMainHappyCase(t *testing.T) {
 	manifestFilePath := testDataFolder + testOutputManifest
-
 	defer os.Remove(manifestFilePath)
 
-	os.Args = []string{"go_build_manifest/", testDataFolder, manifestFilePath}
-	main()
+	cmd := exec.Command("go", "run", "build.go", testDataFolder, manifestFilePath)
+	cmd.Dir, _ = os.Getwd()
+	err := cmd.Run()
 
-	// Read output json and check for its size
-	output := readFileContentForTesting(manifestFilePath)
-	assert.Equal(t, 40, len(output), "Output manifest file size missmatch")
+	assert.Equal(t, nil, err, "Expecting no errors")
 }

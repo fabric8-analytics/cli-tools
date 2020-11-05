@@ -19,36 +19,24 @@ var testDepPackagesMap = map[string]DepPackage{
 		Standard: false,
 		Imports: []string{
 			"bytes",
-			"fmt",
 			"github.com/google/go-cmp/cmp/internal/diff",
 			"github.com/google/go-cmp/cmp/internal/flags",
 			"github.com/google/go-cmp/cmp/internal/function",
 			"github.com/google/go-cmp/cmp/internal/value",
 			"math/rand",
-			"unicode unicode/utf8",
+			"unicode/utf8",
 			"unsafe",
 		},
 		Deps: []string{
-			"bytes",
 			"errors",
-			"fmt",
 			"github.com/google/go-cmp/cmp/internal/diff",
 			"github.com/google/go-cmp/cmp/internal/flags",
 			"github.com/google/go-cmp/cmp/internal/function",
 			"github.com/google/go-cmp/cmp/internal/value",
-			"internal/bytealg",
 			"internal/cpu",
-			"internal/testlog",
-			"internal/unsafeheader",
 			"io",
-			"math/rand",
-			"os",
-			"reflect",
 			"regexp",
-			"regexp/syntax",
-			"runtime",
 			"runtime/internal/sys",
-			"unicode/utf8",
 			"unsafe",
 		},
 	},
@@ -159,7 +147,8 @@ func TestSaveManifest(t *testing.T) {
 
 	defer os.Remove(manifestFilePath)
 
-	SaveManifestFile(BuildManifest(&testDepPackagesMap), manifestFilePath)
+	manifest := BuildManifest(&testDepPackagesMap)
+	manifest.Save(manifestFilePath)
 
 	// Read output json and check for its size
 	output := readFileContentForTesting(testOutputManifest)

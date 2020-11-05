@@ -43,38 +43,29 @@ Sample output is as below:
 ```
 $ go test -cover -v ./...
 === RUN   TestMainWithInvalidNumOfArgs
-11:01AM ERR invalid arguments for the command
-11:01AM INF Usage :: go run github.com/fabric8-analytics/cli-tools/gomanifest <Path to source folder> <Output file path>/golist.json
-11:01AM INF Example :: go run github.com/fabric8-analytics/cli-tools/gomanifest /home/user/goproject/root/folder /home/user/gomanifest.json
---- PASS: TestMainWithInvalidNumOfArgs (0.00s)
+--- PASS: TestMainWithInvalidNumOfArgs (0.14s)
 === RUN   TestMainWithInvalidFolder
-11:01AM ERR Invalid source folder path: ./../testdata/dummy
---- PASS: TestMainWithInvalidFolder (0.00s)
+--- PASS: TestMainWithInvalidFolder (0.13s)
 === RUN   TestMainHappyCase
-11:01AM INF Started analysing go project at ./../testdata/
-11:01AM INF Total packages: 		0
-11:01AM INF Source code imports: 	0
-11:01AM INF Direct dependencies: 	0
-11:01AM INF Manifest file generated and stored at ./../testdata/test_manifest.json
---- PASS: TestMainHappyCase (0.01s)
+--- PASS: TestMainHappyCase (0.14s)
 PASS
-coverage: 88.9% of statements
-ok  	github.com/fabric8-analytics/cli-tools/gomanifest	(cached)	coverage: 88.9% of statements
+coverage: 0.0% of statements
+ok  	github.com/fabric8-analytics/cli-tools/gomanifest	(cached)	coverage: 0.0% of statements
 === RUN   TestProcessDepsDataFailCase
-{"level":"error","time":"2020-11-05T10:52:06+05:30","message":"`go list` command failed, clean dependencies using `go mod tidy` command"}
+{"level":"error","time":"2020-11-05T12:13:42+05:30","message":"`go list` command failed, clean dependencies using `go mod tidy` command"}
 --- PASS: TestProcessDepsDataFailCase (0.00s)
 === RUN   TestProcessDepsDataHappyCase
-{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Total packages: \t\t12"}
+{"level":"info","time":"2020-11-05T12:13:42+05:30","message":"Total packages: \t\t12"}
 --- PASS: TestProcessDepsDataHappyCase (0.00s)
 === RUN   TestTransformationVerionSemVer
 --- PASS: TestTransformationVerionSemVer (0.00s)
 === RUN   TestBuildManifest
-{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Source code imports: \t13"}
-{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Direct dependencies: \t1"}
+{"level":"info","time":"2020-11-05T12:13:42+05:30","message":"Source code imports: \t13"}
+{"level":"info","time":"2020-11-05T12:13:42+05:30","message":"Direct dependencies: \t1"}
 --- PASS: TestBuildManifest (0.00s)
 === RUN   TestSaveManifest
-{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Source code imports: \t13"}
-{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Direct dependencies: \t1"}
+{"level":"info","time":"2020-11-05T12:13:42+05:30","message":"Source code imports: \t13"}
+{"level":"info","time":"2020-11-05T12:13:42+05:30","message":"Direct dependencies: \t1"}
 --- PASS: TestSaveManifest (0.00s)
 PASS
 coverage: 78.3% of statements

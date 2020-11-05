@@ -25,6 +25,28 @@ type Manifest struct {
 	Packages []Dependency `json:"packages"`
 }
 
+// Save ... Save manifest object into a given save path.
+func (manifest Manifest) Save(savePath string) error {
+	d, err := json.Marshal(manifest)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.Create(savePath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write(d)
+	if err != nil {
+		return err
+	}
+	f.Sync()
+
+	return nil
+}
+
 // transformVersion ... Converts the golang version string into semver without 'v' and appended text after '+'
 func transformVersion(inVersion string) string {
 	var outVersion string = strings.Replace(inVersion, "v", "", 1)
@@ -112,27 +134,4 @@ func BuildManifest(depPackages *map[string]DepPackage) Manifest {
 	log.Info().Msgf("Direct dependencies: \t%d", len(manifest.Packages))
 
 	return manifest
-}
-
-// SaveManifestFile ... Save the given manifest data into a file.
-func SaveManifestFile(manifest Manifest, manifestFilePath string) error {
-	d, err := json.Marshal(manifest)
-	if err != nil {
-		return err
-	}
-
-	f, err := os.Create(manifestFilePath)
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-
-	_, err = f.Write(d)
-	if err != nil {
-		return err
-	}
-	f.Sync()
-
-	return nil
 }

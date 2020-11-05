@@ -11,7 +11,7 @@ import (
 )
 
 const testDataFolder = "./../../testdata/"
-const testOutputManifest = "test_manifest.json"
+const testOutputManifest = "test_golist.json"
 
 func readFileContentForTesting(fileName string) string {
 	content, err := ioutil.ReadFile(testDataFolder + fileName)
