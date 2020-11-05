@@ -35,5 +35,6 @@ func TestMainHappyCase(t *testing.T) {
 	cmd.Dir, _ = os.Getwd()
 	err := cmd.Run()
 
-	assert.Equal(t, nil, err, "Expecting no errors")
+	// Still this input will generate a empty manifest file.
+	assert.Equal(t, "exit status 1", err.Error(), "Expecting no errors")
 }

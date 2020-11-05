@@ -42,10 +42,16 @@ func main() {
 	}
 
 	manifest := internal.BuildManifest(&depPackages)
+	// Check for empty manifest file.
+	if manifest.Main == "" {
+		log.Error().Msg("Empty manifest generated, correct project dependencies using `go mod tidy` command")
+		os.Exit(-4)
+	}
+
 	err = manifest.Save(os.Args[2])
 	if err != nil {
 		log.Error().Msgf("Exception raised: %v", err)
-		os.Exit(-4)
+		os.Exit(-5)
 	}
 
 	log.Info().Msgf("Manifest file generated and stored at %s", os.Args[2])

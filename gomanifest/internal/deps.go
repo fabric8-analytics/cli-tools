@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 	"os/exec"
-	"strings"
 
 	"github.com/rs/zerolog/log"
 )
@@ -35,20 +34,17 @@ type GoListCmd struct {
 }
 
 // Run ... Actual function that executes go list command and returns output as string.
-func (goListCmd GoListCmd) Run() (string, error) {
+func (goListCmd GoListCmd) Run() (io.ReadCloser, error) {
 	GoListGoListDeps := exec.Command("go", "list", "-json", "-deps", "./...")
 	GoListGoListDeps.Dir = goListCmd.CWD
-	output, err := GoListGoListDeps.Output()
-
-	if err != nil {
-		return "", err
-	}
-	return string(output), nil
+	defer GoListGoListDeps.Start()
+	GoListGoListDeps.Wait()
+	return GoListGoListDeps.StdoutPipe()
 }
 
 // GoListCmdInterface ... Interface to be implemented to execute go list command.
 type GoListCmdInterface interface {
-	Run() (string, error)
+	Run() (io.ReadCloser, error)
 }
 
 // GoList ... Structure that handle go list data and extract required packages.
@@ -78,14 +74,13 @@ func (goList *GoList) Get() (map[string]DepPackage, error) {
 	var depPackagesMap = make(map[string]DepPackage)
 
 	output, err := goList.Command.Run()
-
 	if err != nil {
 		log.Error().Msgf("`go list` command failed, clean dependencies using `go mod tidy` command")
 		return nil, err
 	}
 
 	ch := make(chan DepPackage, 0)
-	go parseDepsJSON(ch, strings.NewReader(string(output)))
+	go parseDepsJSON(ch, output)
 
 	// Preprocess and remove all standard packages.
 	for pckg := range ch {

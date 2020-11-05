@@ -2,7 +2,9 @@ package internal
 
 import (
 	"errors"
+	"io"
 	"io/ioutil"
+	"strings"
 	"testing"
 
 	"github.com/rs/zerolog/log"
@@ -28,9 +30,9 @@ type FakeGoListCmd struct {
 	mock.Mock
 }
 
-func (mock *FakeGoListCmd) Run() (string, error) {
+func (mock *FakeGoListCmd) Run() (io.ReadCloser, error) {
 	args := mock.Called()
-	return args.String(0), args.Error(1)
+	return ioutil.NopCloser(strings.NewReader(args.String(0))), args.Error(1)
 }
 
 func TestProcessDepsDataFailCase(t *testing.T) {
