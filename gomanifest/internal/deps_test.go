@@ -30,26 +30,33 @@ type FakeGoListCmd struct {
 	mock.Mock
 }
 
-func (mock *FakeGoListCmd) Run() (io.ReadCloser, error) {
+// ReadCloser implements internal.GoList
+func (mock *FakeGoListCmd) ReadCloser() io.ReadCloser {
 	args := mock.Called()
-	return ioutil.NopCloser(strings.NewReader(args.String(0))), args.Error(1)
+	return ioutil.NopCloser(strings.NewReader(args.String(0)))
+}
+
+// Wait implements internal.GoList
+func (mock *FakeGoListCmd) Wait() error {
+	args := mock.Called()
+	return args.Error(0)
 }
 
 func TestProcessDepsDataFailCase(t *testing.T) {
 	fakeGoListCmd := &FakeGoListCmd{}
-	fakeGoListCmd.On("Run").Return("", errors.New("TEST :: Go list failure"))
+	fakeGoListCmd.On("ReadCloser").Return("")
+	fakeGoListCmd.On("Wait").Return(errors.New("TEST :: Go list failure"))
 
-	goList := &GoList{Command: fakeGoListCmd}
-	_, err := goList.Get()
+	_, err := GetDeps(fakeGoListCmd)
 	assert.NotEqual(t, nil, err, "Expect to handle go list command failure")
 }
 
 func TestProcessDepsDataHappyCase(t *testing.T) {
 	fakeGoListCmd := &FakeGoListCmd{}
-	fakeGoListCmd.On("Run").Return(goDepsTestData, nil)
+	fakeGoListCmd.On("ReadCloser").Return(goDepsTestData)
+	fakeGoListCmd.On("Wait").Return(nil)
 
-	goList := &GoList{Command: fakeGoListCmd}
-	depPackages, err := goList.Get()
+	depPackages, err := GetDeps(fakeGoListCmd)
 	assert.Equal(t, nil, err, "Expect to handle go list command failure")
 	assert.Equal(t, 12, len(depPackages), "Package count check failed")
 }

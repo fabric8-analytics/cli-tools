@@ -2,7 +2,7 @@ package internal
 
 import (
 	"encoding/json"
-	"os"
+	"io"
 	"strings"
 
 	"github.com/rs/zerolog/log"
@@ -26,23 +26,16 @@ type Manifest struct {
 }
 
 // Save ... Save manifest object into a given save path.
-func (manifest Manifest) Save(savePath string) error {
+func (manifest Manifest) Write(writer io.Writer) error {
 	d, err := json.Marshal(manifest)
 	if err != nil {
 		return err
 	}
 
-	f, err := os.Create(savePath)
+	_, err = writer.Write(d)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-
-	_, err = f.Write(d)
-	if err != nil {
-		return err
-	}
-	f.Sync()
 
 	return nil
 }
