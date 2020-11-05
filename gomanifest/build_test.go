@@ -23,28 +23,32 @@ func readFileContentForTesting(fileName string) string {
 
 func TestMainWithInvalidNumOfArgs(t *testing.T) {
 	manifestFilePath := testDataFolder + testOutputManifest
+
+	defer os.Remove(manifestFilePath)
+
 	os.Args = []string{"go_build_manifest/"}
 	main()
 
 	_, err := os.Stat(manifestFilePath)
 	assert.NotEqual(t, nil, err, "Output manifest file size missmatch")
-
-	defer os.Remove(manifestFilePath)
 }
 
 func TestMainWithInvalidFolder(t *testing.T) {
 	manifestFilePath := testDataFolder + testOutputManifest
+
+	defer os.Remove(manifestFilePath)
+
 	os.Args = []string{"go_build_manifest/", testDataFolder + "dummy", manifestFilePath}
 	main()
 
 	_, err := os.Stat(manifestFilePath)
 	assert.NotEqual(t, nil, err, "Output manifest file size missmatch")
-
-	defer os.Remove(manifestFilePath)
 }
 
 func TestMainHappyCase(t *testing.T) {
 	manifestFilePath := testDataFolder + testOutputManifest
+
+	defer os.Remove(manifestFilePath)
 
 	os.Args = []string{"go_build_manifest/", testDataFolder, manifestFilePath}
 	main()
@@ -52,6 +56,4 @@ func TestMainHappyCase(t *testing.T) {
 	// Read output json and check for its size
 	output := readFileContentForTesting(manifestFilePath)
 	assert.Equal(t, 40, len(output), "Output manifest file size missmatch")
-
-	defer os.Remove(manifestFilePath)
 }

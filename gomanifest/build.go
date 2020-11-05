@@ -26,13 +26,12 @@ func main() {
 		if err != nil {
 			log.Error().Msgf("Invalid source folder path: %s", os.Args[1])
 		} else {
-
-			goListCmd := &internal.GoListCmd{CWD: os.Args[1]}
-			goList := &internal.GoList{Command: goListCmd}
+			log.Info().Msgf("Started analysing go project at %s", os.Args[1])
+			goList := &internal.GoList{Command: &internal.GoListCmd{CWD: os.Args[1]}}
 			if depPackages, err := goList.Get(); err != nil {
 				log.Error().Msgf("Exception raised: %v", err)
 			} else {
-				if err := internal.SaveManifestFile(internal.BuildManifest(depPackages), os.Args[2]); err != nil {
+				if err := internal.SaveManifestFile(internal.BuildManifest(&depPackages), os.Args[2]); err != nil {
 					log.Error().Msgf("Exception raised: %v", err)
 				} else {
 					log.Info().Msgf("Manifest file generated and stored at %s", os.Args[2])

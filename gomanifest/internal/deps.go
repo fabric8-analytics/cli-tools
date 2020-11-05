@@ -2,6 +2,7 @@ package internal
 
 import (
 	"encoding/json"
+	"io"
 	"os/exec"
 	"strings"
 
@@ -9,11 +10,6 @@ import (
 )
 
 /* Structure required for parsing `go list -deps -json ./...` json parsing */
-
-// DepPackages ... Package list structure from deps json
-type DepPackages struct {
-	Packages []DepPackage `json:"Packages"`
-}
 
 // DepModule ... Module structure from deps json
 type DepModule struct {
@@ -60,8 +56,27 @@ type GoList struct {
 	Command GoListCmdInterface
 }
 
+// parseDepsJSON ... Parse json output of go list -dep command.
+func parseDepsJSON(out chan<- DepPackage, in io.Reader) {
+	defer close(out)
+
+	dec := json.NewDecoder(in)
+	for {
+		var m DepPackage
+		if err := dec.Decode(&m); err == io.EOF {
+			break
+		} else if err != nil {
+			log.Error().Msg("Parsing json data failed.")
+			panic(err)
+		}
+		out <- m
+	}
+}
+
 // Get ... Get deps data through go list deps command and converts json into objects.
 func (goList *GoList) Get() (map[string]DepPackage, error) {
+	var depPackagesMap = make(map[string]DepPackage)
+
 	output, err := goList.Command.Run()
 
 	if err != nil {
@@ -69,23 +84,17 @@ func (goList *GoList) Get() (map[string]DepPackage, error) {
 		return nil, err
 	}
 
-	goListDepsData := string(output)
-	goListDepsData = `{"Packages": [` + strings.ReplaceAll(goListDepsData, "}\n{", "},\n{") + "]}"
-
-	var depPackages DepPackages
-	json.Unmarshal([]byte(goListDepsData), &depPackages)
-	log.Info().Msgf("Packages in deps: %d", len(depPackages.Packages))
-
-	var depPackagesMap = make(map[string]DepPackage)
+	ch := make(chan DepPackage, 0)
+	go parseDepsJSON(ch, strings.NewReader(string(output)))
 
 	// Preprocess and remove all standard packages.
-	for _, pckg := range depPackages.Packages {
+	for pckg := range ch {
 		// Exclude standard packages
-		if pckg.Standard == false {
+		if !pckg.Standard {
 			depPackagesMap[pckg.ImportPath] = pckg
 		}
 	}
-	log.Info().Msgf("Filter package count: %d", len(depPackagesMap))
+	log.Info().Msgf("Total packages: \t\t%d", len(depPackagesMap))
 
 	return depPackagesMap, nil
 }

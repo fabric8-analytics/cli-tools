@@ -42,8 +42,8 @@ func getPackageName(depPackage DepPackage) string {
 	return depPackage.ImportPath
 }
 
-// newDirectDependency ... Return a new direct depenency for a given go package.
-func newDirectDependency(depPackage DepPackage, depPackages map[string]DepPackage) Dependency {
+// newDirectDependency ... Return a new direct dependency for a given go package.
+func newDirectDependency(depPackage DepPackage, depPackages *map[string]DepPackage) Dependency {
 	return Dependency{
 		getPackageName(depPackage),
 		transformVersion(depPackage.Module.Version),
@@ -61,11 +61,11 @@ func newTransitiveDependency(depPackage DepPackage) Dependency {
 }
 
 // getTransitives ... Returns a clean list of deps
-func getTransitives(deps []string, depPackages map[string]DepPackage) []Dependency {
+func getTransitives(deps []string, depPackages *map[string]DepPackage) []Dependency {
 	var dependencies = make([]Dependency, 0)
 	for _, dep := range deps {
-		if depPackage, ok := depPackages[dep]; ok {
-			if depPackage.Module.Main == false {
+		if depPackage, ok := (*depPackages)[dep]; ok {
+			if !depPackage.Module.Main {
 				dependencies = append(dependencies,
 					newTransitiveDependency(depPackage))
 			}
@@ -75,38 +75,41 @@ func getTransitives(deps []string, depPackages map[string]DepPackage) []Dependen
 }
 
 // BuildManifest ... Build direct & transitive dependencies.
-func BuildManifest(depPackages map[string]DepPackage) Manifest {
+func BuildManifest(depPackages *map[string]DepPackage) Manifest {
 	var manifest Manifest = Manifest{manifestVersion, "", make([]Dependency, 0)}
 
 	// Get direct imports from current source.
 	var sourceImports = make(map[string]bool, 0)
-	for _, pckg := range depPackages {
-		// Include only packages with project ROOT
-		if pckg.Module.Main {
-			// Set main module if not set.
-			if manifest.Main == "" {
-				manifest.Main = pckg.Module.Path
-			}
+	for _, pckg := range *depPackages {
+		// Skip dependent packages while scanning for "imports"
+		if !pckg.Module.Main {
+			continue
+		}
 
-			// Added imports as direct dependencies
-			for _, imp := range pckg.Imports {
-				// Add imports if not added yet.
-				if _, ok := sourceImports[imp]; !ok {
-					// Added imports that are non-standard (or present in deps packages) and
-					// which are having main module as 'false'
-					if depPackage, ok := depPackages[imp]; ok {
-						if depPackage.Module.Main == false {
-							manifest.Packages = append(manifest.Packages,
-								newDirectDependency(depPackage, depPackages))
-						}
+		// Set main module if not set.
+		if manifest.Main == "" {
+			manifest.Main = pckg.Module.Path
+		}
+
+		// Added imports as direct dependencies
+		for _, imp := range pckg.Imports {
+			// Add imports if not added yet.
+			if _, ok := sourceImports[imp]; !ok {
+				// Added imports that are non-standard (or present in deps packages) and
+				// which are having main module as 'false'
+				if depPackage, ok := (*depPackages)[imp]; ok {
+					if !depPackage.Module.Main {
+						manifest.Packages = append(manifest.Packages,
+							newDirectDependency(depPackage, depPackages))
 					}
-
-					sourceImports[imp] = true
 				}
+
+				sourceImports[imp] = true
 			}
 		}
 	}
-	log.Info().Msgf("Source code imports: %d", len(sourceImports))
+	log.Info().Msgf("Source code imports: \t%d", len(sourceImports))
+	log.Info().Msgf("Direct dependencies: \t%d", len(manifest.Packages))
 
 	return manifest
 }
@@ -117,19 +120,19 @@ func SaveManifestFile(manifest Manifest, manifestFilePath string) error {
 	if err != nil {
 		return err
 	}
-	var directDependenciesJSON string = string(d)
 
 	f, err := os.Create(manifestFilePath)
 	if err != nil {
 		return err
 	}
-	_, err = f.WriteString(string(directDependenciesJSON))
+
+	defer f.Close()
+
+	_, err = f.Write(d)
 	if err != nil {
 		return err
 	}
 	f.Sync()
-
-	defer f.Close()
 
 	return nil
 }

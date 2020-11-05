@@ -150,17 +150,18 @@ func TestTransformationVerionSemVer(t *testing.T) {
 }
 
 func TestBuildManifest(t *testing.T) {
-	manifest := BuildManifest(testDepPackagesMap)
+	manifest := BuildManifest(&testDepPackagesMap)
 	assert.Equal(t, 1, len(manifest.Packages), "Expected number of deps not found")
 }
 
 func TestSaveManifest(t *testing.T) {
 	manifestFilePath := testDataFolder + testOutputManifest
-	SaveManifestFile(BuildManifest(testDepPackagesMap), manifestFilePath)
+
+	defer os.Remove(manifestFilePath)
+
+	SaveManifestFile(BuildManifest(&testDepPackagesMap), manifestFilePath)
 
 	// Read output json and check for its size
 	output := readFileContentForTesting(testOutputManifest)
 	assert.Equal(t, 144, len(output), "Output manifest file size missmatch")
-
-	defer os.Remove(manifestFilePath)
 }
