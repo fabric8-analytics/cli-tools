@@ -9,7 +9,7 @@ Tool can be used as shown below:
 
 ```
 # Run command to generate manifest file.
-go run github.com/fabric8-analytics/cli-tools/gomanifest /absolute/path/to/source/folder/containing/go.mod/ /absolute/path/to/save/generated/manifestfile.json
+go run github.com/fabric8-analytics/cli-tools/gomanifest /absolute/path/to/source/folder/containing/go.mod/ /absolute/path/to/save/generated/golist.json
 
 ```
 
@@ -18,7 +18,17 @@ It take two paths (1) Absolute source code path containing go.mod file. and (2) 
 Ensure command is ran with proper previlage to read the source folder and to save the manifest file.
 The tool intenall uses `go list` command to fetch source code dependency data. Ensure that go project is free from any dependency errors / issues.
 
-### Test
+### Contribution
+To make changes in this tool you need to install `go` and development environment for executing go commands. Get the source from the repository.
+
+#### Execute
+To execute tool locally with developer changes, you can execute below command
+
+```
+go run <go tool source code>/gomanifest <Sample go project under test> <Path to manifest file>
+```
+
+#### Test
 This tool has unit test which are packged along with source code. Required test data can be stored under `testdata` folder. Unit tests can be executes be using below command:
 
 ```
@@ -31,39 +41,42 @@ Execute above command at root of the source tree, it runs all test cases and pro
 Sample output is as below:
 
 ```
-[dhpatel@dhpatel cli-tools]$ go test -v -cover ./...
-=== RUN   TestTransformationVerionSemVer
---- PASS: TestTransformationVerionSemVer (0.00s)
-=== RUN   TestProcessDepsDataFailCase
-2020/11/03 13:12:04 ERROR :: Command `go list -json -deps ./...` failed, resolve project build errors. TEST :: Go list failure
---- PASS: TestProcessDepsDataFailCase (0.00s)
-=== RUN   TestProcessDepsDataHappyCase
-2020/11/03 13:12:04 Packages in deps: 48
-2020/11/03 13:12:04 Filter package count: 12
---- PASS: TestProcessDepsDataHappyCase (0.00s)
-=== RUN   TestBuildManifest
-2020/11/03 13:12:04 Packages in deps: 48
-2020/11/03 13:12:04 Filter package count: 12
-2020/11/03 13:12:04 Source code imports: 22
---- PASS: TestBuildManifest (0.01s)
+$ go test -cover -v ./...
 === RUN   TestMainWithInvalidNumOfArgs
-2020/11/03 13:12:04 Error :: Invalid arguments for the command.
-2020/11/03 13:12:04 Usage :: go run github.com/dgpatelgit/gobuildmanifest <Absolute source root folder path containing go.mod> <Output file path>.json
-2020/11/03 13:12:04 Example :: go run github.com/dgpatelgit/gobuildmanifest /home/user/goproject/root/folder /home/user/gomanifest.json
+11:01AM ERR invalid arguments for the command
+11:01AM INF Usage :: go run github.com/fabric8-analytics/cli-tools/gomanifest <Path to source folder> <Output file path>/golist.json
+11:01AM INF Example :: go run github.com/fabric8-analytics/cli-tools/gomanifest /home/user/goproject/root/folder /home/user/gomanifest.json
 --- PASS: TestMainWithInvalidNumOfArgs (0.00s)
 === RUN   TestMainWithInvalidFolder
-2020/11/03 13:12:04 ERROR :: Invalid source folder path :: ./../testdata/dummy
+11:01AM ERR Invalid source folder path: ./../testdata/dummy
 --- PASS: TestMainWithInvalidFolder (0.00s)
 === RUN   TestMainHappyCase
-2020/11/03 13:12:04 Building manifest file for :: ./../testdata/
-Outp 
-2020/11/03 13:12:04 Packages in deps: 0
-2020/11/03 13:12:04 Filter package count: 12
-2020/11/03 13:12:04 Source code imports: 22
-2020/11/03 13:12:04 Success :: Manifest file generated and stored at ./../testdata/test_manifest.json
---- PASS: TestMainHappyCase (0.00s)
+11:01AM INF Started analysing go project at ./../testdata/
+11:01AM INF Total packages: 		0
+11:01AM INF Source code imports: 	0
+11:01AM INF Direct dependencies: 	0
+11:01AM INF Manifest file generated and stored at ./../testdata/test_manifest.json
+--- PASS: TestMainHappyCase (0.01s)
 PASS
-coverage: 93.0% of statements
-ok  	github.com/fabric8-analytics/cli-tools/gomanifest	0.013s	coverage: 93.0% of statements
-[dhpatel@dhpatel cli-tools]$
+coverage: 88.9% of statements
+ok  	github.com/fabric8-analytics/cli-tools/gomanifest	(cached)	coverage: 88.9% of statements
+=== RUN   TestProcessDepsDataFailCase
+{"level":"error","time":"2020-11-05T10:52:06+05:30","message":"`go list` command failed, clean dependencies using `go mod tidy` command"}
+--- PASS: TestProcessDepsDataFailCase (0.00s)
+=== RUN   TestProcessDepsDataHappyCase
+{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Total packages: \t\t12"}
+--- PASS: TestProcessDepsDataHappyCase (0.00s)
+=== RUN   TestTransformationVerionSemVer
+--- PASS: TestTransformationVerionSemVer (0.00s)
+=== RUN   TestBuildManifest
+{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Source code imports: \t13"}
+{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Direct dependencies: \t1"}
+--- PASS: TestBuildManifest (0.00s)
+=== RUN   TestSaveManifest
+{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Source code imports: \t13"}
+{"level":"info","time":"2020-11-05T10:52:06+05:30","message":"Direct dependencies: \t1"}
+--- PASS: TestSaveManifest (0.00s)
+PASS
+coverage: 78.3% of statements
+ok  	github.com/fabric8-analytics/cli-tools/gomanifest/internal	(cached)	coverage: 78.3% of statements
 ```
