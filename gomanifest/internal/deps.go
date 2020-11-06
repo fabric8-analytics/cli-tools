@@ -29,7 +29,7 @@ type DepPackage struct {
 	Deps       []string  `json:"Deps"`
 }
 
-// GoListCmdInterface ... Interface to be implemented to execute go list command.
+// GoList ... Interface to be implemented to execute go list command.
 type GoList interface {
 	ReadCloser() io.ReadCloser
 	Wait() error
