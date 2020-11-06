@@ -1,7 +1,8 @@
 package internal
 
 import (
-	"os"
+	"bytes"
+	"io/ioutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -143,14 +144,13 @@ func TestBuildManifest(t *testing.T) {
 }
 
 func TestSaveManifest(t *testing.T) {
-	manifestFilePath := testDataFolder + testOutputManifest
-
-	defer os.Remove(manifestFilePath)
-
+	var b bytes.Buffer
 	manifest := BuildManifest(&testDepPackagesMap)
-	manifest.Save(manifestFilePath)
+	err := manifest.Write(&b)
+	assert.Equal(t, nil, err)
+	manifestContent, err := ioutil.ReadAll(&b)
+	assert.Equal(t, nil, err)
 
 	// Read output json and check for its size
-	output := readFileContentForTesting(testOutputManifest)
-	assert.Equal(t, 144, len(output), "Output manifest file size missmatch")
+	assert.Equal(t, 144, len(manifestContent), "Output manifest file size missmatch")
 }
