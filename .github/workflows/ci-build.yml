@@ -7,6 +7,20 @@ on:
     branches: [ main ]
 
 jobs:
+  lint:
+    name: Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with: 
+          version: v1.29
+          working-directory: gomanifest   
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -32,23 +46,13 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
-    - name: Build
-      run: go build -v ./...
+    - name: Check go mod
+      run: |
+          go mod tidy
+          git diff --exit-code go.mod
     - name: Unit Test
       run:  go test -gcflags=-l -v  -coverprofile=coverage.txt -covermode=atomic ./...
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-    - name: golangci-lint
-      uses: golangci/golangci-lint-action@v2
-      with:
-        version: v1.29
-    - uses: evantorrie/mott-the-tidier@v1-beta
-      with:
-        gomods: |
-          **/go.mod
-    - uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: Auto-fix go.sum discrepancies
-   
