@@ -94,7 +94,7 @@ func BuildManifest(depPackages *map[string]DepPackage) Manifest {
 	var manifest Manifest = Manifest{manifestVersion, "", make([]Dependency, 0)}
 
 	// Get direct imports from current source.
-	var sourceImports = make(map[string]bool, 0)
+	var sourceImports = make(map[string]bool)
 	for _, pckg := range *depPackages {
 		// Skip dependent packages while scanning for "imports"
 		if !pckg.Module.Main {

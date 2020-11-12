@@ -2,7 +2,6 @@ package internal
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 
@@ -58,7 +57,7 @@ func parseDepsJSON(dataC chan<- DepPackage, errorC chan<- error, in io.ReadClose
 func GetDeps(cmd GoList) (map[string]DepPackage, error) {
 	var depPackagesMap = make(map[string]DepPackage)
 
-	dataC := make(chan DepPackage, 0)
+	dataC := make(chan DepPackage)
 	errorC := make(chan error, 1)
 	go parseDepsJSON(dataC, errorC, cmd.ReadCloser())
 
@@ -75,7 +74,7 @@ func GetDeps(cmd GoList) (map[string]DepPackage, error) {
 	}
 	// Wait for the `go list` command to complete.
 	if err := cmd.Wait(); err != nil {
-		return nil, errors.New(fmt.Sprintf("%v: `go list` failed, use `go mod tidy` to known more", err))
+		return nil, fmt.Errorf("%v: `go list` failed, use `go mod tidy` to known more", err)
 	}
 	log.Info().Msgf("Total packages: \t\t%d", len(depPackagesMap))
 	return depPackagesMap, nil
