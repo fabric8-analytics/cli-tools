@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"strings"
@@ -13,7 +13,6 @@ import (
 )
 
 const testDataFolder = "./../../testdata/"
-const testOutputManifest = "test_golist.json"
 
 func readFileContentForTesting(fileName string) string {
 	content, err := ioutil.ReadFile(testDataFolder + fileName)
@@ -45,7 +44,7 @@ func (mock *FakeGoListCmd) Wait() error {
 func TestProcessDepsDataFailCase(t *testing.T) {
 	fakeGoListCmd := &FakeGoListCmd{}
 	fakeGoListCmd.On("ReadCloser").Return("")
-	fakeGoListCmd.On("Wait").Return(errors.New("TEST :: Go list failure"))
+	fakeGoListCmd.On("Wait").Return(fmt.Errorf("TEST :: Go list failure"))
 
 	_, err := GetDeps(fakeGoListCmd)
 	assert.NotEqual(t, nil, err, "Expect to handle go list command failure")

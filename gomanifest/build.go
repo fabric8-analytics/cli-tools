@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"os"
 
 	"github.com/fabric8-analytics/cli-tools/gomanifest/internal"
@@ -10,12 +9,9 @@ import (
 )
 
 func main() {
-	ctx := context.Background()
-
 	// Set debug level to info
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	ctx = log.Logger.WithContext(ctx)
 
 	// Validate required number of parameters.
 	if len(os.Args) != 3 {
