@@ -1,3 +1,5 @@
+![CI](https://github.com/fabric8-analytics/cli-tools/workflows/CI/badge.svg)
+
 # cli-tools
 This repo would server as an interface between the different CRDA clients and the platform. It contains tools that will be used by clients inorder to generate required input for platform APIs. One such tool is `gomanifest`.
 
