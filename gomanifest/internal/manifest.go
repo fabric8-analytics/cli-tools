@@ -49,20 +49,20 @@ func transformVersion(inVersion string) string {
 
 // getPackageName ... Utility function to convert package + module data into package name used by manifest.
 func getPackageName(depPackage DepPackage) string {
+	var modulePath string = depPackage.Module.Path
+
+	// Override module path from replace if present.
+	if depPackage.Module.Replace != nil {
+		modulePath = depPackage.Module.Replace.Path
+	}
+
 	if depPackage.ImportPath != depPackage.Module.Path {
 		// Get package name like package@module
-		if depPackage.Module.Replace != nil {
-			return depPackage.ImportPath + "@" + depPackage.Module.Replace.Path
-		}
-		return depPackage.ImportPath + "@" + depPackage.Module.Path
+		return depPackage.ImportPath + "@" + modulePath
 	}
 
 	// Only module entry will reach here.
-	if depPackage.Module.Replace != nil {
-		return depPackage.Module.Replace.Path
-	}
-
-	return depPackage.Module.Path
+	return modulePath
 }
 
 // getPackageVersion ... Utility function to convert package version used in manifest.

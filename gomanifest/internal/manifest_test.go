@@ -148,6 +148,14 @@ func TestBuildManifest(t *testing.T) {
 	assert.Equal(t, 1, len(manifest.Packages), "Expected number of deps not found")
 }
 
+func TestReplaceDirective(t *testing.T) {
+	manifest := BuildManifest(&testDepPackagesMap)
+
+	// Module should have replace data in manifest
+	assert.Equal(t, "golang.org/x/rxerrors", manifest.Packages[0].Name, "Expected replaced module name")
+	assert.Equal(t, "1.4.0", manifest.Packages[0].Version, "Expected replaced module version")
+}
+
 func TestSaveManifest(t *testing.T) {
 	var b bytes.Buffer
 	manifest := BuildManifest(&testDepPackagesMap)
