@@ -112,7 +112,12 @@ var testDepPackagesMap = map[string]DepPackage{
 			Path:    "golang.org/x/xerrors",
 			Main:    false,
 			Version: "v0.0.0-20191204190536-9bdfabe68543",
-			Replace: nil,
+			Replace: &DepModule{
+				Path:    "golang.org/x/rxerrors",
+				Main:    false,
+				Version: "v1.4.0",
+				Replace: nil,
+			},
 		},
 		Standard: false,
 		Imports: []string{
@@ -152,5 +157,5 @@ func TestSaveManifest(t *testing.T) {
 	assert.Equal(t, nil, err)
 
 	// Read output json and check for its size
-	assert.Equal(t, 144, len(manifestContent), "Output manifest file size missmatch")
+	assert.Equal(t, 117, len(manifestContent), "Output manifest file size missmatch")
 }

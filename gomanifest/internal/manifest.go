@@ -49,19 +49,35 @@ func transformVersion(inVersion string) string {
 
 // getPackageName ... Utility function to convert package + module data into package name used by manifest.
 func getPackageName(depPackage DepPackage) string {
-	// Get module / package@module
 	if depPackage.ImportPath != depPackage.Module.Path {
+		// Get package name like package@module
+		if depPackage.Module.Replace != nil {
+			return depPackage.ImportPath + "@" + depPackage.Module.Replace.Path
+		}
 		return depPackage.ImportPath + "@" + depPackage.Module.Path
 	}
 
-	return depPackage.ImportPath
+	// Only module entry will reach here.
+	if depPackage.Module.Replace != nil {
+		return depPackage.Module.Replace.Path
+	}
+
+	return depPackage.Module.Path
+}
+
+// getPackageVersion ... Utility function to convert package version used in manifest.
+func getPackageVersion(depPackage DepPackage) string {
+	if depPackage.Module.Replace != nil {
+		return transformVersion(depPackage.Module.Replace.Version)
+	}
+	return transformVersion(depPackage.Module.Version)
 }
 
 // newDirectDependency ... Return a new direct dependency for a given go package.
 func newDirectDependency(depPackage DepPackage, depPackages *map[string]DepPackage) Dependency {
 	return Dependency{
 		getPackageName(depPackage),
-		transformVersion(depPackage.Module.Version),
+		getPackageVersion(depPackage),
 		getTransitives(depPackage.Deps, depPackages),
 	}
 }
@@ -70,7 +86,7 @@ func newDirectDependency(depPackage DepPackage, depPackages *map[string]DepPacka
 func newTransitiveDependency(depPackage DepPackage) Dependency {
 	return Dependency{
 		getPackageName(depPackage),
-		transformVersion(depPackage.Module.Version),
+		getPackageVersion(depPackage),
 		nil,
 	}
 }
