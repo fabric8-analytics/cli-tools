@@ -112,7 +112,12 @@ var testDepPackagesMap = map[string]DepPackage{
 			Path:    "golang.org/x/xerrors",
 			Main:    false,
 			Version: "v0.0.0-20191204190536-9bdfabe68543",
-			Replace: nil,
+			Replace: &DepModule{
+				Path:    "golang.org/x/rxerrors",
+				Main:    false,
+				Version: "v1.4.0",
+				Replace: nil,
+			},
 		},
 		Standard: false,
 		Imports: []string{
@@ -143,6 +148,14 @@ func TestBuildManifest(t *testing.T) {
 	assert.Equal(t, 1, len(manifest.Packages), "Expected number of deps not found")
 }
 
+func TestReplaceDirective(t *testing.T) {
+	manifest := BuildManifest(&testDepPackagesMap)
+
+	// Module should have replace data in manifest
+	assert.Equal(t, "golang.org/x/rxerrors", manifest.Packages[0].Name, "Expected replaced module name")
+	assert.Equal(t, "1.4.0", manifest.Packages[0].Version, "Expected replaced module version")
+}
+
 func TestSaveManifest(t *testing.T) {
 	var b bytes.Buffer
 	manifest := BuildManifest(&testDepPackagesMap)
@@ -152,5 +165,5 @@ func TestSaveManifest(t *testing.T) {
 	assert.Equal(t, nil, err)
 
 	// Read output json and check for its size
-	assert.Equal(t, 144, len(manifestContent), "Output manifest file size missmatch")
+	assert.Equal(t, 117, len(manifestContent), "Output manifest file size missmatch")
 }
