@@ -1,0 +1,9 @@
+author: Deepak Sharma <deepshar@redhat.com>
+server: "https://f8a-analytics-preview-2445582058137.production.gw.apicast.io:443"
+3scaleToken: "3e42fa66f65124e6b1266a23431e3d08"
+year: 2021
+license:
+  header: This file is part of CRDA CLI application.
+  text: |
+    {{ .copyright }}
+
