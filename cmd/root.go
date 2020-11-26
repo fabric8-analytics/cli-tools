@@ -1,36 +1,29 @@
-/*
-Copyright © 2020 Deepak Sharma <deepshar@redhat.com>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 package cmd
 
 import (
-	"fmt"
 	"os"
+	"path/filepath"
 
+	homedir "github.com/mitchellh/go-homedir"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+
+	constants "github.com/fabric8-analytics/cli-tools/utils"
 	"github.com/spf13/cobra"
-
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+// Flags
+var (
+	debug   bool
+	cfgFile string
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "crda",
-	Short: "crda is cli tool to interact with CRDA Platform.",
-	Long:  `crda is cli tool to interact with CRDA Platform.`,
+	Short: "Cli tool to interact with CRDA Platform.",
+	Long:  `Cli tool to interact with CRDA Platform. Perfoms synk token validation.`,
 	Args:  cobra.ExactValidArgs(1),
 }
 
@@ -38,38 +31,71 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal().Err(err).Msgf("Error Executing crda command. Please raise at https://github.com/fabric8-analytics/cli-tools/issues, if issue persists.")
 	}
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $PROJECT_ROOT/config.yaml)")
-
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.crda/config.yaml)")
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", constants.Debug, "Sets Log level to Debug.")
+	rootCmd.PersistentFlags().String("host", constants.Host, "Host Server, if set, host from config file will be ignored.")
+	rootCmd.PersistentFlags().String("snyk-token", constants.SnykToken, "Snyk token, if not set, Freemium account will be created.")
+	rootCmd.PersistentFlags().String("auth-token", constants.AuthToken, "3Scale Token, Token for server authentication.")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	// Log Level Settings
+	logLevel := zerolog.InfoLevel
+	if debug {
+		logLevel = zerolog.DebugLevel
+	}
+	zerolog.SetGlobalLevel(logLevel)
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
+	// config.yaml Settings
+	log.Debug().Msgf("Setting Configuration files")
+	configName := "config"
+	configHome, err := homedir.Dir()
+	crdaFolder := ".crda"
+	if err != nil {
+		log.Fatal().Err(err).Msgf(err.Error())
+	}
+	configPath := filepath.Join(configHome, crdaFolder)
+	configFilePath := filepath.Join(configPath, configName)
 	if cfgFile != "" {
 		// Use config file from the flag.
-		viper.SetConfigFile("config")
+		viper.SetConfigFile(cfgFile)
 	} else {
-
-		currentPath, err := os.Getwd()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		viper.AddConfigPath(currentPath)
-		viper.SetConfigName("config")
+		// Search config file in home path.
+		viper.SetConfigName(configName) // name of config file (without extension)
+		viper.SetConfigType("yaml")
+		viper.AddConfigPath(configPath)
 	}
-
 	viper.AutomaticEnv() // read in environment variables that match
-	// If a config file is not found, throw error.
+
+	//Handle Reading Config Files Error
 	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println(err)
+		log.Debug().Msgf("Error reading config file.")
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// Config file not found, Creating one
+			if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
+				log.Debug().Msgf("Creating config file.")
+				os.MkdirAll(configPath, os.ModePerm)
+				_, err := os.Create(configFilePath + ".yaml")
+				if err != nil {
+					log.Fatal().Err(err).Msgf(err.Error())
+				}
+			}
+			viper.SetConfigFile(configFilePath + ".yaml")
+		} else {
+			// Config file was found but another error was produced
+			log.Fatal().Err(err).Msgf(err.Error())
+		}
 	}
+	viper.WriteConfig()
+	log.Info().Msgf("Using config file %s.\n", viper.ConfigFileUsed())
+	log.Debug().Msgf("Successfully configured config files %s.", viper.ConfigFileUsed())
 }

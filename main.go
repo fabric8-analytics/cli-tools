@@ -15,7 +15,9 @@ limitations under the License.
 */
 package main
 
-import "github.com/fabric8-analytics/cli-tools/cmd"
+import (
+	"github.com/fabric8-analytics/cli-tools/cmd"
+)
 
 func main() {
 	cmd.Execute()
