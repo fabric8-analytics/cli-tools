@@ -12,7 +12,7 @@ type GoListCmd struct {
 }
 
 // RunGoList ... Actual function that executes go list command and returns output as string.
-func RunGoList(cwd string, goExec string) (*GoListCmd, error) {
+func RunGoList(goExec string, cwd string) (*GoListCmd, error) {
 	goList := exec.Command(goExec, "list", "-json", "-deps", "-mod=readonly", "./...")
 	goList.Dir = cwd
 	output, err := goList.StdoutPipe()
