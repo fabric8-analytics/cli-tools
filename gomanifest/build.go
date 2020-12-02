@@ -14,7 +14,8 @@ func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	// Validate required number of parameters.
-	if len(os.Args) != 3 && len(os.Args) != 4 {
+	argsLen := len(os.Args)
+	if argsLen != 3 && argsLen != 4 {
 		log.Error().Msg("invalid arguments for the command")
 		log.Info().Msgf("Usage :: go run github.com/fabric8-analytics/cli-tools/gomanifest <Path to source folder> <Output file path>/golist.json [<Go executable path>]")
 		log.Info().Msgf("Example :: go run github.com/fabric8-analytics/cli-tools/gomanifest /home/user/goproject/root/folder /home/user/golist.json /usr/local/bin/go")
@@ -30,7 +31,7 @@ func main() {
 
 	// Extract go executable path, if given
 	goExec := "go"
-	if len(os.Args) == 4 {
+	if argsLen == 4 {
 		goExec = os.Args[3]
 	}
 
