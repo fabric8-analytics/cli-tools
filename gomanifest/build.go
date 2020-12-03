@@ -31,7 +31,7 @@ func main() {
 
 	// Extract go executable path, if given
 	goExec := "go"
-	if argsLen == 4 {
+	if argsLen == 4 && os.Args[3] != "go" {
 		_, err := os.Stat(os.Args[3])
 		if err != nil {
 			log.Error().Err(err).Msg("invalid executable")
