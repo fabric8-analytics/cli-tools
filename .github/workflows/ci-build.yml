@@ -21,7 +21,6 @@ jobs:
         with: 
           version: v1.29
           working-directory: gomanifest
-          #args: --enable-all
       - name: Linter
         run: go get -u golang.org/x/lint/golint && golint ./...
 
