@@ -23,9 +23,7 @@ jobs:
           working-directory: gomanifest
           #args: --enable-all
       - name: Linter
-        run: |
-          go get -u golang.org/x/lint/golint;
-          golint ./...
+        run: go get -u golang.org/x/lint/golint && golint ./...
 
   build:
     name: Build
