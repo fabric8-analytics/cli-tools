@@ -20,7 +20,11 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with: 
           version: v1.29
-          working-directory: gomanifest   
+          working-directory: gomanifest
+          #args: --enable-all
+      - name: Linter
+        run: go get -u golang.org/x/lint/golint && golint ./...
+
   build:
     name: Build
     runs-on: ubuntu-latest
