@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  lint:
+  golangci-lint:
     name: Linter
     runs-on: ubuntu-latest
     steps:
@@ -20,7 +20,18 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with: 
           version: v1.29
-          working-directory: gomanifest   
+          working-directory: gomanifest
+  golint:
+    name: go Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+      - uses: actions/checkout@v2
+      - name: lint
+        run: go get -u golang.org/x/lint/golint && golint ./...
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -31,12 +42,10 @@ jobs:
                 - 1.14
                 - 1.15
     steps:
-
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.version }}
-
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
     - name: Check go mod
