@@ -19,9 +19,7 @@ var authCmd = &cobra.Command{
 }
 
 func preRun(cmd *cobra.Command, args []string) {
-	viper.BindPFlag("auth-token", rootCmd.PersistentFlags().Lookup("auth-token"))
 	viper.BindPFlag("snyk-token", rootCmd.PersistentFlags().Lookup("snyk-token"))
-	viper.BindPFlag("host", rootCmd.PersistentFlags().Lookup("host"))
 }
 
 func init() {
