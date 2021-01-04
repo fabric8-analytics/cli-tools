@@ -17,8 +17,8 @@ import (
 	"github.com/jpillora/backoff"
 )
 
-// SARequestType is a argtype of RequestServer func
-type SARequestType struct {
+// RequestType is a argtype of RequestServer func
+type RequestType struct {
 	UserID          string
 	Host            string
 	ThreeScaleToken string
@@ -27,15 +27,15 @@ type SARequestType struct {
 	DepsTreePath    string
 }
 
-// SAPostResponseType is a argtype of RequestServer func
-type SAPostResponseType struct {
+// PostResponseType is a argtype of RequestServer func
+type PostResponseType struct {
 	SubmittedAt string `json:"submitted_at,omitempty"`
 	Status      string `json:"status,omitempty"`
 	ID          string `json:"id,omitempty"`
 }
 
-// SAGetResponseType is a argtype of RequestServer func
-type SAGetResponseType struct {
+// GetResponseType is a argtype of RequestServer func
+type GetResponseType struct {
 	AnalysedDeps    []interface{}          `json:"analyzed_dependencies"`
 	Ecosystem       string                 `json:"ecosystem"`
 	Recommendation  map[string]interface{} `json:"recommendation"`
@@ -50,8 +50,8 @@ type ReadManifestResponse struct {
 	DepsTreeFileName string `json:"deps_tree,omitempty"`
 }
 
-//StackAnalyses Performs Stack Analyses
-func StackAnalyses(requestParams SARequestType) SAGetResponseType {
+//StackAnalyses Performs Full Stack Analyses
+func StackAnalyses(requestParams RequestType) GetResponseType {
 	log.Info().Msgf("Performing full Stack Analyses. Please wait...")
 	log.Debug().Msgf("Executing StackAnalyses.")
 	b := &backoff.Backoff{
@@ -61,15 +61,15 @@ func StackAnalyses(requestParams SARequestType) SAGetResponseType {
 		Jitter: false,
 	}
 	fileStats := readManifest(requestParams.ShellPath, requestParams.RawManifestFile)
-	postResponse := saPostRequest(requestParams, fileStats)
-	getResponse := saGetRequest(requestParams, postResponse, b)
+	postResponse := postRequest(requestParams, fileStats)
+	getResponse := getRequest(requestParams, postResponse, b)
 	log.Debug().Msgf("Success StackAnalyses.")
 	return getResponse
 }
 
-// saPostRequest performs Stack Analyses POST Request to CRDA server.
-func saPostRequest(requestParams SARequestType, fileStats ReadManifestResponse) SAPostResponseType {
-	log.Debug().Msgf("Executing: saPostRequest.")
+// postRequest performs Stack Analyses POST Request to CRDA server.
+func postRequest(requestParams RequestType, fileStats ReadManifestResponse) PostResponseType {
+	log.Debug().Msgf("Executing: postRequest.")
 	manifest := &bytes.Buffer{}
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodPost,
@@ -100,13 +100,13 @@ func saPostRequest(requestParams SARequestType, fileStats ReadManifestResponse) 
 	}
 	apiResponse := utils.HTTPRequestMultipart(requestData, writer, manifest)
 	body := validatePostResponse(apiResponse)
-	log.Debug().Msgf("Success: saPostRequest.")
+	log.Debug().Msgf("Success: postRequest.")
 	return body
 }
 
-// saGetRequest performs Stack Analyses GET Request to CRDA Server.
-func saGetRequest(requestParams SARequestType, saPost SAPostResponseType, back *backoff.Backoff) SAGetResponseType {
-	log.Debug().Msgf("Executing: saGetRequest.")
+// getRequest performs Stack Analyses GET Request to CRDA Server.
+func getRequest(requestParams RequestType, saPost PostResponseType, back *backoff.Backoff) GetResponseType {
+	log.Debug().Msgf("Executing: getRequest.")
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodGet,
 		Endpoint:        utils.APISA + "/" + saPost.ID,
@@ -120,16 +120,16 @@ func saGetRequest(requestParams SARequestType, saPost SAPostResponseType, back *
 	if apiResponse.StatusCode == http.StatusAccepted {
 		// Retry till server respond 200 or Timeout Error or Exponential Backoff limit hit.
 		log.Debug().Msgf("Retying...")
-		saGetRequest(requestParams, saPost, back)
+		getRequest(requestParams, saPost, back)
 	}
 	body := validateGetResponse(apiResponse)
 	return body
 }
 
 // validateResponse validates API Response.
-func validatePostResponse(apiResponse *http.Response) SAPostResponseType {
+func validatePostResponse(apiResponse *http.Response) PostResponseType {
 	log.Debug().Msgf("Executing validatePostResponse.")
-	var body SAPostResponseType
+	var body PostResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
@@ -140,9 +140,9 @@ func validatePostResponse(apiResponse *http.Response) SAPostResponseType {
 }
 
 // validateGetResponse validates API Response.
-func validateGetResponse(apiResponse *http.Response) SAGetResponseType {
+func validateGetResponse(apiResponse *http.Response) GetResponseType {
 	log.Debug().Msgf("Executing validateGetResponse.")
-	var body SAGetResponseType
+	var body GetResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)

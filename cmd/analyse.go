@@ -28,7 +28,7 @@ func init() {
 
 //runAnalyse is controller func for analyses cmd.
 func runAnalyse(cmd *cobra.Command, args []string) {
-	requestParams := sa.SARequestType{
+	requestParams := sa.RequestType{
 		UserID:          viper.GetString("crda-key"),
 		ThreeScaleToken: viper.GetString("auth-token"),
 		Host:            viper.GetString("host"),
