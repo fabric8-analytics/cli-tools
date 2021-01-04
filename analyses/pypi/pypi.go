@@ -11,18 +11,18 @@ import (
 )
 
 // GeneratePylist creates pylist.json from requirements.txt
-func GeneratePylist(shellPath string, manifestFilePath string) string {
+func GeneratePylist(manifestFilePath string) string {
 	log.Debug().Msgf("Executing: Generate Pylist")
 	crdaTempPath := "/tmp/crda/"
 	err := copyToTemp("analyses/pypi/generate_pylist.py", crdaTempPath)
 	if err != nil {
 		log.Fatal().Err(err).Msgf(err.Error())
 	}
-	err = setUpEnv(shellPath, crdaTempPath, manifestFilePath)
+	err = setUpEnv(crdaTempPath, manifestFilePath)
 	if err != nil {
 		log.Fatal().Err(err).Msgf(err.Error())
 	}
-	pathToPylist := buildDepsTree(shellPath, crdaTempPath, manifestFilePath)
+	pathToPylist := buildDepsTree(crdaTempPath, manifestFilePath)
 	log.Debug().Msgf("Success: Generate Pylist")
 	return pathToPylist
 }
@@ -59,27 +59,16 @@ func copyToTemp(src string, crdaTempPath string) error {
 }
 
 // setUpEnv sets up virtual env and install dependencies.
-func setUpEnv(shellPath string, crdaTempPath string, manifestFilePath string) error {
+func setUpEnv(crdaTempPath string, manifestFilePath string) error {
 	log.Debug().Msgf("Executing: setUpEnv")
 	pyExecPath, err := exec.LookPath("python")
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Please make sure Python v3.6+ is installed. Hint: Check same by executing `python --version`\n.")
 	}
 	os.MkdirAll(crdaTempPath, os.ModePerm)
+	cmd := exec.Command(pyExecPath, "-m", "venv", "venv")
+	log.Debug().Msgf("Executing command for Env. Setup %s", cmd.String())
 
-	cmdCreateVenv := &exec.Cmd{
-		Path: pyExecPath,
-		Args: []string{pyExecPath, "-m", "venv", "venv"},
-	}
-	cmdInstallDeps := &exec.Cmd{
-		Path: pyExecPath,
-		Args: []string{pyExecPath, "venv/bin/pip", "install", "--user", "-r", manifestFilePath},
-	}
-	finalCmd := fmt.Sprintf("%s && %s",
-		cmdCreateVenv.String(),
-		cmdInstallDeps.String())
-	log.Debug().Msgf("Executing command for Env. Setup %s", finalCmd)
-	cmd := exec.Command(shellPath, "-c", finalCmd)
 	cmd.Stderr = os.Stdout
 	cmd.Dir = crdaTempPath
 	if err := cmd.Run(); err != nil {
@@ -91,11 +80,11 @@ func setUpEnv(shellPath string, crdaTempPath string, manifestFilePath string) er
 }
 
 // buildDepsTree generates final Deps Tree and saves it to pylist.json
-func buildDepsTree(shellPath string, crdaTempDir string, manifestFilePath string) string {
+func buildDepsTree(crdaTempDir string, manifestFilePath string) string {
 	log.Debug().Msgf("Execute: buildDepsTree")
 	pathToPylist := manifestFilePath + " pylist.json"
 	command := fmt.Sprintf("cat %s/generate_pylist.py | python - %s", crdaTempDir, pathToPylist)
-	cmd := exec.Command(shellPath, "-c", command)
+	cmd := exec.Command("/bin/sh", "-c", command)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
 	cmd.Dir = crdaTempDir

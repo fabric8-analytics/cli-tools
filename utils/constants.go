@@ -12,5 +12,5 @@ const (
 // API Constants
 const (
 	APIUsers = "user"
-	APISA    = "api/v2/stack-analyses"
+	APISA    = "/api/v2/stack-analyses"
 )

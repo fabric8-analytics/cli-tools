@@ -2,7 +2,6 @@ package cmd
 
 import (
 	sa "github.com/fabric8-analytics/cli-tools/analyses/stackanalyses"
-	constants "github.com/fabric8-analytics/cli-tools/utils"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -21,9 +20,7 @@ var analyseCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(analyseCmd)
 	analyseCmd.PersistentFlags().StringVarP(&manifestFile, "file", "f", "", "Manifest file absolute path.")
-	analyseCmd.PersistentFlags().String("shell-path", constants.Shell, "Shell Path.")
 	analyseCmd.MarkPersistentFlagRequired("file")
-	viper.BindPFlag("shell-path", analyseCmd.PersistentFlags().Lookup("shell-path"))
 }
 
 //runAnalyse is controller func for analyses cmd.
@@ -32,7 +29,6 @@ func runAnalyse(cmd *cobra.Command, args []string) {
 		UserID:          viper.GetString("crda-key"),
 		ThreeScaleToken: viper.GetString("auth-token"),
 		Host:            viper.GetString("host"),
-		ShellPath:       viper.GetString("shell-path"),
 		RawManifestFile: manifestFile,
 	}
 	saResponse := sa.StackAnalyses(requestParams)

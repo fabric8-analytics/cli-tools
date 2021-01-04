@@ -22,7 +22,6 @@ type RequestType struct {
 	UserID          string
 	Host            string
 	ThreeScaleToken string
-	ShellPath       string
 	RawManifestFile string
 	DepsTreePath    string
 }
@@ -60,7 +59,7 @@ func StackAnalyses(requestParams RequestType) GetResponseType {
 		Factor: 2,
 		Jitter: false,
 	}
-	fileStats := readManifest(requestParams.ShellPath, requestParams.RawManifestFile)
+	fileStats := readManifest(requestParams.RawManifestFile)
 	postResponse := postRequest(requestParams, fileStats)
 	getResponse := getRequest(requestParams, postResponse, b)
 	log.Debug().Msgf("Success StackAnalyses.")
@@ -153,7 +152,7 @@ func validateGetResponse(apiResponse *http.Response) GetResponseType {
 }
 
 // readManifest Manifest File validator and reader.
-func readManifest(shellPath string, manifestFile string) ReadManifestResponse {
+func readManifest(manifestFile string) ReadManifestResponse {
 	log.Debug().Msgf("Executing readManifest.")
 	stats, err := os.Stat(manifestFile)
 	if err != nil {
@@ -165,7 +164,7 @@ func readManifest(shellPath string, manifestFile string) ReadManifestResponse {
 	msg := fmt.Sprintf("Support for %s is coming soon. Thanks for your Patience. :)", fileStats.RawFileName)
 	switch fileStats.RawFileName {
 	case "requirements.txt":
-		fileStats.DepsTreePath = pypi.GeneratePylist(shellPath, manifestFile)
+		fileStats.DepsTreePath = pypi.GeneratePylist(manifestFile)
 		fileStats.Ecosystem = "pypi"
 		fileStats.DepsTreeFileName = "pylist.json"
 		return fileStats
