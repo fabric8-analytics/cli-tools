@@ -46,7 +46,7 @@ type GetResponseType struct {
 type ReadManifestResponse struct {
 	DepsTreePath     string `json:"manifest,omitempty"`
 	RawFileName      string `json:"file,omitempty"`
-	Eco              string `json:"ecosystem,omitempty"`
+	Ecosystem        string `json:"ecosystem,omitempty"`
 	DepsTreeFileName string `json:"deps_tree,omitempty"`
 }
 
@@ -92,7 +92,7 @@ func postRequest(requestParams RequestType, fileStats ReadManifestResponse) Post
 	if err != nil {
 		log.Fatal().Err(err).Msgf(err.Error())
 	}
-	_ = writer.WriteField("ecosystem", fileStats.Eco)
+	_ = writer.WriteField("ecosystem", fileStats.Ecosystem)
 	_ = writer.WriteField("file_path", "/tmp/bin")
 	err = writer.Close()
 	if err != nil {
@@ -166,7 +166,7 @@ func readManifest(shellPath string, manifestFile string) ReadManifestResponse {
 	switch fileStats.RawFileName {
 	case "requirements.txt":
 		fileStats.DepsTreePath = pypi.GeneratePylist(shellPath, manifestFile)
-		fileStats.Eco = "pypi"
+		fileStats.Ecosystem = "pypi"
 		fileStats.DepsTreeFileName = "pylist.json"
 		return fileStats
 	case "go.mod":
