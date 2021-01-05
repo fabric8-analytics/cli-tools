@@ -6,7 +6,6 @@ const (
 	SnykToken string = ""
 	AuthToken string = "3e42fa66f65124e6b1266a23431e3d08"
 	Debug     bool   = false
-	Shell     string = "/bin/sh"
 )
 
 // API Constants
