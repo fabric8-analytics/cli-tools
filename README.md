@@ -1,5 +1,4 @@
 # cli-tools
-This repo would server as an interface between the different CRDA clients and the platform. It contains tools that will be used by clients inorder to generate required input for platform APIs. One such tool is `gomanifest`.
 
 <p align="center">
     <a alt="GoReport" href="https://goreportcard.com/report/github.com/fabric8-analytics/cli-tools">
@@ -12,6 +11,8 @@ This repo would server as an interface between the different CRDA clients and th
         <img src="https://codecov.io/gh/fabric8-analytics/cli-tools/branch/main/graph/badge.svg?token=AN4JV0BPW1"/>
       </a>
 </p>
+
+This repo would server as an interface between the different CRDA clients and the platform. It contains tools that will be used by clients inorder to generate required input for platform APIs. One such tool is `gomanifest`.
 
 ## gomanifest CLI tool
 This tool shall be used by client that needs to trigger stack analyses request for golang software stack. The tool generate a manifest file that should be passed to stack analyses request for CRDA platform API. 
