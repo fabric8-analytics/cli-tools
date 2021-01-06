@@ -10,8 +10,27 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// GeneratePylist creates pylist.json from requirements.txt
-func GeneratePylist(manifestFilePath string) string {
+var pypiSupportedFormats = []string{
+	"*-requirements.txt",
+	"requirements-*.txt",
+	"requirements.txt",
+	"constraints-*.txt",
+	"*-constraints.txt",
+	"*-requirements.in",
+	"requirements-*.in"}
+
+// IsSupportedManifestFormat checks for Supported Formats
+func (*Matcher) IsSupportedManifestFormat(filename string) bool {
+	for _, format := range pypiSupportedFormats {
+		if format == filename {
+			return true
+		}
+	}
+	return false
+}
+
+// GeneratorDependencyTree creates pylist.json from requirements.txt
+func (*Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	log.Debug().Msgf("Executing: Generate Pylist")
 	crdaTempPath := "/tmp/crda/"
 	err := copyToTemp("analyses/pypi/generate_pylist.py", crdaTempPath)

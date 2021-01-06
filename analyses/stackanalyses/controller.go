@@ -3,7 +3,7 @@ package stackanalyses
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -12,45 +12,22 @@ import (
 
 	"github.com/rs/zerolog/log"
 
+	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 	"github.com/fabric8-analytics/cli-tools/analyses/pypi"
 	"github.com/fabric8-analytics/cli-tools/utils"
 	"github.com/jpillora/backoff"
 )
 
-// RequestType is a argtype of RequestServer func
-type RequestType struct {
-	UserID          string
-	Host            string
-	ThreeScaleToken string
-	RawManifestFile string
-	DepsTreePath    string
-}
-
-// PostResponseType is a argtype of RequestServer func
-type PostResponseType struct {
-	SubmittedAt string `json:"submitted_at,omitempty"`
-	Status      string `json:"status,omitempty"`
-	ID          string `json:"id,omitempty"`
-}
-
-// GetResponseType is a argtype of RequestServer func
-type GetResponseType struct {
-	AnalysedDeps    []interface{}          `json:"analyzed_dependencies"`
-	Ecosystem       string                 `json:"ecosystem"`
-	Recommendation  map[string]interface{} `json:"recommendation"`
-	LicenseAnalyses map[string]interface{} `json:"license_analysis"`
-}
-
-// ReadManifestResponse is arg type of readManifest func
-type ReadManifestResponse struct {
-	DepsTreePath     string `json:"manifest,omitempty"`
-	RawFileName      string `json:"file,omitempty"`
-	Ecosystem        string `json:"ecosystem,omitempty"`
-	DepsTreeFileName string `json:"deps_tree,omitempty"`
+// Controller is a control structure used to find vulnerabilities affecting
+// a set of packages.
+type Controller struct {
+	// an implemented Matcher
+	m         driver.StackAnalysisInterface
+	fileStats *driver.ReadManifestResponse
 }
 
 //StackAnalyses Performs Full Stack Analyses
-func StackAnalyses(requestParams RequestType) GetResponseType {
+func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
 	log.Info().Msgf("Performing full Stack Analyses. Please wait...")
 	log.Debug().Msgf("Executing StackAnalyses.")
 	b := &backoff.Backoff{
@@ -59,15 +36,23 @@ func StackAnalyses(requestParams RequestType) GetResponseType {
 		Factor: 2,
 		Jitter: false,
 	}
-	fileStats := readManifest(requestParams.RawManifestFile)
-	postResponse := postRequest(requestParams, fileStats)
-	getResponse := getRequest(requestParams, postResponse, b)
+	matcher, err := GetMatcher(requestParams.Ecosystem)
+	if err != nil {
+		log.Fatal().Msgf(err.Error())
+	}
+	mc := NewController(matcher)
+	mc.fileStats = mc.buildFileStats(requestParams.RawManifestFile)
+	if !mc.m.IsSupportedManifestFormat(mc.fileStats.RawFileName) {
+		log.Fatal().Msgf("File Name not supported.")
+	}
+	postResponse := mc.postRequest(requestParams, mc.fileStats.DepsTreePath)
+	getResponse := mc.getRequest(requestParams, postResponse, b)
 	log.Debug().Msgf("Success StackAnalyses.")
 	return getResponse
 }
 
 // postRequest performs Stack Analyses POST Request to CRDA server.
-func postRequest(requestParams RequestType, fileStats ReadManifestResponse) PostResponseType {
+func (mc *Controller) postRequest(requestParams driver.RequestType, filePath string) driver.PostResponseType {
 	log.Debug().Msgf("Executing: postRequest.")
 	manifest := &bytes.Buffer{}
 	requestData := utils.HTTPRequestType{
@@ -77,13 +62,13 @@ func postRequest(requestParams RequestType, fileStats ReadManifestResponse) Post
 		Host:            requestParams.Host,
 	}
 	writer := multipart.NewWriter(manifest)
-	fd, err := os.Open(fileStats.DepsTreePath)
+	fd, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal().Err(err).Msgf(err.Error())
 	}
 	defer fd.Close()
 
-	fw, err := writer.CreateFormFile("manifest", fileStats.DepsTreeFileName)
+	fw, err := writer.CreateFormFile("manifest", mc.m.DepsTreeFileName())
 	if err != nil {
 		log.Fatal().Err(err).Msgf(err.Error())
 	}
@@ -91,20 +76,21 @@ func postRequest(requestParams RequestType, fileStats ReadManifestResponse) Post
 	if err != nil {
 		log.Fatal().Err(err).Msgf(err.Error())
 	}
-	_ = writer.WriteField("ecosystem", fileStats.Ecosystem)
+	_ = writer.WriteField("ecosystem", mc.m.Ecosystem())
 	_ = writer.WriteField("file_path", "/tmp/bin")
 	err = writer.Close()
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Error closing Buffer Writer in SA Request.")
 	}
+	log.Debug().Msgf("Hitting: SA Post API.")
 	apiResponse := utils.HTTPRequestMultipart(requestData, writer, manifest)
-	body := validatePostResponse(apiResponse)
+	body := mc.validatePostResponse(apiResponse)
 	log.Debug().Msgf("Success: postRequest.")
 	return body
 }
 
 // getRequest performs Stack Analyses GET Request to CRDA Server.
-func getRequest(requestParams RequestType, saPost PostResponseType, back *backoff.Backoff) GetResponseType {
+func (mc *Controller) getRequest(requestParams driver.RequestType, saPost driver.PostResponseType, back *backoff.Backoff) driver.GetResponseType {
 	log.Debug().Msgf("Executing: getRequest.")
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodGet,
@@ -119,16 +105,16 @@ func getRequest(requestParams RequestType, saPost PostResponseType, back *backof
 	if apiResponse.StatusCode == http.StatusAccepted {
 		// Retry till server respond 200 or Timeout Error or Exponential Backoff limit hit.
 		log.Debug().Msgf("Retying...")
-		getRequest(requestParams, saPost, back)
+		mc.getRequest(requestParams, saPost, back)
 	}
-	body := validateGetResponse(apiResponse)
+	body := mc.validateGetResponse(apiResponse)
 	return body
 }
 
 // validateResponse validates API Response.
-func validatePostResponse(apiResponse *http.Response) PostResponseType {
+func (mc *Controller) validatePostResponse(apiResponse *http.Response) driver.PostResponseType {
 	log.Debug().Msgf("Executing validatePostResponse.")
-	var body PostResponseType
+	var body driver.PostResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
@@ -139,9 +125,9 @@ func validatePostResponse(apiResponse *http.Response) PostResponseType {
 }
 
 // validateGetResponse validates API Response.
-func validateGetResponse(apiResponse *http.Response) GetResponseType {
+func (mc *Controller) validateGetResponse(apiResponse *http.Response) driver.GetResponseType {
 	log.Debug().Msgf("Executing validateGetResponse.")
-	var body GetResponseType
+	var body driver.GetResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
@@ -151,35 +137,48 @@ func validateGetResponse(apiResponse *http.Response) GetResponseType {
 	return body
 }
 
-// readManifest Manifest File validator and reader.
-func readManifest(manifestFile string) ReadManifestResponse {
-	log.Debug().Msgf("Executing readManifest.")
+func (mc *Controller) execute() (err error) {
+	mc.m.IsSupportedManifestFormat(mc.fileStats.RawFileName)
+	return nil
+}
+
+// NewController is a constructor for a Controller
+func NewController(m driver.StackAnalysisInterface) *Controller {
+	return &Controller{
+		m: m,
+	}
+}
+
+// defaultMatchers is a variable containing all the matchers.
+var defaultMatchers = []driver.StackAnalysisInterface{
+	&pypi.Matcher{},
+}
+
+// GetMatcher returns ecosystem specific matcher
+func GetMatcher(ecosystem string) (driver.StackAnalysisInterface, error) {
+	for _, matcher := range defaultMatchers {
+		if matcher.Filter(ecosystem) {
+			return matcher, nil
+		}
+	}
+	return nil, errors.New("matcher not implemented")
+}
+
+func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestResponse {
+	stats := &driver.ReadManifestResponse{
+		Ecosystem:        mc.m.Ecosystem(),
+		RawFileName:      mc.getManifestName(manifestFile),
+		RawFilePath:      mc.m.GetManifestFilePath(manifestFile),
+		DepsTreePath:     mc.m.GeneratorDependencyTree(manifestFile),
+		DepsTreeFileName: mc.m.DepsTreeFileName(),
+	}
+	return stats
+}
+
+func (mc *Controller) getManifestName(manifestFile string) string {
 	stats, err := os.Stat(manifestFile)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Error")
 	}
-	fileStats := ReadManifestResponse{
-		RawFileName: stats.Name(),
-	}
-	msg := fmt.Sprintf("Support for %s is coming soon. Thanks for your Patience. :)", fileStats.RawFileName)
-	switch fileStats.RawFileName {
-	case "requirements.txt":
-		fileStats.DepsTreePath = pypi.GeneratePylist(manifestFile)
-		fileStats.Ecosystem = "pypi"
-		fileStats.DepsTreeFileName = "pylist.json"
-		return fileStats
-	case "go.mod":
-		log.Info().Err(err).Msgf(msg)
-		os.Exit(1)
-	case "pom.xml":
-		log.Info().Err(err).Msgf(msg)
-		os.Exit(1)
-	case "package.json":
-		log.Info().Err(err).Msgf(msg)
-		os.Exit(1)
-	default:
-		log.Fatal().Err(err).Msgf("Manifest file not supported. Please try again with one of following: requirements.txt, go.mod, pom.xml or package.json.")
-	}
-	log.Debug().Msgf("Success readManifest.")
-	return fileStats
+	return stats.Name()
 }
