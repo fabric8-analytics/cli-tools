@@ -43,7 +43,7 @@ func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
 	mc := NewController(matcher)
 	mc.fileStats = mc.buildFileStats(requestParams.RawManifestFile)
 	if !mc.m.IsSupportedManifestFormat(mc.fileStats.RawFileName) {
-		log.Fatal().Msgf("File Name not supported.")
+		log.Fatal().Msgf("Manifest File not supported.")
 	}
 	postResponse := mc.postRequest(requestParams, mc.fileStats.DepsTreePath)
 	getResponse := mc.getRequest(requestParams, postResponse, b)
