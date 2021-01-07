@@ -51,7 +51,7 @@ func checkExt(ext string) bool {
 func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	log.Debug().Msgf("Executing: Generate Pylist")
 	m.getPylistGenerator()
-	pathToPylist := m.buildDepsTree("analyses/pypi/generate_pylist.py", manifestFilePath)
+	pathToPylist := m.buildDepsTree("generate_pylist.py", manifestFilePath)
 	log.Debug().Msgf("Success: Generate Pylist")
 	return pathToPylist
 }
@@ -60,7 +60,7 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 func (m *Matcher) getPylistGenerator() error {
 	log.Debug().Msgf("Executing: getPylistGenerator")
 	// Generating generate_pylist.py
-	err := ioutil.WriteFile("analyses/pypi/generate_pylist.py", CodeForPylist, 0644)
+	err := ioutil.WriteFile("generate_pylist.py", CodeForPylist, 0644)
 	if err != nil {
 		log.Fatal().Msg("Error Generating generate_pylist.py")
 	}
