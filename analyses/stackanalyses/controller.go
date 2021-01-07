@@ -18,8 +18,7 @@ import (
 	"github.com/jpillora/backoff"
 )
 
-// Controller is a control structure used to find vulnerabilities affecting
-// a set of packages.
+// Controller is a control structure.
 type Controller struct {
 	// an implemented Matcher
 	m         driver.StackAnalysisInterface
