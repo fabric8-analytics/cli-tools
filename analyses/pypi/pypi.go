@@ -65,12 +65,11 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 // buildDepsTree generates final Deps Tree and saves it as pylist.json
 func (m *Matcher) buildDepsTree(generatePylist string, manifestFilePath string) string {
 	log.Debug().Msgf("Execute: buildDepsTree")
-	command := fmt.Sprintf("cat %s | python - %s %s", generatePylist, manifestFilePath, m.DepsTreeFileName())
-	shell, isSet := os.LookupEnv("SHELL")
-	if !isSet {
-		log.Fatal().Msgf("Please set $SHELL value to current shell.")
+	python, err := exec.LookPath("python")
+	if err != nil {
+		log.Fatal().Err(err).Msgf("Please make sure Python v3.6+ is installed. Hint: Check same by executing python --version \n")
 	}
-	cmd := exec.Command(shell, "-c", command)
+	cmd := exec.Command(python, generatePylist, manifestFilePath, m.DepsTreeFileName())
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
 	if err := cmd.Run(); err != nil {
