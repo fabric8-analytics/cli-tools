@@ -160,7 +160,7 @@ func GetMatcher(ecosystem string) (driver.StackAnalysisInterface, error) {
 			return matcher, nil
 		}
 	}
-	return nil, errors.New("matcher not implemented")
+	return nil, errors.New("ecosystem not supported yet")
 }
 
 func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestResponse {

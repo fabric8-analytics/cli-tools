@@ -1,30 +1,16 @@
 package pypi
 
+// This File contains Utility functions of Pypi Ecosystem
+
 import (
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"strings"
 
 	"github.com/rs/zerolog/log"
 )
-
-// IsSupportedManifestFormat checks for Supported Formats
-func (*Matcher) IsSupportedManifestFormat(filename string) bool {
-	log.Debug().Msgf("Executing: IsSupportedManifestFormat")
-	s := strings.Split(filename, ".")
-	name, ext := s[0], s[1]
-	isExtSupported := checkExt(ext)
-	isNameSupported := checkName(name)
-	if isExtSupported && isNameSupported {
-		log.Debug().Msgf("Success: IsSupportedManifestFormat")
-		return true
-	}
-	log.Debug().Msgf("Success: IsSupportedManifestFormat")
-	return false
-}
 
 // checkName checks for valid file name.
 func checkName(name string) bool {
@@ -45,15 +31,6 @@ func checkExt(ext string) bool {
 		return true
 	}
 	return false
-}
-
-// GeneratorDependencyTree creates pylist.json from requirements.txt
-func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
-	log.Debug().Msgf("Executing: Generate Pylist")
-	m.getPylistGenerator()
-	pathToPylist := m.buildDepsTree("generate_pylist.py", manifestFilePath)
-	log.Debug().Msgf("Success: Generate Pylist")
-	return pathToPylist
 }
 
 // getPylistGenerator generates `generate_pylist.py from `generatepylist.go`
