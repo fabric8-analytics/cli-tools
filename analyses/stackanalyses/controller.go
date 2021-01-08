@@ -94,6 +94,7 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 	log.Debug().Msgf("Hitting: SA Post API.")
 	apiResponse := utils.HTTPRequestMultipart(requestData, writer, manifest)
 	body := mc.validatePostResponse(apiResponse)
+	log.Debug().Msgf("Got SA Post Response Stack Id: %s", body.ID)
 	log.Debug().Msgf("Success: postRequest.")
 	return body
 }
@@ -113,7 +114,7 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, saPost driver
 	apiResponse := utils.HTTPRequest(requestData)
 	if apiResponse.StatusCode == http.StatusAccepted {
 		// Retry till server respond 200 or Timeout Error or Exponential Backoff limit hit.
-		log.Debug().Msgf("Retying...")
+		log.Debug().Msgf("Retrying...")
 		mc.getRequest(requestParams, saPost, back)
 	}
 	body := mc.validateGetResponse(apiResponse)
@@ -140,7 +141,7 @@ func (mc *Controller) validateGetResponse(apiResponse *http.Response) driver.Get
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
-		log.Fatal().Err(err).Msgf(err.Error())
+		log.Fatal().Err(err).Msgf("SA Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
 	}
 	log.Debug().Msgf("Success validateGetResponse.")
 	return body
