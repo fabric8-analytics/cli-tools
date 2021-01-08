@@ -36,8 +36,6 @@ type ReadManifestResponse struct {
 
 // StackAnalysisInterface is implemented by each ecosystem
 type StackAnalysisInterface interface {
-	GetManifestFilePath(string) string
-	Name() string
 	DepsTreeFileName() string
 	Filter(string) bool
 	Ecosystem() string

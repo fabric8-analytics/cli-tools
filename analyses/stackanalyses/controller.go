@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -48,6 +49,15 @@ func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
 	getResponse := mc.getRequest(requestParams, postResponse, b)
 	log.Debug().Msgf("Success StackAnalyses.")
 	return getResponse
+}
+
+// GetManifestFilePath sets file path
+func (mc *Controller) GetManifestFilePath(input string) string {
+	path, err := filepath.Abs(input)
+	if err != nil {
+		log.Fatal().Msgf("Invalid Path of Manifest file. Only Absolute path is allowed.")
+	}
+	return path
 }
 
 // postRequest performs Stack Analyses POST Request to CRDA server.
@@ -167,7 +177,7 @@ func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestRe
 	stats := &driver.ReadManifestResponse{
 		Ecosystem:        mc.m.Ecosystem(),
 		RawFileName:      mc.getManifestName(manifestFile),
-		RawFilePath:      mc.m.GetManifestFilePath(manifestFile),
+		RawFilePath:      mc.GetManifestFilePath(manifestFile),
 		DepsTreePath:     mc.m.GeneratorDependencyTree(manifestFile),
 		DepsTreeFileName: mc.m.DepsTreeFileName(),
 	}
