@@ -146,11 +146,6 @@ func (mc *Controller) validateGetResponse(apiResponse *http.Response) driver.Get
 	return body
 }
 
-func (mc *Controller) execute() (err error) {
-	mc.m.IsSupportedManifestFormat(mc.fileStats.RawFileName)
-	return nil
-}
-
 // NewController is a constructor for a Controller
 func NewController(m driver.StackAnalysisInterface) *Controller {
 	return &Controller{
