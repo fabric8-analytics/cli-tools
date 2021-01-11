@@ -3,6 +3,7 @@ package pypi
 // Matcher implements driver.Matcher Interface for Pypi
 
 import (
+	"path/filepath"
 	"strings"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
@@ -17,9 +18,6 @@ var (
 type Matcher struct {
 	FilePath string
 }
-
-// Filter implements driver.Filter.
-func (*Matcher) Filter(ecosystem string) bool { return ecosystem == "pypi" }
 
 // Ecosystem implements driver.Matcher.
 func (*Matcher) Ecosystem() string { return "pypi" }
@@ -36,11 +34,12 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	return pathToPylist
 }
 
-// IsSupportedManifestFormat checks for Supported Formats
-func (*Matcher) IsSupportedManifestFormat(filename string) bool {
+// IsSupportedManifestFormat checks for Supported File Formats
+func (*Matcher) IsSupportedManifestFormat(manifestFile string) bool {
 	log.Debug().Msgf("Executing: IsSupportedManifestFormat")
-	s := strings.Split(filename, ".")
-	name, ext := s[0], s[1]
+	basename := filepath.Base(manifestFile)
+	ext := filepath.Ext(basename)
+	name := strings.TrimSuffix(basename, ext)
 	isExtSupported := checkExt(ext)
 	isNameSupported := checkName(name)
 	if isExtSupported && isNameSupported {

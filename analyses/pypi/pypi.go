@@ -26,8 +26,8 @@ func checkName(name string) bool {
 func checkExt(ext string) bool {
 	switch ext {
 	case
-		"in",
-		"txt":
+		".in",
+		".txt":
 		return true
 	}
 	return false

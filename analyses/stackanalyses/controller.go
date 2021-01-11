@@ -41,15 +41,12 @@ func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
 		Factor: 2,
 		Jitter: false,
 	}
-	matcher, err := GetMatcher(requestParams.Ecosystem)
+	matcher, err := GetMatcher(requestParams.RawManifestFile)
 	if err != nil {
 		log.Fatal().Msgf(err.Error())
 	}
 	mc := NewController(matcher)
 	mc.fileStats = mc.buildFileStats(requestParams.RawManifestFile)
-	if !mc.m.IsSupportedManifestFormat(mc.fileStats.RawFileName) {
-		log.Fatal().Msgf("Manifest File not supported.")
-	}
 	postResponse := mc.postRequest(requestParams, mc.fileStats.DepsTreePath)
 	getResponse := mc.getRequest(requestParams, postResponse, b)
 	log.Debug().Msgf("Success StackAnalyses.")
@@ -165,9 +162,9 @@ var defaultMatchers = []driver.StackAnalysisInterface{
 }
 
 // GetMatcher returns ecosystem specific matcher
-func GetMatcher(ecosystem string) (driver.StackAnalysisInterface, error) {
+func GetMatcher(manifestFile string) (driver.StackAnalysisInterface, error) {
 	for _, matcher := range defaultMatchers {
-		if matcher.Filter(ecosystem) {
+		if matcher.IsSupportedManifestFormat(manifestFile) {
 			return matcher, nil
 		}
 	}
