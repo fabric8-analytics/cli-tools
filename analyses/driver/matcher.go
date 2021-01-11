@@ -7,7 +7,6 @@ type RequestType struct {
 	Host            string
 	ThreeScaleToken string
 	RawManifestFile string
-	DepsTreePath    string
 }
 
 // PostResponseType is a argtype of RequestServer func
