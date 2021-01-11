@@ -1,7 +1,7 @@
 package pypi
 
-// CodeForPylist is converted to generate_pylist.py
-var CodeForPylist = []byte(
+// codeForPylist is converted to generate_pylist.py
+var codeForPylist = []byte(
 	`import pkg_resources as pr;import json,sys;gd=pr.get_distribution;res=list();
 for i in open(sys.argv[1]):
     try:

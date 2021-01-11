@@ -66,7 +66,7 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 	manifest := &bytes.Buffer{}
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodPost,
-		Endpoint:        utils.APISA,
+		Endpoint:        utils.APIStackAnalyses,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
 	}
@@ -89,22 +89,22 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 	_ = writer.WriteField("file_path", "/tmp/bin")
 	err = writer.Close()
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Error closing Buffer Writer in SA Request.")
+		log.Fatal().Err(err).Msgf("Error closing Buffer Writer in Stack Analyses Request.")
 	}
-	log.Debug().Msgf("Hitting: SA Post API.")
+	log.Debug().Msgf("Hitting: Stack Analyses Post API.")
 	apiResponse := utils.HTTPRequestMultipart(requestData, writer, manifest)
 	body := mc.validatePostResponse(apiResponse)
-	log.Debug().Msgf("Got SA Post Response Stack Id: %s", body.ID)
+	log.Debug().Msgf("Got Stack Analyses Post Response Stack Id: %s", body.ID)
 	log.Debug().Msgf("Success: postRequest.")
 	return body
 }
 
 // getRequest performs Stack Analyses GET Request to CRDA Server.
-func (mc *Controller) getRequest(requestParams driver.RequestType, saPost driver.PostResponseType, back *backoff.Backoff) driver.GetResponseType {
+func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse driver.PostResponseType, back *backoff.Backoff) driver.GetResponseType {
 	log.Debug().Msgf("Executing: getRequest.")
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodGet,
-		Endpoint:        utils.APISA + "/" + saPost.ID,
+		Endpoint:        utils.APIStackAnalyses + "/" + postResponse.ID,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
 	}
@@ -115,7 +115,7 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, saPost driver
 	if apiResponse.StatusCode == http.StatusAccepted {
 		// Retry till server respond 200 or Timeout Error or Exponential Backoff limit hit.
 		log.Debug().Msgf("Retrying...")
-		mc.getRequest(requestParams, saPost, back)
+		mc.getRequest(requestParams, postResponse, back)
 	}
 	body := mc.validateGetResponse(apiResponse)
 	return body
@@ -141,7 +141,7 @@ func (mc *Controller) validateGetResponse(apiResponse *http.Response) driver.Get
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
-		log.Fatal().Err(err).Msgf("SA Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
+		log.Fatal().Err(err).Msgf("Stack Analyses Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
 	}
 	log.Debug().Msgf("Success validateGetResponse.")
 	return body

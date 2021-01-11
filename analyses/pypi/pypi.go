@@ -37,7 +37,7 @@ func checkExt(ext string) bool {
 func (m *Matcher) getPylistGenerator() error {
 	log.Debug().Msgf("Executing: getPylistGenerator")
 	// Generating generate_pylist.py
-	err := ioutil.WriteFile("generate_pylist.py", CodeForPylist, 0644)
+	err := ioutil.WriteFile("generate_pylist.py", codeForPylist, 0644)
 	if err != nil {
 		log.Fatal().Msg("Error Generating generate_pylist.py")
 	}
