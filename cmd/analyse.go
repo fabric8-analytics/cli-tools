@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 	sa "github.com/fabric8-analytics/cli-tools/analyses/stackanalyses"
@@ -36,6 +37,7 @@ func destructor(cmd *cobra.Command, args []string) {
 	}
 	intermediataryFiles := []string{"generate_pylist.py", "pylist.json", "dependencies.txt", "golist.json", "npmlist.json"}
 	for _, file := range intermediataryFiles {
+		file = filepath.Join("/tmp", file)
 		if _, err := os.Stat(file); err != nil {
 			if os.IsNotExist(err) {
 				// If file doesn't exists, continue
