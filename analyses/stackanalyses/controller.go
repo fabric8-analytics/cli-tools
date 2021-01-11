@@ -26,6 +26,11 @@ type Controller struct {
 	fileStats *driver.ReadManifestResponse
 }
 
+// API Constants
+const (
+	APIStackAnalyses = "/api/v2/stack-analyses"
+)
+
 //StackAnalyses Performs Full Stack Analyses
 func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
 	log.Info().Msgf("Performing full Stack Analyses. Please wait...")
@@ -66,7 +71,7 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 	manifest := &bytes.Buffer{}
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodPost,
-		Endpoint:        utils.APIStackAnalyses,
+		Endpoint:        APIStackAnalyses,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
 	}
@@ -104,7 +109,7 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 	log.Debug().Msgf("Executing: getRequest.")
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodGet,
-		Endpoint:        utils.APIStackAnalyses + "/" + postResponse.ID,
+		Endpoint:        APIStackAnalyses + "/" + postResponse.ID,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
 	}
@@ -128,7 +133,7 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) driver.Po
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
-		log.Fatal().Err(err).Msgf(err.Error())
+		log.Fatal().Err(err).Msgf("Stack Analyses Post Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
 	}
 	log.Debug().Msgf("Success validatePostResponse.")
 	return body
