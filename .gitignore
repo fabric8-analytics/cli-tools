@@ -36,11 +36,5 @@ coverage.txt
 #target is generate by crda ext.
 target/
 
-# Programatically Generated Deps Trees
-pylist.json
-dependencies.txt
-golist.json
-npmlist.json
-
 # Programatically generated files
 generate_pylist.py
