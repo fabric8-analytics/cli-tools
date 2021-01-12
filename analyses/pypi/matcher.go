@@ -3,6 +3,7 @@ package pypi
 // Matcher implements driver.Matcher Interface for Pypi
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -28,7 +29,7 @@ func (*Matcher) DepsTreeFileName() string { return "pylist.json" }
 // GeneratorDependencyTree creates pylist.json from requirements.txt
 func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	log.Debug().Msgf("Executing: Generate Pylist")
-	pylistGenerator := m.getPylistGenerator(filepath.Join("/tmp", "generate_pylist.py"))
+	pylistGenerator := m.getPylistGenerator(filepath.Join(os.TempDir(), "generate_pylist.py"))
 	pathToPylist := m.buildDepsTree(pylistGenerator, manifestFilePath)
 	log.Debug().Msgf("Success: Generate Pylist")
 	return pathToPylist

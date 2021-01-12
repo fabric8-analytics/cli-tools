@@ -37,7 +37,7 @@ func destructor(cmd *cobra.Command, args []string) {
 	}
 	intermediataryFiles := []string{"generate_pylist.py", "pylist.json", "dependencies.txt", "golist.json", "npmlist.json"}
 	for _, file := range intermediataryFiles {
-		file = filepath.Join("/tmp", file)
+		file = filepath.Join(os.TempDir(), file)
 		if _, err := os.Stat(file); err != nil {
 			if os.IsNotExist(err) {
 				// If file doesn't exists, continue
