@@ -27,27 +27,23 @@ type Controller struct {
 	fileStats *driver.ReadManifestResponse
 }
 
+// API Constants
+const (
+	APIStackAnalyses = "/api/v2/stack-analyses"
+)
+
 //StackAnalyses Performs Full Stack Analyses
 func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
 	log.Info().Msgf("Performing full Stack Analyses. Please wait...")
 	log.Debug().Msgf("Executing StackAnalyses.")
-	b := &backoff.Backoff{
-		Min:    5 * time.Second,
-		Max:    120 * time.Second,
-		Factor: 2,
-		Jitter: false,
-	}
-	matcher, err := GetMatcher(requestParams.Ecosystem)
+	matcher, err := GetMatcher(requestParams.RawManifestFile)
 	if err != nil {
 		log.Fatal().Msgf(err.Error())
 	}
 	mc := NewController(matcher)
 	mc.fileStats = mc.buildFileStats(requestParams.RawManifestFile)
-	if !mc.m.IsSupportedManifestFormat(mc.fileStats.RawFileName) {
-		log.Fatal().Msgf("Manifest File not supported.")
-	}
 	postResponse := mc.postRequest(requestParams, mc.fileStats.DepsTreePath)
-	getResponse := mc.getRequest(requestParams, postResponse, b)
+	getResponse := mc.getRequest(requestParams, postResponse)
 	log.Debug().Msgf("Success StackAnalyses.")
 	return getResponse
 }
@@ -67,7 +63,7 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 	manifest := &bytes.Buffer{}
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodPost,
-		Endpoint:        utils.APIStackAnalyses,
+		Endpoint:        APIStackAnalyses,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
 	}
@@ -101,22 +97,31 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 }
 
 // getRequest performs Stack Analyses GET Request to CRDA Server.
-func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse driver.PostResponseType, back *backoff.Backoff) driver.GetResponseType {
+func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse driver.PostResponseType) driver.GetResponseType {
 	log.Debug().Msgf("Executing: getRequest.")
+	polling := &backoff.Backoff{
+		Min:    5 * time.Second,
+		Max:    120 * time.Second,
+		Factor: 2,
+		Jitter: false,
+	}
+	var apiResponse *http.Response
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodGet,
-		Endpoint:        utils.APIStackAnalyses + "/" + postResponse.ID,
+		Endpoint:        APIStackAnalyses + "/" + postResponse.ID,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
 	}
-	d := back.Duration()
-	log.Debug().Msgf("Sleeping for %s", d)
-	time.Sleep(d)
-	apiResponse := utils.HTTPRequest(requestData)
-	if apiResponse.StatusCode == http.StatusAccepted {
-		// Retry till server respond 200 or Timeout Error or Exponential Backoff limit hit.
+	for {
+		d := polling.Duration()
+		log.Debug().Msgf("Sleeping for %s", d)
+		time.Sleep(d)
+		apiResponse = utils.HTTPRequest(requestData)
+		if apiResponse.StatusCode != http.StatusAccepted {
+			// Break when server returns anything other than 202.
+			break
+		}
 		log.Debug().Msgf("Retrying...")
-		mc.getRequest(requestParams, postResponse, back)
 	}
 	body := mc.validateGetResponse(apiResponse)
 	return body
@@ -129,7 +134,7 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) driver.Po
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
-		log.Fatal().Err(err).Msgf(err.Error())
+		log.Fatal().Err(err).Msgf("Stack Analyses Post Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
 	}
 	log.Debug().Msgf("Success validatePostResponse.")
 	return body
@@ -162,9 +167,9 @@ var defaultMatchers = []driver.StackAnalysisInterface{
 }
 
 // GetMatcher returns ecosystem specific matcher
-func GetMatcher(ecosystem string) (driver.StackAnalysisInterface, error) {
+func GetMatcher(manifestFile string) (driver.StackAnalysisInterface, error) {
 	for _, matcher := range defaultMatchers {
-		if matcher.Filter(ecosystem) {
+		if matcher.IsSupportedManifestFormat(manifestFile) {
 			return matcher, nil
 		}
 	}

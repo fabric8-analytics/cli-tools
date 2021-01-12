@@ -3,7 +3,6 @@ package driver
 // RequestType is a argtype of RequestServer func
 type RequestType struct {
 	UserID          string
-	Ecosystem       string
 	Host            string
 	ThreeScaleToken string
 	RawManifestFile string
@@ -36,7 +35,6 @@ type ReadManifestResponse struct {
 // StackAnalysisInterface is implemented by each ecosystem
 type StackAnalysisInterface interface {
 	DepsTreeFileName() string
-	Filter(string) bool
 	Ecosystem() string
 	IsSupportedManifestFormat(string) bool
 	GeneratorDependencyTree(string) string
