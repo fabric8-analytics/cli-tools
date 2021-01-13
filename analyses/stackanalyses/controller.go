@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/fabric8-analytics/cli-tools/analyses/maven"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -162,6 +163,7 @@ func NewController(m driver.StackAnalysisInterface) *Controller {
 // defaultMatchers is a variable containing all the matchers.
 var defaultMatchers = []driver.StackAnalysisInterface{
 	&pypi.Matcher{},
+	&maven.Matcher{},
 }
 
 // GetMatcher returns ecosystem specific matcher
