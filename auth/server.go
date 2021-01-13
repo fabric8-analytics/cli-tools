@@ -30,6 +30,11 @@ type UserResponse struct {
 	Status  int32  `json:"status,omitempty"`
 }
 
+// API Constants
+const (
+	APIUsers = "/user"
+)
+
 // RequestServer is auth request to CRDA server
 func RequestServer(requestParams RequestServerType) string {
 	log.Debug().Msgf("Executing Request Server.")
@@ -38,7 +43,7 @@ func RequestServer(requestParams RequestServerType) string {
 	requestData := utils.HTTPRequestType{
 		Payload:         payload,
 		Method:          http.MethodPost,
-		Endpoint:        utils.APIUsers,
+		Endpoint:        APIUsers,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
 	}

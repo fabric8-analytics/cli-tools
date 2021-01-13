@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 
@@ -54,5 +55,23 @@ func HTTPRequest(data HTTPRequestType) *http.Response {
 		log.Fatal().Err(err).Msgf("Unable to reach the server. hint: Check your Internet connection.")
 	}
 	log.Debug().Msgf("Success HTTPRequest.")
+	return res
+}
+
+// HTTPRequestMultipart is generic method for HTTP Multipart Requests to server
+func HTTPRequestMultipart(data HTTPRequestType, w *multipart.Writer, buf *bytes.Buffer) *http.Response {
+	log.Debug().Msgf("Executing HTTPRequestMultipart.")
+	client := &http.Client{}
+	url := buildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
+	req, err := http.NewRequest(data.Method, url.String(), buf)
+	if err != nil {
+		log.Fatal().Err(err).Msgf("Unable to build request")
+	}
+	req.Header.Set("Content-Type", w.FormDataContentType())
+	res, err := client.Do(req)
+	if err != nil {
+		log.Fatal().Err(err).Msgf("Unable to reach the server. hint: Check your Internet connection.")
+	}
+	log.Debug().Msgf("Success HTTPRequestMultipart.")
 	return res
 }

@@ -33,3 +33,8 @@ crda
 #Test
 coverage.txt
 
+#target is generate by crda ext.
+target/
+
+# Programatically generated files
+generate_pylist.py

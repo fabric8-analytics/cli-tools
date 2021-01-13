@@ -43,6 +43,8 @@ func init() {
 	rootCmd.PersistentFlags().String("host", constants.Host, "Host Server, if set, host from config file will be ignored.")
 	rootCmd.PersistentFlags().String("snyk-token", constants.SnykToken, "Snyk token, if not set, Freemium account will be created.")
 	rootCmd.PersistentFlags().String("auth-token", constants.AuthToken, "3Scale Token, Token for server authentication.")
+	viper.BindPFlag("auth-token", rootCmd.PersistentFlags().Lookup("auth-token"))
+	viper.BindPFlag("host", rootCmd.PersistentFlags().Lookup("host"))
 }
 
 // initConfig reads in config file and ENV variables if set.
