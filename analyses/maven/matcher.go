@@ -7,8 +7,9 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 	"github.com/rs/zerolog/log"
+
+	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 )
 
 var (
