@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/fabric8-analytics/cli-tools/analyses/maven"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -12,12 +11,13 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/jpillora/backoff"
 	"github.com/rs/zerolog/log"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/analyses/maven"
 	"github.com/fabric8-analytics/cli-tools/analyses/pypi"
 	"github.com/fabric8-analytics/cli-tools/utils"
-	"github.com/jpillora/backoff"
 )
 
 // Controller is a control structure.
