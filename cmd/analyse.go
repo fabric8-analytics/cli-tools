@@ -16,8 +16,8 @@ var manifestFile string
 // analyseCmd represents the analyse command
 var analyseCmd = &cobra.Command{
 	Use:     "analyse",
-	Short:   "analyse performs Stack Analyses",
-	Long:    `analyse performs full Stack Analyses. Supported Ecosystems are Pypi, Maven, npm and golang.`,
+	Short:   "Performs full Stack Analyses on CRDA Platform.",
+	Long:    `Performs full Stack Analyses on CRDA Platform. Supported ecosystems are Pypi (Python), Maven (Java), Npm (Node) and Golang (Go).`,
 	Run:     runAnalyse,
 	PostRun: destructor,
 }
@@ -28,16 +28,16 @@ func init() {
 	analyseCmd.MarkPersistentFlagRequired("file")
 }
 
-// destructor deletes intermediatery files used to have stack analyses
+// destructor deletes intermediary files used to have stack analyses
 func destructor(cmd *cobra.Command, args []string) {
 	log.Debug().Msgf("Running Destructor.\n")
 	if debug {
-		// Keep intermediatery files, when on debug
+		// Keep intermediary files, when on debug
 		log.Debug().Msgf("Skipping file clearance on Debug Mode.\n")
 		return
 	}
-	intermediataryFiles := []string{"generate_pylist.py", "pylist.json", "dependencies.txt", "golist.json", "npmlist.json"}
-	for _, file := range intermediataryFiles {
+	intermediaryFiles := []string{"generate_pylist.py", "pylist.json", "dependencies.txt", "golist.json", "npmlist.json"}
+	for _, file := range intermediaryFiles {
 		file = filepath.Join(os.TempDir(), file)
 		if _, err := os.Stat(file); err != nil {
 			if os.IsNotExist(err) {
@@ -60,6 +60,9 @@ func runAnalyse(cmd *cobra.Command, args []string) {
 		Host:            viper.GetString("host"),
 		RawManifestFile: manifestFile,
 	}
-	sa.StackAnalyses(requestParams)
-	log.Info().Msgf("Successfully completed Stack Analyses.\n")
+	analysesResult := sa.StackAnalyses(requestParams)
+	if sa.ProcessResult(analysesResult) {
+		// If Stack has vulnerability, exit with 2 code
+		os.Exit(2)
+	}
 }

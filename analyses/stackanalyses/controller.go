@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/analyses/golang"
 	"github.com/fabric8-analytics/cli-tools/analyses/maven"
 	"github.com/fabric8-analytics/cli-tools/analyses/pypi"
 	"github.com/fabric8-analytics/cli-tools/utils"
@@ -127,7 +129,7 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 	return body
 }
 
-// validateResponse validates API Response.
+// validatePostResponse validates Stack Analyses POST API Response.
 func (mc *Controller) validatePostResponse(apiResponse *http.Response) driver.PostResponseType {
 	log.Debug().Msgf("Executing validatePostResponse.")
 	var body driver.PostResponseType
@@ -140,7 +142,7 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) driver.Po
 	return body
 }
 
-// validateGetResponse validates API Response.
+// validateGetResponse validates Stack Analyses GET API Response.
 func (mc *Controller) validateGetResponse(apiResponse *http.Response) driver.GetResponseType {
 	log.Debug().Msgf("Executing validateGetResponse.")
 	var body driver.GetResponseType
@@ -164,6 +166,7 @@ func NewController(m driver.StackAnalysisInterface) *Controller {
 var defaultMatchers = []driver.StackAnalysisInterface{
 	&pypi.Matcher{},
 	&maven.Matcher{},
+	&golang.Matcher{},
 }
 
 // GetMatcher returns ecosystem specific matcher
@@ -190,7 +193,64 @@ func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestRe
 func (mc *Controller) getManifestName(manifestFile string) string {
 	stats, err := os.Stat(manifestFile)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Error")
+		log.Fatal().Err(err).Msgf("Error fetching manifest name.")
 	}
 	return stats.Name()
+}
+
+// ProcessResult processes result in CI Required format, return true if Vul found
+func ProcessResult(analysedResult driver.GetResponseType) bool {
+	totalDepsScanned := len(analysedResult.AnalysedDeps)
+	publicVulCount, privateVulCount, severities := processVulnerabilities(analysedResult.AnalysedDeps)
+	out := &driver.CIFormat{
+		TotalScannedDependencies:                   totalDepsScanned,
+		DirectDependenciesWithKnownVulnerabilities: publicVulCount,
+		DirectDependenciesWithSynkAdvisories:       privateVulCount,
+		VulnerabilitiesPerSeverity:                 *severities,
+	}
+	b, err := json.Marshal(out)
+	if err != nil {
+		log.Fatal().Msg("Error forming CLI Response.")
+	}
+	fmt.Fprintln(os.Stdout, string(b))
+	if out.DirectDependenciesWithKnownVulnerabilities+out.DirectDependenciesWithSynkAdvisories > 1 {
+		// If Vulnerability found, return true
+		return true
+	}
+	return false
+}
+
+// processVulnerabilities calculates Total Direct Public Vulnerabilities in Response
+func processVulnerabilities(analysedDeps []driver.AnalysedDepsType) (int, int, *driver.SeverityType) {
+	publicVul := 0
+	privateVul := 0
+	severities := &driver.SeverityType{}
+	for _, dep := range analysedDeps {
+		publicVul += len(dep.PublicVulnerabilities)
+		privateVul += len(dep.PrivateVulnerabilities)
+		severities = getSeverity(dep.PublicVulnerabilities, severities)
+		severities = getSeverity(dep.PrivateVulnerabilities, severities)
+	}
+	return publicVul, privateVul, severities
+}
+
+// getSeverity calculates total severities in Vulnerabilities
+func getSeverity(vulnerability []driver.VulnerabilitiesType, severity *driver.SeverityType) *driver.SeverityType {
+	for _, vul := range vulnerability {
+		switch vul.Severity {
+		case "critical":
+			severity.Critical++
+			break
+		case "high":
+			severity.High++
+			break
+		case "medium":
+			severity.Medium++
+			break
+		case "low":
+			severity.Low++
+			break
+		}
+	}
+	return severity
 }
