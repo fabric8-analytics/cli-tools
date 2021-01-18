@@ -1,7 +1,6 @@
 package maven_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
@@ -21,8 +20,6 @@ type depsTreeTestCase struct {
 }
 
 func (tc isSupportedManifestTestcase) TestMatcher_IsSupportedManifest(t *testing.T) {
-	_, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	got := tc.Matcher.IsSupportedManifestFormat(tc.Name)
 	want := tc.Want
 	if got != want {
@@ -31,8 +28,6 @@ func (tc isSupportedManifestTestcase) TestMatcher_IsSupportedManifest(t *testing
 }
 
 func (dt depsTreeTestCase) TestDepsTree_GeneratorDependencyTree(t *testing.T) {
-	_, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	want := dt.Want
 	got := dt.Matcher.GeneratorDependencyTree(dt.ManifestFile)
 	if got != want {

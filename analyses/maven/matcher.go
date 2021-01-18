@@ -53,6 +53,6 @@ func (*Matcher) IsSupportedManifestFormat(filename string) bool {
 	log.Debug().Msgf("Executing: IsSupportedManifestFormat")
 	basename := filepath.Base(filename)
 	match, _ := regexp.MatchString("pom.xml$", basename)
-	log.Debug().Msgf("Success: IsSupportedManifestFormat.")
+	log.Debug().Bool("regex", match).Str("path", filename).Msg("IsSupportedManifest")
 	return match
 }
