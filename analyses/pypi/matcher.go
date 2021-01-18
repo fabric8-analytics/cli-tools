@@ -16,9 +16,7 @@ var (
 )
 
 // Matcher is State Object for Pypi
-type Matcher struct {
-	FilePath string
-}
+type Matcher struct{}
 
 // Ecosystem implements driver.Matcher.
 func (*Matcher) Ecosystem() string { return "pypi" }
