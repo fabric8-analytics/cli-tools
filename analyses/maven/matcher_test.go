@@ -1,6 +1,8 @@
 package maven_test
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
@@ -69,8 +71,8 @@ func TestMatcher(t *testing.T) {
 func TestDepsTree(t *testing.T) {
 	tt := []depsTreeTestCase{
 		{
-			ManifestFile: "testdata/pom.xml",
-			Want:         "/tmp/dependencies.txt",
+			ManifestFile: filepath.Join("testdata", "pom.xml"),
+			Want:         filepath.Join(os.TempDir(), "dependencies.txt"),
 			Matcher:      &maven.Matcher{},
 		},
 	}
