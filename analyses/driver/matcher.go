@@ -11,8 +11,8 @@ type RequestType struct {
 	DepsTreePath    string
 }
 
-// CIFormat is SA Result output format required by CI
-type CIFormat struct {
+// StackSummary is SA Result Summary output
+type StackSummary struct {
 	TotalScannedDependencies                   int          `json:"total_scanned_dependencies"`
 	DirectDependenciesWithKnownVulnerabilities int          `json:"direct_dependencies_with_known_vulnerabilites"`
 	DirectDependenciesWithSynkAdvisories       int          `json:"direct_dependencies_with_synk_advisories"`

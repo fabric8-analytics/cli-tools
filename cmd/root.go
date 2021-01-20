@@ -98,6 +98,6 @@ func initConfig() {
 		}
 	}
 	viper.WriteConfig()
-	log.Info().Msgf("Using config file %s.\n", viper.ConfigFileUsed())
+	log.Debug().Msgf("Using config file %s.\n", viper.ConfigFileUsed())
 	log.Debug().Msgf("Successfully configured config files %s.", viper.ConfigFileUsed())
 }

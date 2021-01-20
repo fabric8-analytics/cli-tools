@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
+	"strings"
 
 	"github.com/rs/zerolog/log"
 
@@ -51,8 +51,7 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 // IsSupportedManifestFormat checks for Supported Formats
 func (*Matcher) IsSupportedManifestFormat(filename string) bool {
 	log.Debug().Msgf("Executing: IsSupportedManifestFormat")
-	basename := filepath.Base(filename)
-	match, _ := regexp.MatchString("go.mod$", basename)
-	log.Debug().Bool("regex", match).Str("path", filename).Msg("IsSupportedManifest")
+	match := strings.HasSuffix(filename, "go.mod")
+	log.Debug().Bool("match", match).Str("path", filename).Msg("IsSupportedManifest")
 	return match
 }

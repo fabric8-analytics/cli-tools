@@ -36,7 +36,6 @@ const (
 
 //StackAnalyses Performs Full Stack Analyses
 func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
-	log.Info().Msgf("Performing full Stack Analyses. Please wait...")
 	log.Debug().Msgf("Executing StackAnalyses.")
 	matcher, err := GetMatcher(requestParams.RawManifestFile)
 	if err != nil {
@@ -202,7 +201,7 @@ func (mc *Controller) getManifestName(manifestFile string) string {
 func ProcessResult(analysedResult driver.GetResponseType) bool {
 	totalDepsScanned := len(analysedResult.AnalysedDeps)
 	publicVulCount, privateVulCount, severities := processVulnerabilities(analysedResult.AnalysedDeps)
-	out := &driver.CIFormat{
+	out := &driver.StackSummary{
 		TotalScannedDependencies:                   totalDepsScanned,
 		DirectDependenciesWithKnownVulnerabilities: publicVulCount,
 		DirectDependenciesWithSynkAdvisories:       privateVulCount,
@@ -213,7 +212,7 @@ func ProcessResult(analysedResult driver.GetResponseType) bool {
 		log.Fatal().Msg("Error forming CLI Response.")
 	}
 	fmt.Fprintln(os.Stdout, string(b))
-	if out.DirectDependenciesWithKnownVulnerabilities+out.DirectDependenciesWithSynkAdvisories > 1 {
+	if out.DirectDependenciesWithKnownVulnerabilities+out.DirectDependenciesWithSynkAdvisories > 0 {
 		// If Vulnerability found, return true
 		return true
 	}
