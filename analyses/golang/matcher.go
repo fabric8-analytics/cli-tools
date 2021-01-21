@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
+	gomanifest "github.com/fabric8-analytics/cli-tools/gomanifest/manifest"
 )
 
 var (
@@ -26,25 +27,13 @@ func (*Matcher) DepsTreeFileName() string { return "golist.json" }
 
 // GeneratorDependencyTree creates golist.json from go.mod
 func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
-	log.Debug().Msgf("Executing: Generate golist.json")
 	golang, err := exec.LookPath("go")
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Please make sure Golang is installed. Hint: Check same by executing: go version \n")
 	}
 	manifestDir := filepath.Dir(manifestFilePath)
 	treePath, _ := filepath.Abs(filepath.Join(os.TempDir(), m.DepsTreeFileName()))
-	genRepo := "github.com/fabric8-analytics/cli-tools/gomanifest"
-	getGenerator := exec.Command(golang, "get", "-u", genRepo)
-	dependencyTree := exec.Command(golang, "run", genRepo, manifestDir, treePath, golang)
-	log.Debug().Msgf("Generator Command: %s", getGenerator)
-	log.Debug().Msgf("dependencyTree Command: %s", dependencyTree)
-	if err := getGenerator.Run(); err != nil {
-		log.Fatal().Err(err).Msgf(err.Error())
-	}
-	if err := dependencyTree.Run(); err != nil {
-		log.Fatal().Err(err).Msgf(err.Error())
-	}
-	log.Debug().Msgf("Success: buildDepsTree")
+	gomanifest.Generate(golang, manifestDir, treePath)
 	return treePath
 }
 
