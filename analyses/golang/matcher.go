@@ -9,12 +9,39 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
-	gomanifest "github.com/fabric8-analytics/cli-tools/gomanifest/manifest"
+	gomanifest "github.com/fabric8-analytics/cli-tools/gomanifest/generator"
 )
 
 var (
 	_ driver.StackAnalysisInterface = (*Matcher)(nil)
 )
+
+func generate(goExePath string, goModPath string, goManifestPath string) error {
+	// Start generating manifest data.
+	cmd, err := gomanifest.RunGoList(goExePath, goModPath)
+	if err != nil {
+		return err
+	}
+
+	depPackages, err := gomanifest.GetDeps(cmd)
+	if err != nil {
+		return err
+	}
+
+	manifest := gomanifest.BuildManifest(&depPackages)
+	// Create out file.
+	f, err := os.Create(goManifestPath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	err = manifest.Write(f)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 // Matcher is State Object for Golang
 type Matcher struct{}
@@ -33,7 +60,7 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	}
 	manifestDir := filepath.Dir(manifestFilePath)
 	treePath, _ := filepath.Abs(filepath.Join(os.TempDir(), m.DepsTreeFileName()))
-	gomanifest.Generate(golang, manifestDir, treePath)
+	generate(golang, manifestDir, treePath)
 	return treePath
 }
 
