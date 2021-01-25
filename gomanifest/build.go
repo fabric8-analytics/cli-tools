@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/fabric8-analytics/cli-tools/gomanifest/internal"
+	"github.com/fabric8-analytics/cli-tools/gomanifest/generator"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -42,19 +42,19 @@ func main() {
 
 	// Start generating manifest data.
 	log.Info().Msgf("Started analysing go project at [%s] using go exec [%s]", os.Args[1], goExec)
-	cmd, err := internal.RunGoList(goExec, os.Args[1])
+	cmd, err := generator.RunGoList(goExec, os.Args[1])
 	if err != nil {
 		log.Error().Err(err).Msg("`go list` failed")
 		os.Exit(3)
 	}
 
-	depPackages, err := internal.GetDeps(cmd)
+	depPackages, err := generator.GetDeps(cmd)
 	if err != nil {
 		log.Error().Err(err).Msg("get deps")
 		os.Exit(4)
 	}
 
-	manifest := internal.BuildManifest(&depPackages)
+	manifest := generator.BuildManifest(&depPackages)
 	// Check for empty manifest file.
 	if manifest.Main == "" {
 		log.Error().Msg("Empty manifest generated, correct project dependencies using `go mod tidy` command")

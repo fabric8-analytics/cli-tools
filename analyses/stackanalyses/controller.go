@@ -15,6 +15,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/analyses/golang"
 	"github.com/fabric8-analytics/cli-tools/analyses/maven"
 	"github.com/fabric8-analytics/cli-tools/analyses/pypi"
 	"github.com/fabric8-analytics/cli-tools/utils"
@@ -34,7 +35,6 @@ const (
 
 //StackAnalyses Performs Full Stack Analyses
 func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
-	log.Info().Msgf("Performing full Stack Analyses. Please wait...")
 	log.Debug().Msgf("Executing StackAnalyses.")
 	matcher, err := GetMatcher(requestParams.RawManifestFile)
 	if err != nil {
@@ -127,7 +127,7 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 	return body
 }
 
-// validateResponse validates API Response.
+// validatePostResponse validates Stack Analyses POST API Response.
 func (mc *Controller) validatePostResponse(apiResponse *http.Response) driver.PostResponseType {
 	log.Debug().Msgf("Executing validatePostResponse.")
 	var body driver.PostResponseType
@@ -140,7 +140,7 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) driver.Po
 	return body
 }
 
-// validateGetResponse validates API Response.
+// validateGetResponse validates Stack Analyses GET API Response.
 func (mc *Controller) validateGetResponse(apiResponse *http.Response) driver.GetResponseType {
 	log.Debug().Msgf("Executing validateGetResponse.")
 	var body driver.GetResponseType
@@ -164,6 +164,7 @@ func NewController(m driver.StackAnalysisInterface) *Controller {
 var defaultMatchers = []driver.StackAnalysisInterface{
 	&pypi.Matcher{},
 	&maven.Matcher{},
+	&golang.Matcher{},
 }
 
 // GetMatcher returns ecosystem specific matcher
@@ -190,7 +191,7 @@ func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestRe
 func (mc *Controller) getManifestName(manifestFile string) string {
 	stats, err := os.Stat(manifestFile)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Error")
+		log.Fatal().Err(err).Msgf("Error fetching manifest name.")
 	}
 	return stats.Name()
 }

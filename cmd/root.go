@@ -23,7 +23,7 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "crda",
 	Short: "Cli tool to interact with CRDA Platform.",
-	Long:  `Cli tool to interact with CRDA Platform. Perfoms synk token validation.`,
+	Long:  `Cli tool to interact with CRDA Platform. This tool performs full Stack Analyses and token Authentication. Authenticated token can be used as Auth Token to interact with CRDA Plateform.`,
 	Args:  cobra.ExactValidArgs(1),
 }
 
@@ -98,6 +98,6 @@ func initConfig() {
 		}
 	}
 	viper.WriteConfig()
-	log.Info().Msgf("Using config file %s.\n", viper.ConfigFileUsed())
+	log.Debug().Msgf("Using config file %s.\n", viper.ConfigFileUsed())
 	log.Debug().Msgf("Successfully configured config files %s.", viper.ConfigFileUsed())
 }
