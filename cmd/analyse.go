@@ -6,18 +6,22 @@ import (
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 	sa "github.com/fabric8-analytics/cli-tools/analyses/stackanalyses"
+	"github.com/fatih/color"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var manifestFile string
+var jsonOut bool
+var flagNoColor bool
 
 // analyseCmd represents the analyse command
 var analyseCmd = &cobra.Command{
-	Use:     "analyse",
-	Short:   "Performs full Stack Analyses on CRDA Platform.",
-	Long:    `Performs full Stack Analyses on CRDA Platform. Supported ecosystems are Pypi (Python), Maven (Java), Npm (Node) and Golang (Go).`,
+	Use:   "analyse",
+	Short: "Provides detailed report of vulnerabilities.",
+	Long: `Provides detailed report of vulnerabilities. Supported ecosystems are Pypi (Python), Maven (Java), Npm (Node) and Golang (Go).
+If stack has Vulnerabilities, command will exit with status code 2.`,
 	Run:     runAnalyse,
 	PostRun: destructor,
 }
@@ -26,6 +30,8 @@ func init() {
 	rootCmd.AddCommand(analyseCmd)
 	analyseCmd.PersistentFlags().StringVarP(&manifestFile, "file", "f", "", "Manifest file absolute path.")
 	analyseCmd.MarkPersistentFlagRequired("file")
+	analyseCmd.Flags().BoolVarP(&jsonOut, "json", "j", false, "Sets Output format.")
+	analyseCmd.Flags().BoolVarP(&flagNoColor, "no-color", "c", false, "Sets Output format.")
 }
 
 // destructor deletes intermediary files used to have stack analyses
@@ -54,11 +60,21 @@ func destructor(cmd *cobra.Command, args []string) {
 
 //runAnalyse is controller func for analyses cmd.
 func runAnalyse(cmd *cobra.Command, args []string) {
+	if flagNoColor {
+		color.NoColor = true
+	}
 	requestParams := driver.RequestType{
 		UserID:          viper.GetString("crda-key"),
 		ThreeScaleToken: viper.GetString("auth-token"),
 		Host:            viper.GetString("host"),
 		RawManifestFile: manifestFile,
 	}
-	sa.StackAnalyses(requestParams)
+	if !jsonOut {
+		log.Info().Msgf("Executing Stack Analyses! Please wait... ")
+	}
+	hasVul := sa.StackAnalyses(requestParams, jsonOut)
+	if hasVul && jsonOut {
+		// Stack has vulnerability, exit with 2 code
+		os.Exit(2)
+	}
 }
