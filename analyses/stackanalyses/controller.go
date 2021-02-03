@@ -18,6 +18,7 @@ import (
 	"github.com/fabric8-analytics/cli-tools/analyses/golang"
 	"github.com/fabric8-analytics/cli-tools/analyses/maven"
 	"github.com/fabric8-analytics/cli-tools/analyses/pypi"
+	"github.com/fabric8-analytics/cli-tools/analyses/summary"
 	"github.com/fabric8-analytics/cli-tools/utils"
 )
 
@@ -34,7 +35,7 @@ const (
 )
 
 //StackAnalyses Performs Full Stack Analyses
-func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
+func StackAnalyses(requestParams driver.RequestType, jsonOut bool) bool {
 	log.Debug().Msgf("Executing StackAnalyses.")
 	matcher, err := GetMatcher(requestParams.RawManifestFile)
 	if err != nil {
@@ -44,8 +45,9 @@ func StackAnalyses(requestParams driver.RequestType) driver.GetResponseType {
 	mc.fileStats = mc.buildFileStats(requestParams.RawManifestFile)
 	postResponse := mc.postRequest(requestParams, mc.fileStats.DepsTreePath)
 	getResponse := mc.getRequest(requestParams, postResponse)
+	hasVul := summary.ProcessSummary(getResponse, jsonOut)
 	log.Debug().Msgf("Success StackAnalyses.")
-	return getResponse
+	return hasVul
 }
 
 // GetManifestFilePath sets file path
