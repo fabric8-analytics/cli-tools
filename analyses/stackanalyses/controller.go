@@ -17,6 +17,7 @@ import (
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 	"github.com/fabric8-analytics/cli-tools/analyses/golang"
 	"github.com/fabric8-analytics/cli-tools/analyses/maven"
+	"github.com/fabric8-analytics/cli-tools/analyses/npm"
 	"github.com/fabric8-analytics/cli-tools/analyses/pypi"
 	"github.com/fabric8-analytics/cli-tools/analyses/summary"
 	"github.com/fabric8-analytics/cli-tools/utils"
@@ -167,6 +168,7 @@ var defaultMatchers = []driver.StackAnalysisInterface{
 	&pypi.Matcher{},
 	&maven.Matcher{},
 	&golang.Matcher{},
+	&npm.Matcher{},
 }
 
 // GetMatcher returns ecosystem specific matcher
