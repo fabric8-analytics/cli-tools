@@ -30,8 +30,8 @@ func data() driver.GetResponseType {
 
 func TestProcessSummary(t *testing.T) {
 	got := ProcessSummary(data(), false)
-	if diff := cmp.Diff(true, got); diff != "" {
-		t.Errorf("Vuln mismatch (-want, +got):\n%s", diff)
+	if got != true {
+		t.Errorf("Error in ProcessSummary.")
 	}
 }
 
