@@ -38,18 +38,24 @@ type Transitives struct {
 	Version string `json:"version"`
 }
 
-// AnalysedDepsType is type for Analysed Deps API Response
-type AnalysedDepsType struct {
-	Transitives            []Transitives         `json:"trasitives"`
-	Ecosystem              string                `json:"ecosystem"`
-	LatestVersion          string                `json:"latest_version"`
-	Licenses               []interface{}         `json:"licenses"`
-	Name                   string                `json:"name"`
+// VulnerableDependencies is type for Transitives in direct Dependencies
+type VulnerableDependencies struct {
 	PrivateVulnerabilities []VulnerabilitiesType `json:"private_vulnerabilities"`
 	PublicVulnerabilities  []VulnerabilitiesType `json:"public_vulnerabilities"`
-	RecommendedVersion     string                `json:"recommended_version"`
-	Version                string                `json:"version"`
-	VulnerableDependencies []interface{}         `json:"vulnerable_dependencies"`
+}
+
+// AnalysedDepsType is type for Analysed Deps API Response
+type AnalysedDepsType struct {
+	Transitives            []Transitives            `json:"dependencies"`
+	Ecosystem              string                   `json:"ecosystem"`
+	LatestVersion          string                   `json:"latest_version"`
+	Licenses               []interface{}            `json:"licenses"`
+	Name                   string                   `json:"name"`
+	PrivateVulnerabilities []VulnerabilitiesType    `json:"private_vulnerabilities"`
+	PublicVulnerabilities  []VulnerabilitiesType    `json:"public_vulnerabilities"`
+	RecommendedVersion     string                   `json:"recommended_version"`
+	Version                string                   `json:"version"`
+	VulnerableDependencies []VulnerableDependencies `json:"vulnerable_dependencies"`
 }
 
 // GetResponseType is a argtype of RequestServer func

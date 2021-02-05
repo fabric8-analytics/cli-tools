@@ -29,7 +29,7 @@ func getResultSummary(analysedResult driver.GetResponseType) *StackSummary {
 	out := &StackSummary{
 		TotalScannedDependencies:           totalDepsScanned,
 		TotalScannedTransitiveDependencies: data.TotalTransitives,
-		TotalVulnerabilities:               data.PrivateVul + data.PrivateVul,
+		TotalVulnerabilities:               data.PublicVul + data.PrivateVul,
 		DirectVulnerableDependencies:       data.DirectVulnerableDependencies,
 		CommonlyKnownVulnerabilities:       data.PublicVul,
 		VulnerabilitiesUniqueToSynk:        data.PrivateVul,
@@ -45,16 +45,22 @@ func getResultSummary(analysedResult driver.GetResponseType) *StackSummary {
 func processVulnerabilities(analysedDeps []driver.AnalysedDepsType) ProcessVulnerabilities {
 	processedData := &ProcessVulnerabilities{}
 	for _, dep := range analysedDeps {
-		public := len(dep.PublicVulnerabilities)
-		private := len(dep.PrivateVulnerabilities)
-		if public+private > 0 {
+		publicVul := len(dep.PublicVulnerabilities)
+		privateVul := len(dep.PrivateVulnerabilities)
+		if publicVul+privateVul > 0 {
 			processedData.DirectVulnerableDependencies++
 		}
 		processedData.TotalTransitives += len(dep.Transitives)
 		processedData.Severities = getSeverity(dep.PublicVulnerabilities, processedData.Severities)
 		processedData.Severities = getSeverity(dep.PrivateVulnerabilities, processedData.Severities)
-		processedData.PublicVul += public
-		processedData.PrivateVul += private
+		for _, transVul:= range dep.VulnerableDependencies{
+			publicVul += len(transVul.PublicVulnerabilities)
+			privateVul += len(transVul.PrivateVulnerabilities)
+			processedData.Severities = getSeverity(transVul.PublicVulnerabilities, processedData.Severities)
+			processedData.Severities = getSeverity(transVul.PrivateVulnerabilities, processedData.Severities)
+		}
+		processedData.PublicVul += publicVul
+		processedData.PrivateVul += privateVul
 	}
 	return *processedData
 }
