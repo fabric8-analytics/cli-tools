@@ -30,7 +30,7 @@ func data() driver.GetResponseType {
 
 func TestProcessSummary(t *testing.T) {
 	got := ProcessSummary(data(), false)
-	if diff := cmp.Diff(false, got); diff != "" {
+	if diff := cmp.Diff(true, got); diff != "" {
 		t.Errorf("Vuln mismatch (-want, +got):\n%s", diff)
 	}
 }
@@ -40,7 +40,7 @@ func TestGetResultSummary(t *testing.T) {
 	want := &StackSummary{
 		TotalScannedDependencies:           1,
 		TotalScannedTransitiveDependencies: 0,
-		TotalVulnerabilities:               0,
+		TotalVulnerabilities:               1,
 		CommonlyKnownVulnerabilities:       1,
 		VulnerabilitiesUniqueToSynk:        0,
 		DirectVulnerableDependencies:       1,
