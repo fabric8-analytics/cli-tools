@@ -11,18 +11,15 @@ var showUUID bool
 
 // authCmd represents the auth command
 var authCmd = &cobra.Command{
-	Use:              "auth",
-	Short:            "Links uuid with Snyk token.",
-	Long:             `command maps Snyk Token with UUID on crda server and outputs UUID to use for Authentication.`,
-	Run:              main,
-	PersistentPreRun: preRun,
-}
-
-func preRun(cmd *cobra.Command, args []string) {
-	viper.BindPFlag("snyk-token", rootCmd.PersistentFlags().Lookup("snyk-token"))
+	Use:   "auth",
+	Short: "Links uuid with Snyk token.",
+	Long:  `command maps Snyk Token with UUID on crda server and outputs UUID to use for Authentication.`,
+	Run:   main,
 }
 
 func init() {
+	authCmd.Flags().String("snyk-token", "", "Snyk token, if not set, Freemium account will be created.")
+	viper.BindPFlag("snyk-token", authCmd.Flag("snyk-token"))
 	authCmd.Flags().BoolVarP(&showUUID, "show-token", "s", false, "Show token to STDOUT")
 	rootCmd.AddCommand(authCmd)
 }

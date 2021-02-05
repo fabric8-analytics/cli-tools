@@ -30,8 +30,8 @@ func init() {
 	rootCmd.AddCommand(analyseCmd)
 	analyseCmd.PersistentFlags().StringVarP(&manifestFile, "file", "f", "", "Manifest file absolute path.")
 	analyseCmd.MarkPersistentFlagRequired("file")
-	analyseCmd.Flags().BoolVarP(&jsonOut, "json", "j", false, "Sets Output format.")
-	analyseCmd.Flags().BoolVarP(&flagNoColor, "no-color", "c", false, "Sets Output format.")
+	analyseCmd.Flags().BoolVarP(&jsonOut, "json", "j", false, "Set output format to JSON.")
+	analyseCmd.Flags().BoolVarP(&flagNoColor, "no-color", "c", false, "Toggle colors in output.")
 }
 
 // destructor deletes intermediary files used to have stack analyses
