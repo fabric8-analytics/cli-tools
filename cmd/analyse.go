@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-var manifestFile string
 var jsonOut bool
+var verboseOut bool
 var flagNoColor bool
 
 // analyseCmd represents the analyse command
@@ -23,15 +23,15 @@ var analyseCmd = &cobra.Command{
 	Long: `Provides detailed report of vulnerabilities. Supported ecosystems are Pypi (Python), Maven (Java), Npm (Node) and Golang (Go).
 If stack has Vulnerabilities, command will exit with status code 2.`,
 	Run:     runAnalyse,
+	Args:    validateFileArg,
 	PostRun: destructor,
 }
 
 func init() {
 	rootCmd.AddCommand(analyseCmd)
-	analyseCmd.PersistentFlags().StringVarP(&manifestFile, "file", "f", "", "Manifest file absolute path.")
-	analyseCmd.MarkPersistentFlagRequired("file")
 	analyseCmd.Flags().BoolVarP(&jsonOut, "json", "j", false, "Set output format to JSON.")
 	analyseCmd.Flags().BoolVarP(&flagNoColor, "no-color", "c", false, "Toggle colors in output.")
+	analyseCmd.Flags().BoolVarP(&verboseOut, "verbose", "v", false, "Detailed Analyses Report.")
 }
 
 // destructor deletes intermediary files used to have stack analyses
@@ -60,19 +60,20 @@ func destructor(cmd *cobra.Command, args []string) {
 
 //runAnalyse is controller func for analyses cmd.
 func runAnalyse(cmd *cobra.Command, args []string) {
-	if flagNoColor {
-		color.NoColor = true
+	color.NoColor = flagNoColor
+	if !viper.IsSet("crda-key") {
+		log.Fatal().Msg("Please run `crda auth` command first to get `crda-key` and set it in environment.")
 	}
 	requestParams := driver.RequestType{
 		UserID:          viper.GetString("crda-key"),
 		ThreeScaleToken: viper.GetString("auth-token"),
 		Host:            viper.GetString("host"),
-		RawManifestFile: manifestFile,
+		RawManifestFile: args[0],
 	}
 	if !jsonOut {
 		log.Info().Msgf("Executing Stack Analyses! Please wait... ")
 	}
-	hasVul := sa.StackAnalyses(requestParams, jsonOut)
+	hasVul := sa.StackAnalyses(requestParams, jsonOut, verboseOut)
 	if hasVul && jsonOut {
 		// Stack has vulnerability, exit with 2 code
 		os.Exit(2)

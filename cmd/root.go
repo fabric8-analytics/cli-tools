@@ -40,10 +40,6 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.crda/config.yaml)")
 	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", constants.Debug, "Sets Log level to Debug.")
-	rootCmd.PersistentFlags().String("host", constants.Host, "Host Server, if set, host from config file will be ignored.")
-	rootCmd.PersistentFlags().String("auth-token", constants.AuthToken, "3Scale Token, Token for server authentication.")
-	viper.BindPFlag("auth-token", rootCmd.PersistentFlags().Lookup("auth-token"))
-	viper.BindPFlag("host", rootCmd.PersistentFlags().Lookup("host"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -95,6 +91,12 @@ func initConfig() {
 			// Config file was found but another error was produced
 			log.Fatal().Err(err).Msgf(err.Error())
 		}
+	}
+	if !viper.IsSet("host") {
+		viper.Set("host", constants.Host)
+	}
+	if !viper.IsSet("auth-token") {
+		viper.Set("auth-token", constants.AuthToken)
 	}
 	viper.WriteConfig()
 	log.Debug().Msgf("Using config file %s.\n", viper.ConfigFileUsed())

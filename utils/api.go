@@ -20,6 +20,7 @@ type HTTPRequestType struct {
 	Endpoint        string         `json:"endpoint,omitempty"`
 	ThreeScaleToken string         `json:"threeScale,omitempty"`
 	Host            string         `json:"host,omitempty"`
+	UserID          string         `json:"user_id,omitempty"`
 }
 
 // buildAPIURL builds API Endpoint URL
@@ -46,6 +47,7 @@ func HTTPRequest(data HTTPRequestType) *http.Response {
 	payload, _ := json.Marshal(&data.Payload)
 	req, err := http.NewRequest(data.Method, url.String(), bytes.NewBuffer(payload))
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("uuid", data.UserID)
 
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to build request")

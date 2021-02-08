@@ -1,0 +1,39 @@
+{
+    "analyzed_dependencies": [
+		{
+			"ecosystem":     "pypi",
+			"latest_version": "7.1.2",
+			"name":          "click",
+			"public_vulnerabilities": [
+				{
+					"severity": "medium",
+					"id":       "ABC-PYTHON-CODECOV-12345",
+					"title":    "Command Injection1"
+				},
+				{
+					"severity": "medium",
+					"id":       "ABC-PYTHON-CODECOV-67890",
+					"title":    "Command Injection2"
+				},
+				{
+					"severity": "high",
+					"id":       "ABC-PYTHON-CODECOV-abcde",
+					"title":    "Command Injection3"
+				}
+            ],
+			"private_vulnerabilities": [
+				{
+					"severity": "critical",
+					"id":       "Critical-12345",
+					"title":    "SQL Attack"
+				}
+            ],
+			"dependencies": [
+				{
+					"name":    "Transitive 1",
+					"version": "1.1"
+				}
+            ]
+		}
+    ]
+}

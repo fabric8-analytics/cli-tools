@@ -12,12 +12,12 @@ import (
 )
 
 // ProcessSummary processes summary results, return true if Vul found
-func ProcessSummary(analysedResult driver.GetResponseType, jsonOut bool) bool {
+func ProcessSummary(analysedResult driver.GetResponseType, jsonOut bool, showVerboseMsg bool) bool {
 	out := getResultSummary(analysedResult)
 	if jsonOut {
 		outputSummaryJSON(out)
 	} else {
-		outputSummaryPlain(out)
+		outputSummaryPlain(out, showVerboseMsg)
 	}
 	return out.TotalVulnerabilities > 0
 }
@@ -53,7 +53,7 @@ func processVulnerabilities(analysedDeps []driver.AnalysedDepsType) ProcessVulne
 		processedData.TotalTransitives += len(dep.Transitives)
 		processedData.Severities = getSeverity(dep.PublicVulnerabilities, processedData.Severities)
 		processedData.Severities = getSeverity(dep.PrivateVulnerabilities, processedData.Severities)
-		for _, transVul:= range dep.VulnerableDependencies{
+		for _, transVul := range dep.VulnerableDependencies {
 			publicVul += len(transVul.PublicVulnerabilities)
 			privateVul += len(transVul.PrivateVulnerabilities)
 			processedData.Severities = getSeverity(transVul.PublicVulnerabilities, processedData.Severities)
@@ -96,7 +96,7 @@ func outputSummaryJSON(result *StackSummary) {
 }
 
 // outputSummaryPlain stdout analyses summary output as JSON
-func outputSummaryPlain(result *StackSummary) {
+func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 	yellow := color.New(color.FgHiYellow, color.Bold).SprintFunc()
 	white := color.New(color.FgHiWhite, color.Bold).SprintFunc()
 	red := color.New(color.FgHiRed, color.Bold).SprintFunc()
@@ -116,5 +116,9 @@ func outputSummaryPlain(result *StackSummary) {
 		blue("Low Vulnerabilities:"), blue(result.LowVulnerabilities), "\n\n",
 	)
 	fmt.Print("(Powered by Snyk)\n\n")
+	if verboseMsg {
+		fmt.Println("Authenticate with `Snyk Token` to get verbose scanning results.")
+		return
+	}
 	fmt.Println("Use --verbose for detailed report.")
 }
