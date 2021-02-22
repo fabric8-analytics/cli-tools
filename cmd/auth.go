@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	auth "github.com/fabric8-analytics/cli-tools/auth"
+	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -30,7 +31,7 @@ type promtVars struct {
 var authCmd = &cobra.Command{
 	Use:   "auth",
 	Short: "Links uuid with Snyk token.",
-	Long: fmt.Sprintf(`Command maps Snyk Token with UUID on crda server and STDOUT 'crda-key' for further Authentication.
+	Long: fmt.Sprintf(`Command maps Snyk Token with UUID and Outputs 'crda-key' for further Authentication.
 	
 	To get "Snyk Token" Please click here: %s`, snykURL),
 	Run: main,
@@ -54,9 +55,10 @@ func main(cmd *cobra.Command, args []string) {
 	}
 	userID := auth.RequestServer(requestParams)
 
-	log.Info().Msgf("Successfully Registered.\n")
+	fmt.Fprint(os.Stdout, "Successfully Registered. \n\n")
+	green := color.New(color.FgHiGreen, color.Bold).SprintFunc()
 	fmt.Fprintln(os.Stdout,
-		fmt.Sprintf("\t crda-key: %s\n\n", userID),
+		fmt.Sprintf(green("\t crda-key: ")+"%s\n\n", color.GreenString(userID)),
 		fmt.Sprintf("This token is confidential, Please keep it safe!"),
 	)
 	viper.Set("crda-key", userID)

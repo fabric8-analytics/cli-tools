@@ -1,12 +1,12 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 	sa "github.com/fabric8-analytics/cli-tools/analyses/stackanalyses"
-	"github.com/fatih/color"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,13 +14,12 @@ import (
 
 var jsonOut bool
 var verboseOut bool
-var flagNoColor bool
 
 // analyseCmd represents the analyse command
 var analyseCmd = &cobra.Command{
 	Use:   "analyse",
-	Short: "Provides detailed report of vulnerabilities.",
-	Long: `Provides detailed report of vulnerabilities. Supported ecosystems are Pypi (Python), Maven (Java), Npm (Node) and Golang (Go).
+	Short: "Get detailed report of vulnerabilities.",
+	Long: `Get detailed report of vulnerabilities. Supported ecosystems are Pypi (Python), Maven (Java), Npm (Node) and Golang (Go).
 If stack has Vulnerabilities, command will exit with status code 2.`,
 	Run:     runAnalyse,
 	Args:    validateFileArg,
@@ -30,7 +29,6 @@ If stack has Vulnerabilities, command will exit with status code 2.`,
 func init() {
 	rootCmd.AddCommand(analyseCmd)
 	analyseCmd.Flags().BoolVarP(&jsonOut, "json", "j", false, "Set output format to JSON.")
-	analyseCmd.Flags().BoolVarP(&flagNoColor, "no-color", "c", false, "Toggle colors in output.")
 	analyseCmd.Flags().BoolVarP(&verboseOut, "verbose", "v", false, "Detailed Analyses Report.")
 }
 
@@ -60,7 +58,6 @@ func destructor(cmd *cobra.Command, args []string) {
 
 //runAnalyse is controller func for analyses cmd.
 func runAnalyse(cmd *cobra.Command, args []string) {
-	color.NoColor = flagNoColor
 	if !viper.IsSet("crda-key") {
 		log.Fatal().Msg("Please run `crda auth` command first to get `crda-key` and set it in environment.")
 	}
@@ -71,7 +68,7 @@ func runAnalyse(cmd *cobra.Command, args []string) {
 		RawManifestFile: args[0],
 	}
 	if !jsonOut {
-		log.Info().Msgf("Executing Stack Analyses! Please wait... ")
+		fmt.Fprintln(os.Stdout, "Analysing your Dependency Stack! Please wait...")
 	}
 	hasVul := sa.StackAnalyses(requestParams, jsonOut, verboseOut)
 	if hasVul && jsonOut {
