@@ -1,5 +1,4 @@
 # cli-tools
-
 <p align="center">
     <a alt="GoReport" href="https://goreportcard.com/report/github.com/fabric8-analytics/cli-tools">
         <img alt="GoReport" src="https://goreportcard.com/badge/github.com/fabric8-analytics/cli-tools">
