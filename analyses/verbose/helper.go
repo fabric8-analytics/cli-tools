@@ -129,7 +129,7 @@ func outputVerboseJSON(result *StackVerbose) {
 // outputVerbosePlain STDOUT Headers and Footers in Verbose Plain Output
 func outputVerbosePlain(result *StackVerbose) {
 	fmt.Fprint(os.Stdout, "Verbose Report for given Stack:\n\n")
-	cusColor := &CustomColors{
+	cusColor := &driver.CustomColors{
 		Green: color.New(color.FgGreen, color.Bold).SprintFunc(),
 		White: color.New(color.FgWhite, color.Bold).SprintFunc(),
 		Cyan:  color.New(color.FgCyan).SprintFunc(),
@@ -146,7 +146,7 @@ func outputVerbosePlain(result *StackVerbose) {
 }
 
 // outputVulDeps STDOUT Vulnerable dependencies in verbose format
-func outputVulDeps(deps []DependenciesType, cusColor CustomColors) {
+func outputVulDeps(deps []DependenciesType, cusColor driver.CustomColors) {
 	for _, dep := range deps {
 		pkgName := fmt.Sprintf("%s@%s", cusColor.White(dep.Name), cusColor.White(dep.Version))
 
