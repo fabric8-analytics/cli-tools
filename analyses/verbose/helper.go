@@ -12,6 +12,13 @@ import (
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 )
 
+var cusColor = &driver.CustomColors{
+	Green: color.New(color.FgGreen, color.Bold).SprintFunc(),
+	White: color.New(color.FgWhite, color.Bold).SprintFunc(),
+	Cyan:  color.New(color.FgCyan).SprintFunc(),
+	Red:   color.New(color.FgRed, color.Bold).SprintFunc(),
+}
+
 // ProcessVerbose processes verbose results and decides STDOUT format
 func ProcessVerbose(analysedResult driver.GetResponseType, jsonOut bool) bool {
 	out := getVerboseResult(analysedResult)
@@ -129,24 +136,18 @@ func outputVerboseJSON(result *StackVerbose) {
 // outputVerbosePlain STDOUT Headers and Footers in Verbose Plain Output
 func outputVerbosePlain(result *StackVerbose) {
 	fmt.Fprint(os.Stdout, "Verbose Report for given Stack:\n\n")
-	cusColor := &driver.CustomColors{
-		Green: color.New(color.FgGreen, color.Bold).SprintFunc(),
-		White: color.New(color.FgWhite, color.Bold).SprintFunc(),
-		Cyan:  color.New(color.FgCyan).SprintFunc(),
-		Red:   color.New(color.FgRed, color.Bold).SprintFunc(),
-	}
 
 	fmt.Fprint(os.Stdout,
 		color.WhiteString("Scanned %d Dependencies and %d Transitives,", len(result.Dependencies), result.TotalTransitives),
 		fmt.Sprintf(cusColor.Red(" Found %d Issues\n\n"), result.TotalDirectVulnerabilities+result.TotalTransitiveVulnerabilities),
 	)
 	fmt.Fprintln(os.Stdout, cusColor.Green("Fixable Issues:"))
-	outputVulDeps(result.Dependencies, *cusColor)
+	outputVulDeps(result.Dependencies)
 	fmt.Fprint(os.Stdout, "(Powered by Snyk)\n\n")
 }
 
 // outputVulDeps STDOUT Vulnerable dependencies in verbose format
-func outputVulDeps(deps []DependenciesType, cusColor driver.CustomColors) {
+func outputVulDeps(deps []DependenciesType) {
 	for _, dep := range deps {
 		pkgName := fmt.Sprintf("%s@%s", cusColor.White(dep.Name), cusColor.White(dep.Version))
 
