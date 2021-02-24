@@ -49,3 +49,11 @@ type ProcessVulnerabilities struct {
 	TotalTransitiveVulnerabilities int
 	Severities                     SeverityType
 }
+
+// CustomColors maintain state of custom colors
+type CustomColors struct {
+	Green func(...interface{}) string
+	White func(...interface{}) string
+	Cyan  func(...interface{}) string
+	Red   func(...interface{}) string
+}

@@ -69,11 +69,3 @@ type StackAnalysisInterface interface {
 	IsSupportedManifestFormat(string) bool
 	GeneratorDependencyTree(string) string
 }
-
-// CustomColors maintain state of custom colors
-type CustomColors struct {
-	Green func(...interface{}) string
-	White func(...interface{}) string
-	Cyan  func(...interface{}) string
-	Red   func(...interface{}) string
-}

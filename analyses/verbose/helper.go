@@ -12,7 +12,7 @@ import (
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 )
 
-var cusColor = &driver.CustomColors{
+var cusColor = &CustomColors{
 	Green: color.New(color.FgGreen, color.Bold).SprintFunc(),
 	White: color.New(color.FgWhite, color.Bold).SprintFunc(),
 	Cyan:  color.New(color.FgCyan).SprintFunc(),
