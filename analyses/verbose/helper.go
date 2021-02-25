@@ -143,7 +143,7 @@ func outputVerbosePlain(result *StackVerbose) {
 	)
 	fmt.Fprintln(os.Stdout, cusColor.Green("Fixable Issues:"))
 	outputVulDeps(result.Dependencies)
-	fmt.Fprint(os.Stdout, "(Powered by Snyk)\n\n")
+	fmt.Fprint(os.Stdout, "\n(Powered by Snyk)\n\n")
 }
 
 // outputVulDeps STDOUT Vulnerable dependencies in verbose format
@@ -153,7 +153,7 @@ func outputVulDeps(deps []DependenciesType) {
 
 		if len(dep.CommonlyKnownVulnerabilities)+len(dep.VulnerabilitiesUniqueToSynk) > 0 {
 			fmt.Fprint(os.Stdout,
-				fmt.Sprintf("\tUpgrade %s ", pkgName),
+				fmt.Sprintf("\n\tUpgrade %s ", pkgName),
 				fmt.Sprintf("to %s@%s\n", cusColor.White(dep.Name), cusColor.White(dep.RecommendedVersion)),
 			)
 			dep.CommonlyKnownVulnerabilities = append(dep.CommonlyKnownVulnerabilities, dep.VulnerabilitiesUniqueToSynk...)
@@ -171,10 +171,8 @@ func outputVulDeps(deps []DependenciesType) {
 				)
 				trans.CommonlyKnownVulnerabilities = append(trans.CommonlyKnownVulnerabilities, trans.VulnerabilitiesUniqueToSynk...)
 				outputVulType(trans.CommonlyKnownVulnerabilities, transName, pkgName)
-				fmt.Fprintln(os.Stdout, "")
 			}
 		}
-		fmt.Fprintln(os.Stdout, "")
 	}
 }
 
