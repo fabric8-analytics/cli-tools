@@ -10,7 +10,7 @@ type StackVerbose struct {
 	TotalDirectVulnerabilities     int                `json:"total_direct_vulnerabilities"`
 	TotalTransitives               int                `json:"total_transitives_scanned"`
 	TotalTransitiveVulnerabilities int                `json:"transitive_vulnerabilities"`
-	Exploits                       SeverityType       `json:"exploits"`
+	Severity                       SeverityType       `json:"severity"`
 }
 
 // VulnerabilityType type for Vulnerability in verbose output

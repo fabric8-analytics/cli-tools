@@ -38,7 +38,7 @@ func getVerboseResult(analysedResult driver.GetResponseType) *StackVerbose {
 		TotalTransitives:               data.TotalTransitives,
 		TotalDirectVulnerabilities:     data.TotalDirectVulnerabilities,
 		TotalTransitiveVulnerabilities: data.TotalTransitiveVulnerabilities,
-		Exploits:                       data.Severities,
+		Severity:                       data.Severities,
 	}
 	return out
 }
