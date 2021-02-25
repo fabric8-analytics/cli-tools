@@ -104,21 +104,21 @@ func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 	magenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
 	fmt.Print("Summary Report for Analyses:\n\n")
 	fmt.Fprint(os.Stdout,
-		white("Total Scanned Dependencies:"), white(result.TotalScannedDependencies), "\n",
-		white("Total Scanned Transitive Dependencies:"), white(result.TotalScannedTransitiveDependencies), "\n",
-		white("Direct Vulnerable Dependencies:"), white(result.DirectVulnerableDependencies), "\n",
-		white("Total Vulnerabilities:"), white(result.TotalVulnerabilities), "\n",
-		white("Commonly Known Vulnerabilities:"), white(result.CommonlyKnownVulnerabilities), "\n",
-		white("Vulnerabilities Unique to Synk:"), white(result.VulnerabilitiesUniqueToSynk), "\n",
-		red("Critical Vulnerabilities:"), red(result.CriticalVulnerabilities), "\n",
-		magenta("High Vulnerabilities:"), magenta(result.HighVulnerabilities), "\n",
-		yellow("Medium Vulnerabilities:"), yellow(result.MediumVulnerabilities), "\n",
-		blue("Low Vulnerabilities:"), blue(result.LowVulnerabilities), "\n\n",
+		white("Total Scanned Dependencies: "), white(result.TotalScannedDependencies), "\n",
+		white("Total Scanned Transitive Dependencies: "), white(result.TotalScannedTransitiveDependencies), "\n",
+		white("Direct Vulnerable Dependencies: "), white(result.DirectVulnerableDependencies), "\n",
+		white("Total Vulnerabilities: "), white(result.TotalVulnerabilities), "\n",
+		white("Commonly Known Vulnerabilities: "), white(result.CommonlyKnownVulnerabilities), "\n",
+		white("Vulnerabilities Unique to Synk: "), white(result.VulnerabilitiesUniqueToSynk), "\n",
+		red("Critical Vulnerabilities: "), red(result.CriticalVulnerabilities), "\n",
+		magenta("High Vulnerabilities: "), magenta(result.HighVulnerabilities), "\n",
+		yellow("Medium Vulnerabilities: "), yellow(result.MediumVulnerabilities), "\n",
+		blue("Low Vulnerabilities: "), blue(result.LowVulnerabilities), "\n\n",
 	)
 	fmt.Print("(Powered by Snyk)\n\n")
 	if verboseMsg {
 		fmt.Print("Register with Snyk and add token by running `crda auth`.")
 		return
 	}
-	fmt.Print("Use --verbose for detailed report.")
+	fmt.Println("tip: Use --verbose for detailed report.")
 }
