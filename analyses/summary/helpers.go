@@ -117,7 +117,7 @@ func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 	)
 	fmt.Print("(Powered by Snyk)\n\n")
 	if verboseMsg {
-		fmt.Print("Register with Snyk and add token by running `crda auth`.")
+		fmt.Println("Register with Snyk and add token by running `crda auth`.")
 		return
 	}
 	fmt.Println("tip: Use --verbose for detailed report.")
