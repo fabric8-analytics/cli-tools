@@ -23,7 +23,7 @@
 	],
 	"total_transitives_scanned": 1,
 	"total_direct_vulnerabilities": 4,
-	"exploits": {
+	"severity": {
 		"medium": [
 			{"id": "ABC-PYTHON-CODECOV-12345", "severity": "medium", "title": "Command Injection1"},
 			{"id": "ABC-PYTHON-CODECOV-67890", "severity": "medium", "title": "Command Injection2"}
