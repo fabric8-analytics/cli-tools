@@ -57,10 +57,11 @@ func main(cmd *cobra.Command, args []string) {
 
 	fmt.Fprint(os.Stdout, "Successfully Registered. \n\n")
 	green := color.New(color.FgHiGreen, color.Bold).SprintFunc()
-	fmt.Fprintln(os.Stdout,
-		fmt.Sprintf(green("\t crda-key: ")+"%s\n\n", color.GreenString(userID)),
-		fmt.Sprintf("This token is confidential, Please keep it safe!"),
+	fmt.Fprint(os.Stdout,
+		fmt.Sprintf(green("crda-key: ")+"%s\n\n", color.GreenString(userID)),
 	)
+	fmt.Fprint(os.Stdout, "This key is confidential, Please keep it safe!. \n")
+
 	viper.Set("crda-key", userID)
 	viper.WriteConfig()
 	log.Debug().Msgf("Successfully Executed Auth command.")
