@@ -102,7 +102,7 @@ func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 	red := color.New(color.FgHiRed, color.Bold).SprintFunc()
 	blue := color.New(color.FgHiBlue, color.Bold).SprintFunc()
 	magenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
-	fmt.Print("Summary Report for Analyses:\n\n")
+	fmt.Fprint(os.Stdout, "Summary Report for Analyses:\n\n")
 	fmt.Fprint(os.Stdout,
 		white("Total Scanned Dependencies: "), white(result.TotalScannedDependencies), "\n",
 		white("Total Scanned Transitive Dependencies: "), white(result.TotalScannedTransitiveDependencies), "\n",
@@ -115,10 +115,10 @@ func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 		yellow("Medium Vulnerabilities: "), yellow(result.MediumVulnerabilities), "\n",
 		blue("Low Vulnerabilities: "), blue(result.LowVulnerabilities), "\n\n",
 	)
-	fmt.Print("(Powered by Snyk)\n\n")
+	fmt.Fprint(os.Stdout, "(Powered by Snyk)\n\n")
 	if verboseMsg {
-		fmt.Println("Register with Snyk and add token by running `crda auth`.")
+		fmt.Fprint(os.Stdout, "tip: Register with Snyk and add token by running `crda auth`.\n")
 		return
 	}
-	fmt.Println("tip: Use --verbose for detailed report.")
+	fmt.Fprint(os.Stdout, "tip: Use --verbose for detailed report.\n")
 }
