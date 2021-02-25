@@ -7,6 +7,7 @@ import (
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 	sa "github.com/fabric8-analytics/cli-tools/analyses/stackanalyses"
+	"github.com/fatih/color"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -59,7 +60,11 @@ func destructor(cmd *cobra.Command, args []string) {
 //runAnalyse is controller func for analyses cmd.
 func runAnalyse(cmd *cobra.Command, args []string) {
 	if !viper.IsSet("crda-key") {
-		log.Fatal().Msg("Please run `crda auth` command first to get `crda-key` and set it in environment.")
+		fmt.Fprintln(os.Stdout,
+			color.RedString("\u2718 "),
+			"Please run `crda auth` command first.",
+		)
+		os.Exit(1)
 	}
 	requestParams := driver.RequestType{
 		UserID:          viper.GetString("crda-key"),
