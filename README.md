@@ -31,36 +31,4 @@ go test -v -cover ./...
 ```
 
 Execute above command at root of the source tree, it runs all test cases and provides oneliner output in code coverage.
-Sample output is as below:
 
-```
-$ go test -cover -v ./...
-=== RUN   TestMainWithInvalidNumOfArgs
---- PASS: TestMainWithInvalidNumOfArgs (0.13s)
-=== RUN   TestMainWithInvalidFolder
---- PASS: TestMainWithInvalidFolder (0.13s)
-=== RUN   TestMainHappyCase
---- PASS: TestMainHappyCase (0.14s)
-PASS
-coverage: 0.0% of statements
-ok  	github.com/fabric8-analytics/cli-tools/gomanifest	(cached)	coverage: 0.0% of statements
-=== RUN   TestProcessDepsDataFailCase
-{"level":"error","time":"2020-11-05T14:07:35+05:30","message":"`go list` command failed, clean dependencies using `go mod tidy` command"}
---- PASS: TestProcessDepsDataFailCase (0.00s)
-=== RUN   TestProcessDepsDataHappyCase
-{"level":"info","time":"2020-11-05T14:07:35+05:30","message":"Total packages: \t\t12"}
---- PASS: TestProcessDepsDataHappyCase (0.00s)
-=== RUN   TestTransformationVerionSemVer
---- PASS: TestTransformationVerionSemVer (0.00s)
-=== RUN   TestBuildManifest
-{"level":"info","time":"2020-11-05T14:07:35+05:30","message":"Source code imports: \t13"}
-{"level":"info","time":"2020-11-05T14:07:35+05:30","message":"Direct dependencies: \t1"}
---- PASS: TestBuildManifest (0.00s)
-=== RUN   TestSaveManifest
-{"level":"info","time":"2020-11-05T14:07:35+05:30","message":"Source code imports: \t13"}
-{"level":"info","time":"2020-11-05T14:07:35+05:30","message":"Direct dependencies: \t1"}
---- PASS: TestSaveManifest (0.00s)
-PASS
-coverage: 79.4% of statements
-ok  	github.com/fabric8-analytics/cli-tools/gomanifest/internal	(cached)	coverage: 79.4% of statements
-```
