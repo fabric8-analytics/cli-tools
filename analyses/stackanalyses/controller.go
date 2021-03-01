@@ -8,7 +8,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/jpillora/backoff"
@@ -20,6 +19,7 @@ import (
 	"github.com/fabric8-analytics/cli-tools/analyses/npm"
 	"github.com/fabric8-analytics/cli-tools/analyses/pypi"
 	"github.com/fabric8-analytics/cli-tools/analyses/summary"
+	"github.com/fabric8-analytics/cli-tools/analyses/verbose"
 	"github.com/fabric8-analytics/cli-tools/utils"
 )
 
@@ -33,11 +33,13 @@ type Controller struct {
 // API Constants
 const (
 	APIStackAnalyses = "/api/v2/stack-analyses"
+	RegisteredStatus = "REGISTERED"
 )
 
-//StackAnalyses Performs Full Stack Analyses
-func StackAnalyses(requestParams driver.RequestType, jsonOut bool) bool {
+//StackAnalyses is main controller function for analyse command. This function is responsible for all communications between cmd and custom packages.
+func StackAnalyses(requestParams driver.RequestType, jsonOut bool, verboseOut bool) bool {
 	log.Debug().Msgf("Executing StackAnalyses.")
+	var hasVul bool
 	matcher, err := GetMatcher(requestParams.RawManifestFile)
 	if err != nil {
 		log.Fatal().Msgf(err.Error())
@@ -46,18 +48,17 @@ func StackAnalyses(requestParams driver.RequestType, jsonOut bool) bool {
 	mc.fileStats = mc.buildFileStats(requestParams.RawManifestFile)
 	postResponse := mc.postRequest(requestParams, mc.fileStats.DepsTreePath)
 	getResponse := mc.getRequest(requestParams, postResponse)
-	hasVul := summary.ProcessSummary(getResponse, jsonOut)
+	verboseEligible := getResponse.RegistrationStatus == RegisteredStatus
+	showVerboseMsg := verboseOut && !verboseEligible
+
+	if verboseOut && verboseEligible {
+		hasVul = verbose.ProcessVerbose(getResponse, jsonOut)
+	} else {
+		hasVul = summary.ProcessSummary(getResponse, jsonOut, showVerboseMsg)
+	}
+
 	log.Debug().Msgf("Success StackAnalyses.")
 	return hasVul
-}
-
-// GetManifestFilePath sets file path
-func (mc *Controller) GetManifestFilePath(input string) string {
-	path, err := filepath.Abs(input)
-	if err != nil {
-		log.Fatal().Msgf("Invalid Path of Manifest file. Only Absolute path is allowed.")
-	}
-	return path
 }
 
 // postRequest performs Stack Analyses POST Request to CRDA server.
@@ -114,6 +115,7 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 		Endpoint:        APIStackAnalyses + "/" + postResponse.ID,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
+		UserID:          requestParams.UserID,
 	}
 	for {
 		d := polling.Duration()
@@ -185,7 +187,7 @@ func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestRe
 	stats := &driver.ReadManifestResponse{
 		Ecosystem:        mc.m.Ecosystem(),
 		RawFileName:      mc.getManifestName(manifestFile),
-		RawFilePath:      mc.GetManifestFilePath(manifestFile),
+		RawFilePath:      manifestFile,
 		DepsTreePath:     mc.m.GeneratorDependencyTree(manifestFile),
 		DepsTreeFileName: mc.m.DepsTreeFileName(),
 	}

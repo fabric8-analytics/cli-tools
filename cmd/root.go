@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/fatih/color"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -15,16 +16,19 @@ import (
 
 // Flags
 var (
-	debug   bool
-	cfgFile string
+	debug       bool
+	cfgFile     string
+	flagNoColor bool
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "crda",
 	Short: "Cli tool to interact with CRDA Platform.",
-	Long:  `Cli tool to interact with CRDA Platform. This tool performs full Stack Analyses and token Authentication. Authenticated token can be used as Auth Token to interact with CRDA Plateform.`,
-	Args:  cobra.ExactValidArgs(1),
+	Long: `Cli tool to interact with CRDA Platform. This tool performs token Authentication and verbose Analyses of Dependency Stack. 
+	
+	Authenticated token can be used as Auth Token to interact with CRDA Platform.`,
+	Args: cobra.ExactValidArgs(1),
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -38,16 +42,15 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.crda/config.yaml)")
 	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", constants.Debug, "Sets Log level to Debug.")
-	rootCmd.PersistentFlags().String("host", constants.Host, "Host Server, if set, host from config file will be ignored.")
-	rootCmd.PersistentFlags().String("auth-token", constants.AuthToken, "3Scale Token, Token for server authentication.")
-	viper.BindPFlag("auth-token", rootCmd.PersistentFlags().Lookup("auth-token"))
-	viper.BindPFlag("host", rootCmd.PersistentFlags().Lookup("host"))
+	rootCmd.PersistentFlags().BoolVarP(&flagNoColor, "no-color", "c", false, "Toggle colors in output.")
+
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	color.NoColor = flagNoColor
+
 	// Log Level Settings
 	logLevel := zerolog.InfoLevel
 	if debug {
@@ -66,15 +69,10 @@ func initConfig() {
 	}
 	configPath := filepath.Join(configHome, crdaFolder)
 	configFilePath := filepath.Join(configPath, configName)
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Search config file in home path.
-		viper.SetConfigName(configName) // name of config file (without extension)
-		viper.SetConfigType("yaml")
-		viper.AddConfigPath(configPath)
-	}
+	// Search config file in home path.
+	viper.SetConfigName(configName) // name of config file (without extension)
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(configPath)
 	viper.AutomaticEnv() // read in environment variables that match
 
 	//Handle Reading Config Files Error
@@ -95,6 +93,12 @@ func initConfig() {
 			// Config file was found but another error was produced
 			log.Fatal().Err(err).Msgf(err.Error())
 		}
+	}
+	if !viper.IsSet("host") {
+		viper.Set("host", constants.Host)
+	}
+	if !viper.IsSet("auth-token") {
+		viper.Set("auth-token", constants.AuthToken)
 	}
 	viper.WriteConfig()
 	log.Debug().Msgf("Using config file %s.\n", viper.ConfigFileUsed())

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -12,26 +13,24 @@ import (
 	"github.com/spf13/viper"
 )
 
-var manifestFile string
 var jsonOut bool
-var flagNoColor bool
+var verboseOut bool
 
 // analyseCmd represents the analyse command
 var analyseCmd = &cobra.Command{
 	Use:   "analyse",
-	Short: "Provides detailed report of vulnerabilities.",
-	Long: `Provides detailed report of vulnerabilities. Supported ecosystems are Pypi (Python), Maven (Java), Npm (Node) and Golang (Go).
+	Short: "Get detailed report of vulnerabilities.",
+	Long: `Get detailed report of vulnerabilities. Supported ecosystems are Pypi (Python), Maven (Java), Npm (Node) and Golang (Go).
 If stack has Vulnerabilities, command will exit with status code 2.`,
 	Run:     runAnalyse,
+	Args:    validateFileArg,
 	PostRun: destructor,
 }
 
 func init() {
 	rootCmd.AddCommand(analyseCmd)
-	analyseCmd.PersistentFlags().StringVarP(&manifestFile, "file", "f", "", "Manifest file absolute path.")
-	analyseCmd.MarkPersistentFlagRequired("file")
 	analyseCmd.Flags().BoolVarP(&jsonOut, "json", "j", false, "Set output format to JSON.")
-	analyseCmd.Flags().BoolVarP(&flagNoColor, "no-color", "c", false, "Toggle colors in output.")
+	analyseCmd.Flags().BoolVarP(&verboseOut, "verbose", "v", false, "Detailed Analyses Report.")
 }
 
 // destructor deletes intermediary files used to have stack analyses
@@ -60,19 +59,23 @@ func destructor(cmd *cobra.Command, args []string) {
 
 //runAnalyse is controller func for analyses cmd.
 func runAnalyse(cmd *cobra.Command, args []string) {
-	if flagNoColor {
-		color.NoColor = true
+	if !viper.IsSet("crda-key") {
+		fmt.Fprintln(os.Stdout,
+			color.RedString("\u2718 "),
+			"Please run `crda auth` command first.",
+		)
+		os.Exit(1)
 	}
 	requestParams := driver.RequestType{
 		UserID:          viper.GetString("crda-key"),
 		ThreeScaleToken: viper.GetString("auth-token"),
 		Host:            viper.GetString("host"),
-		RawManifestFile: manifestFile,
+		RawManifestFile: args[0],
 	}
 	if !jsonOut {
-		log.Info().Msgf("Executing Stack Analyses! Please wait... ")
+		fmt.Fprintln(os.Stdout, "Analysing your Dependency Stack! Please wait...")
 	}
-	hasVul := sa.StackAnalyses(requestParams, jsonOut)
+	hasVul := sa.StackAnalyses(requestParams, jsonOut, verboseOut)
 	if hasVul && jsonOut {
 		// Stack has vulnerability, exit with 2 code
 		os.Exit(2)

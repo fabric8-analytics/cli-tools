@@ -29,7 +29,7 @@ func data() driver.GetResponseType {
 }
 
 func TestProcessSummary(t *testing.T) {
-	got := ProcessSummary(data(), false)
+	got := ProcessSummary(data(), false, false)
 	if got != true {
 		t.Errorf("Error in ProcessSummary.")
 	}

@@ -12,12 +12,12 @@ import (
 )
 
 // ProcessSummary processes summary results, return true if Vul found
-func ProcessSummary(analysedResult driver.GetResponseType, jsonOut bool) bool {
+func ProcessSummary(analysedResult driver.GetResponseType, jsonOut bool, showVerboseMsg bool) bool {
 	out := getResultSummary(analysedResult)
 	if jsonOut {
 		outputSummaryJSON(out)
 	} else {
-		outputSummaryPlain(out)
+		outputSummaryPlain(out, showVerboseMsg)
 	}
 	return out.TotalVulnerabilities > 0
 }
@@ -53,7 +53,7 @@ func processVulnerabilities(analysedDeps []driver.AnalysedDepsType) ProcessVulne
 		processedData.TotalTransitives += len(dep.Transitives)
 		processedData.Severities = getSeverity(dep.PublicVulnerabilities, processedData.Severities)
 		processedData.Severities = getSeverity(dep.PrivateVulnerabilities, processedData.Severities)
-		for _, transVul:= range dep.VulnerableDependencies{
+		for _, transVul := range dep.VulnerableDependencies {
 			publicVul += len(transVul.PublicVulnerabilities)
 			privateVul += len(transVul.PrivateVulnerabilities)
 			processedData.Severities = getSeverity(transVul.PublicVulnerabilities, processedData.Severities)
@@ -96,25 +96,29 @@ func outputSummaryJSON(result *StackSummary) {
 }
 
 // outputSummaryPlain stdout analyses summary output as JSON
-func outputSummaryPlain(result *StackSummary) {
+func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 	yellow := color.New(color.FgHiYellow, color.Bold).SprintFunc()
 	white := color.New(color.FgHiWhite, color.Bold).SprintFunc()
 	red := color.New(color.FgHiRed, color.Bold).SprintFunc()
 	blue := color.New(color.FgHiBlue, color.Bold).SprintFunc()
 	magenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
-	fmt.Print("Summary Report for Analyses:\n\n")
+	fmt.Fprint(os.Stdout, "Summary Report for Analyses:\n\n")
 	fmt.Fprint(os.Stdout,
-		white("Total Scanned Dependencies:"), white(result.TotalScannedDependencies), "\n",
-		white("Total Scanned Transitive Dependencies:"), white(result.TotalScannedTransitiveDependencies), "\n",
-		white("Direct Vulnerable Dependencies:"), white(result.DirectVulnerableDependencies), "\n",
-		white("Total Vulnerabilities:"), white(result.TotalVulnerabilities), "\n",
-		white("Commonly Known Vulnerabilities:"), white(result.CommonlyKnownVulnerabilities), "\n",
-		white("Vulnerabilities Unique to Synk:"), white(result.VulnerabilitiesUniqueToSynk), "\n",
-		red("Critical Vulnerabilities:"), red(result.CriticalVulnerabilities), "\n",
-		magenta("High Vulnerabilities:"), magenta(result.HighVulnerabilities), "\n",
-		yellow("Medium Vulnerabilities:"), yellow(result.MediumVulnerabilities), "\n",
-		blue("Low Vulnerabilities:"), blue(result.LowVulnerabilities), "\n\n",
+		white("Total Scanned Dependencies: "), white(result.TotalScannedDependencies), "\n",
+		white("Total Scanned Transitive Dependencies: "), white(result.TotalScannedTransitiveDependencies), "\n",
+		white("Direct Vulnerable Dependencies: "), white(result.DirectVulnerableDependencies), "\n",
+		white("Total Vulnerabilities: "), white(result.TotalVulnerabilities), "\n",
+		white("Commonly Known Vulnerabilities: "), white(result.CommonlyKnownVulnerabilities), "\n",
+		white("Vulnerabilities Unique to Synk: "), white(result.VulnerabilitiesUniqueToSynk), "\n",
+		red("Critical Vulnerabilities: "), red(result.CriticalVulnerabilities), "\n",
+		magenta("High Vulnerabilities: "), magenta(result.HighVulnerabilities), "\n",
+		yellow("Medium Vulnerabilities: "), yellow(result.MediumVulnerabilities), "\n",
+		blue("Low Vulnerabilities: "), blue(result.LowVulnerabilities), "\n\n",
 	)
-	fmt.Print("(Powered by Snyk)\n\n")
-	fmt.Println("Use --verbose for detailed report.")
+	fmt.Fprint(os.Stdout, "(Powered by Snyk)\n\n")
+	if verboseMsg {
+		fmt.Fprint(os.Stdout, "tip: Register with Snyk and add token by running `crda auth`.\n")
+		return
+	}
+	fmt.Fprint(os.Stdout, "tip: Use --verbose for detailed report.\n")
 }

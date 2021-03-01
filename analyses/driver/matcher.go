@@ -1,9 +1,5 @@
 package driver
 
-import (
-	"net/url"
-)
-
 // RequestType is a argtype of RequestServer func
 type RequestType struct {
 	UserID          string
@@ -22,14 +18,13 @@ type PostResponseType struct {
 
 // VulnerabilitiesType is a Vulnerability Response structure
 type VulnerabilitiesType struct {
-	CveID    []interface{} `json:"cve_id"`
-	Cvss     int           `json:"cvss"`
-	CvssV3   string        `json:"cvss_v3"`
-	Cwes     []interface{} `json:"cwes"`
-	ID       string        `json:"id"`
-	Severity string        `json:"severity"`
-	Title    string        `json:"title"`
-	URL      url.URL       `json:"url"`
+	CveID    []string `json:"cve_ids"`
+	Cvss     float32  `json:"cvss"`
+	ID       string   `json:"id"`
+	Severity string   `json:"severity"`
+	Title    string   `json:"title"`
+	URL      string   `json:"url"`
+	Kind     string   `json:"kind"`
 }
 
 // Transitives type for Transitives
@@ -38,29 +33,24 @@ type Transitives struct {
 	Version string `json:"version"`
 }
 
-// VulnerableDependencies is type for Transitives in direct Dependencies
-type VulnerableDependencies struct {
-	PrivateVulnerabilities []VulnerabilitiesType `json:"private_vulnerabilities"`
-	PublicVulnerabilities  []VulnerabilitiesType `json:"public_vulnerabilities"`
-}
-
 // AnalysedDepsType is type for Analysed Deps API Response
 type AnalysedDepsType struct {
-	Transitives            []Transitives            `json:"dependencies"`
-	Ecosystem              string                   `json:"ecosystem"`
-	LatestVersion          string                   `json:"latest_version"`
-	Licenses               []interface{}            `json:"licenses"`
-	Name                   string                   `json:"name"`
-	PrivateVulnerabilities []VulnerabilitiesType    `json:"private_vulnerabilities"`
-	PublicVulnerabilities  []VulnerabilitiesType    `json:"public_vulnerabilities"`
-	RecommendedVersion     string                   `json:"recommended_version"`
-	Version                string                   `json:"version"`
-	VulnerableDependencies []VulnerableDependencies `json:"vulnerable_dependencies"`
+	Transitives            []Transitives         `json:"dependencies"`
+	Ecosystem              string                `json:"ecosystem"`
+	LatestVersion          string                `json:"latest_version"`
+	Licenses               []interface{}         `json:"licenses"`
+	Name                   string                `json:"name"`
+	PrivateVulnerabilities []VulnerabilitiesType `json:"private_vulnerabilities"`
+	PublicVulnerabilities  []VulnerabilitiesType `json:"public_vulnerabilities"`
+	RecommendedVersion     string                `json:"recommended_version"`
+	Version                string                `json:"version"`
+	VulnerableDependencies []AnalysedDepsType    `json:"vulnerable_dependencies"`
 }
 
 // GetResponseType is a argtype of RequestServer func
 type GetResponseType struct {
-	AnalysedDeps []AnalysedDepsType `json:"analyzed_dependencies"`
+	AnalysedDeps       []AnalysedDepsType `json:"analyzed_dependencies"`
+	RegistrationStatus string             `json:"registration_status"`
 }
 
 // ReadManifestResponse is arg type of readManifest func

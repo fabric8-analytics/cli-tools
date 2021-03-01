@@ -1,0 +1,38 @@
+{
+    "analysed_dependencies": [
+		{
+			"name": "click",
+			"transitives": [{
+				"name":    "Transitive 1",
+				"version": "1.1"
+			}],
+			"latest_version": "7.1.2",
+			"commonly_known_vulnerabilities": [
+				{"id": "ABC-PYTHON-CODECOV-12345", "severity": "medium", "title": "Command Injection1"},
+				{"id": "ABC-PYTHON-CODECOV-67890", "severity": "medium", "title": "Command Injection2"},
+				{"id": "ABC-PYTHON-CODECOV-abcde", "severity": "high", "title": "Command Injection3"}
+			],
+			"vulnerabilities_unique_with_snyk": [
+				{
+					"severity": "critical",
+					"id":       "Critical-12345",
+					"title":    "SQL Attack"
+				}
+			]
+		}
+	],
+	"total_transitives_scanned": 1,
+	"total_direct_vulnerabilities": 4,
+	"severity": {
+		"medium": [
+			{"id": "ABC-PYTHON-CODECOV-12345", "severity": "medium", "title": "Command Injection1"},
+			{"id": "ABC-PYTHON-CODECOV-67890", "severity": "medium", "title": "Command Injection2"}
+        ],
+		"high": [
+			{"id": "ABC-PYTHON-CODECOV-abcde", "severity": "high", "title": "Command Injection3"}
+        ],
+		"critical": [
+			{"id": "Critical-12345", "severity": "critical", "title": "SQL Attack"}
+        ]
+	}
+}
