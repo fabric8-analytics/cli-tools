@@ -3,10 +3,31 @@ archives:
   - files:
       - LICENSE
       - docs/cli_README.md
+    replacements:
+      amd64: 64bit
+      arm64: ARM64
+      darwin: macOS
+      linux: Linux
+      windows: Windows
+release:
+  draft: true
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - typo
+      - (?i)foo
 builds:
-  - env: [CGO_ENABLED=0]
+  - env: 
+    - CGO_ENABLED=0 
     main: ./main.go
-    id: "cli"
+    ldflags: 
+      - -s -w -X github.com/fabric8-analytics/cli-tools/cmd.Version={{.Version}} 
+      - -X github.com/fabric8-analytics/cli-tools/cmd.VendorInfo=CRDA
+      - -X github.com/fabric8-analytics/cli-tools/cmd.Timestamp={{ .Timestamp }} 
+      - -X github.com/fabric8-analytics/cli-tools/cmd.CommitHash={{ .ShortCommit }}
+    id: "crda"
     binary: crda
     goos:
       - linux
@@ -16,21 +37,24 @@ builds:
       - amd64
       - arm64
     ignore:
-      - goos: darwin
-        goarch: 386
-      - goos: darwin
-        goarch: arm64
       - goos: linux
-        goarch: arm
-        goarm: 7
+        goarch: arm64
       - goarm: mips64
-        gomips: hardfloat
+        gomips: hardfloat 
 nfpms:
-- maintainer: Deepak Sharma <deepshar@redhat.com>
+- id: "crda"
+  vendor: "CRDA"
+  maintainer: Deepak Sharma <deepshar@redhat.com>
   description: CLI Tools for CRDA.
   homepage: https://github.com/fabric8-analytics/cli-tools
   license: MIT
+  file_name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
+  replacements:
+      amd64: 64bit
+      arm64: ARM64
+      darwin: macOS
+      linux: Linux
+      windows: Windows
   formats:
   - deb
   - rpm
-  - apk
