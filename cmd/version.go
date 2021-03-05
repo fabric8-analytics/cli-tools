@@ -23,7 +23,7 @@ var (
 	// commitHash contains the current Git revision.
 	CommitHash string
 	// Timestamp contains the UnixTimestamp of the binary build.
-	Timestamp string = "1405544146"
+	Timestamp string
 	// VendorInfo contains vendor notes about the current build.
 	VendorInfo string
 )
