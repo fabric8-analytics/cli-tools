@@ -31,7 +31,7 @@ type promtVars struct {
 var authCmd = &cobra.Command{
 	Use:   "auth",
 	Short: "Links uuid with Snyk token.",
-	Long: fmt.Sprintf(`Command maps Snyk Token with UUID and Outputs 'crda-key' for further Authentication.
+	Long: fmt.Sprintf(`Command maps Snyk Token with UUID and Outputs 'crda_key' for further Authentication.
 	
 	To get "Snyk Token" Please click here: %s`, snykURL),
 	Run: main,
@@ -48,9 +48,9 @@ func main(cmd *cobra.Command, args []string) {
 		snykToken = promptForToken()
 	}
 	requestParams := auth.RequestServerType{
-		UserID:          viper.GetString("crda-key"),
+		UserID:          viper.GetString("crda_key"),
 		SynkToken:       snykToken,
-		ThreeScaleToken: viper.GetString("auth-token"),
+		ThreeScaleToken: viper.GetString("auth_token"),
 		Host:            viper.GetString("host"),
 	}
 	userID := auth.RequestServer(requestParams)
@@ -58,11 +58,11 @@ func main(cmd *cobra.Command, args []string) {
 	fmt.Fprint(os.Stdout, "Successfully Registered. \n\n")
 	green := color.New(color.FgHiGreen, color.Bold).SprintFunc()
 	fmt.Fprint(os.Stdout,
-		fmt.Sprintf(green("crda-key: ")+"%s\n\n", color.GreenString(userID)),
+		fmt.Sprintf(green("crda_key: ")+"%s\n\n", color.GreenString(userID)),
 	)
 	fmt.Fprint(os.Stdout, "This key is confidential, Please keep it safe!. \n")
 
-	viper.Set("crda-key", userID)
+	viper.Set("crda_key", userID)
 	viper.WriteConfig()
 	log.Debug().Msgf("Successfully Executed Auth command.")
 }
