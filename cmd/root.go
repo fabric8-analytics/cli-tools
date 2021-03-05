@@ -97,8 +97,8 @@ func initConfig() {
 	if !viper.IsSet("host") {
 		viper.Set("host", constants.Host)
 	}
-	if !viper.IsSet("auth-token") {
-		viper.Set("auth-token", constants.AuthToken)
+	if !viper.IsSet("auth_token") {
+		viper.Set("auth_token", constants.AuthToken)
 	}
 	viper.WriteConfig()
 	log.Debug().Msgf("Using config file %s.\n", viper.ConfigFileUsed())

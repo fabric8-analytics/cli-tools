@@ -59,7 +59,7 @@ func destructor(cmd *cobra.Command, args []string) {
 
 //runAnalyse is controller func for analyses cmd.
 func runAnalyse(cmd *cobra.Command, args []string) {
-	if !viper.IsSet("crda-key") {
+	if !viper.IsSet("crda_key") {
 		fmt.Fprintln(os.Stdout,
 			color.RedString("\u2718 "),
 			"Please run `crda auth` command first.",
@@ -67,8 +67,8 @@ func runAnalyse(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 	requestParams := driver.RequestType{
-		UserID:          viper.GetString("crda-key"),
-		ThreeScaleToken: viper.GetString("auth-token"),
+		UserID:          viper.GetString("crda_key"),
+		ThreeScaleToken: viper.GetString("auth_token"),
 		Host:            viper.GetString("host"),
 		RawManifestFile: args[0],
 	}
