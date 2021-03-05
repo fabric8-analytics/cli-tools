@@ -51,7 +51,7 @@ func getVersion(cmd *cobra.Command, args []string) {
 		}
 	}
 	if VendorInfo != "" {
-		versionString += fmt.Sprintf("Vendor: %s", VendorInfo)
+		versionString += fmt.Sprintf(" Vendor: %s", VendorInfo)
 	}
 
 	fmt.Println(versionString)
