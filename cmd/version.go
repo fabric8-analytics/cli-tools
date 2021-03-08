@@ -47,11 +47,11 @@ func getVersion(cmd *cobra.Command, args []string) {
 		i, err := strconv.ParseInt(Timestamp, 10, 64)
 		if err == nil {
 			tm := time.Unix(i, 0)
-			versionString += " BuildDate: " + tm.Format(time.RFC1123)
+			versionString += " BuildDate:" + tm.Format(time.RFC1123)
 		}
 	}
 	if VendorInfo != "" {
-		versionString += fmt.Sprintf(" Vendor: %s", VendorInfo)
+		versionString += fmt.Sprintf("  Vendor:%s", VendorInfo)
 	}
 
 	fmt.Println(versionString)

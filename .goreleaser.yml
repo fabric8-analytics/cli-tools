@@ -27,7 +27,7 @@ builds:
       - -X github.com/fabric8-analytics/cli-tools/cmd.VendorInfo=CRDA
       - -X github.com/fabric8-analytics/cli-tools/cmd.Timestamp={{ .Timestamp }} 
       - -X github.com/fabric8-analytics/cli-tools/cmd.CommitHash={{ .ShortCommit }}
-    id: "crda"
+    id: crda
     binary: crda
     goos:
       - linux
@@ -42,10 +42,10 @@ builds:
       - goarm: mips64
         gomips: hardfloat 
 nfpms:
-- id: "crda"
-  vendor: "CRDA"
+- id: crda
+  vendor: CRDA
   maintainer: Deepak Sharma <deepshar@redhat.com>
-  description: CLI Tools for CRDA.
+  description: CLI Tools from team CRDA.
   homepage: https://github.com/fabric8-analytics/cli-tools
   license: MIT
   file_name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
