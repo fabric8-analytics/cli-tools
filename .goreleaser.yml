@@ -24,7 +24,7 @@ builds:
     main: ./main.go
     ldflags: 
       - -s -w -X github.com/fabric8-analytics/cli-tools/cmd.Version={{.Version}} 
-      - -X github.com/fabric8-analytics/cli-tools/cmd.VendorInfo=CRDA
+      - '-X github.com/fabric8-analytics/cli-tools/cmd.VendorInfo="Red Hat"'
       - -X github.com/fabric8-analytics/cli-tools/cmd.Timestamp={{ .Timestamp }} 
       - -X github.com/fabric8-analytics/cli-tools/cmd.CommitHash={{ .ShortCommit }}
     id: crda
