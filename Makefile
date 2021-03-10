@@ -7,7 +7,6 @@ REPO=github.com/fabric8-analytics/cli-tools
 VERSION?=0.0.1
 EXPORT_RESULT?=false
 CGO_ENABLED:=0
-LDFLAGS:=-X ${REPO}/cmd.VendorInfo=LocalBuild
 LDFLAGS +=-X ${REPO}/cmd.Timestamp=$(shell date +%s)
 LDFLAGS +=-X ${REPO}/cmd.Version=${VERSION}
 LDFLAGS +=-X ${REPO}/cmd.CommitHash=${GITCOMMIT}

@@ -21,11 +21,11 @@ var versionCmd = &cobra.Command{
 var (
 	Version string = "0.0.0"
 	// commitHash contains the current Git revision.
-	CommitHash string
+	CommitHash string = "abcd"
 	// Timestamp contains the UnixTimestamp of the binary build.
-	Timestamp string
+	Timestamp string = "1615361906"
 	// VendorInfo contains vendor notes about the current build.
-	VendorInfo string
+	VendorInfo string = "Local Build"
 )
 
 func init() {
@@ -47,11 +47,11 @@ func getVersion(cmd *cobra.Command, args []string) {
 		i, err := strconv.ParseInt(Timestamp, 10, 64)
 		if err == nil {
 			tm := time.Unix(i, 0)
-			versionString += " BuildDate:" + tm.Format(time.RFC1123)
+			versionString += fmt.Sprintf(" BuildDate: %s", tm.Format(time.RFC1123))
 		}
 	}
 	if VendorInfo != "" {
-		versionString += fmt.Sprintf("  Vendor:%s", VendorInfo)
+		versionString += fmt.Sprintf("  Vendor: %s", VendorInfo)
 	}
 
 	fmt.Println(versionString)
