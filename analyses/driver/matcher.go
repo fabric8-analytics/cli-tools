@@ -51,6 +51,7 @@ type AnalysedDepsType struct {
 type GetResponseType struct {
 	AnalysedDeps       []AnalysedDepsType `json:"analyzed_dependencies"`
 	RegistrationStatus string             `json:"registration_status"`
+	StackID            string             `json:"external_request_id"`
 }
 
 // ReadManifestResponse is arg type of readManifest func

@@ -3,6 +3,7 @@ package verbose
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fabric8-analytics/cli-tools/utils"
 	"os"
 	"sort"
 
@@ -39,6 +40,7 @@ func getVerboseResult(analysedResult driver.GetResponseType) *StackVerbose {
 		TotalDirectVulnerabilities:     data.TotalDirectVulnerabilities,
 		TotalTransitiveVulnerabilities: data.TotalTransitiveVulnerabilities,
 		Severity:                       data.Severities,
+		ReportLink:                     utils.BuildReportLink(analysedResult.StackID),
 	}
 	return out
 }
@@ -143,6 +145,7 @@ func outputVerbosePlain(result *StackVerbose) {
 	)
 	fmt.Fprintln(os.Stdout, cusColor.Green("Fixable Issues:"))
 	outputVulDeps(result.Dependencies)
+	fmt.Fprint(os.Stdout, fmt.Sprintf(cusColor.White("\n\n Full Report: ")+"%s \n\n", result.ReportLink))
 	fmt.Fprint(os.Stdout, "\n(Powered by Snyk)\n\n")
 }
 
