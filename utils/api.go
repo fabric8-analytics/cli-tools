@@ -23,29 +23,29 @@ type HTTPRequestType struct {
 	UserID          string         `json:"user_id,omitempty"`
 }
 
-// buildAPIURL builds API Endpoint URL
-func buildAPIURL(host string, endpoint string, threeScale string) url.URL {
+// BuildAPIURL builds API Endpoint URL
+func BuildAPIURL(host string, endpoint string, threeScale string) url.URL {
 	log.Debug().Msgf("Building API Url.")
 	APIHost, err := url.Parse(host)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to Parse Host URL")
 	}
-	url := url.URL{Host: APIHost.Hostname(), Path: endpoint}
-	url.Scheme = "https"
-	q := url.Query()
+	apiURL := url.URL{Host: APIHost.Hostname(), Path: endpoint}
+	apiURL.Scheme = "https"
+	q := apiURL.Query()
 	q.Set("user_key", threeScale)
-	url.RawQuery = q.Encode()
+	apiURL.RawQuery = q.Encode()
 	log.Debug().Msgf("Success: Building API Url.")
-	return url
+	return apiURL
 }
 
 // HTTPRequest is generic method for HTTP Requests to server
 func HTTPRequest(data HTTPRequestType) *http.Response {
 	log.Debug().Msgf("Executing HTTPRequest.")
 	client := &http.Client{}
-	url := buildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
+	apiURL := BuildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
 	payload, _ := json.Marshal(&data.Payload)
-	req, err := http.NewRequest(data.Method, url.String(), bytes.NewBuffer(payload))
+	req, err := http.NewRequest(data.Method, apiURL.String(), bytes.NewBuffer(payload))
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("uuid", data.UserID)
 
@@ -64,8 +64,8 @@ func HTTPRequest(data HTTPRequestType) *http.Response {
 func HTTPRequestMultipart(data HTTPRequestType, w *multipart.Writer, buf *bytes.Buffer) *http.Response {
 	log.Debug().Msgf("Executing HTTPRequestMultipart.")
 	client := &http.Client{}
-	url := buildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
-	req, err := http.NewRequest(data.Method, url.String(), buf)
+	apiURL := BuildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
+	req, err := http.NewRequest(data.Method, apiURL.String(), buf)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to build request")
 	}

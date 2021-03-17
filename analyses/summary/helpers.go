@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/utils"
 )
 
 // ProcessSummary processes summary results, return true if Vul found
@@ -37,8 +38,16 @@ func getResultSummary(analysedResult driver.GetResponseType) *StackSummary {
 		HighVulnerabilities:                data.Severities.High,
 		MediumVulnerabilities:              data.Severities.Medium,
 		LowVulnerabilities:                 data.Severities.Low,
+		ReportLink:                         buildReportLink(analysedResult.StackID),
 	}
 	return out
+}
+func buildReportLink(stackID string) string {
+	log.Debug().Msgf("Building Report Url.")
+	endpoint := fmt.Sprintf("api/v2/stack-report/%s", stackID)
+	reportUrl := utils.BuildAPIURL(utils.Host, endpoint, utils.AuthToken)
+	log.Debug().Msgf("Success Building Report Url.")
+	return reportUrl.String()
 }
 
 // processVulnerabilities calculates Total Direct Public Vulnerabilities in Response
@@ -109,11 +118,12 @@ func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 		white("Direct Vulnerable Dependencies: "), white(result.DirectVulnerableDependencies), "\n",
 		white("Total Vulnerabilities: "), white(result.TotalVulnerabilities), "\n",
 		white("Commonly Known Vulnerabilities: "), white(result.CommonlyKnownVulnerabilities), "\n",
-		white("Vulnerabilities Unique to Synk: "), white(result.VulnerabilitiesUniqueToSynk), "\n",
+		white("Vulnerabilities Unique to Snyk: "), white(result.VulnerabilitiesUniqueToSynk), "\n",
 		red("Critical Vulnerabilities: "), red(result.CriticalVulnerabilities), "\n",
 		magenta("High Vulnerabilities: "), magenta(result.HighVulnerabilities), "\n",
 		yellow("Medium Vulnerabilities: "), yellow(result.MediumVulnerabilities), "\n",
 		blue("Low Vulnerabilities: "), blue(result.LowVulnerabilities), "\n\n",
+		"Full Report: ", result.ReportLink, "\n\n",
 	)
 	fmt.Fprint(os.Stdout, "(Powered by Snyk)\n\n")
 	if verboseMsg {
