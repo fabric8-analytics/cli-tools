@@ -34,5 +34,6 @@
 		"critical": [
 			{"id": "Critical-12345", "severity": "critical", "title": "SQL Attack"}
         ]
-	}
+	},
+	"report_link": "https://recommender.api.openshift.io/api/v2/stack-report/123456789"
 }

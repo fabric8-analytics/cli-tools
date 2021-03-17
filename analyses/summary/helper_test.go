@@ -24,6 +24,7 @@ func data() driver.GetResponseType {
 				},
 			},
 		},
+		StackID: "123456789",
 	}
 	return *GetResponse
 }
@@ -48,6 +49,7 @@ func TestGetResultSummary(t *testing.T) {
 		HighVulnerabilities:                0,
 		MediumVulnerabilities:              1,
 		LowVulnerabilities:                 0,
+		ReportLink:                         "https://recommender.api.openshift.io/api/v2/stack-report/123456789",
 	}
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("Vuln mismatch (-want, +got):\n%s", diff)
