@@ -27,7 +27,7 @@ type HTTPRequestType struct {
 // BuildReportLink builds stack report UI Link
 func BuildReportLink(stackID string) string {
 	log.Debug().Msgf("Building Report Url.")
-	APIHost, err := url.Parse(Server)
+	APIHost, err := url.Parse(ActualHost)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to Parse Host URL")
 	}
