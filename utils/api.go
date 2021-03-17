@@ -27,10 +27,15 @@ type HTTPRequestType struct {
 // BuildReportLink builds stack report UI Link
 func BuildReportLink(stackID string) string {
 	log.Debug().Msgf("Building Report Url.")
+	APIHost, err := url.Parse(Server)
+	if err != nil {
+		log.Fatal().Err(err).Msgf("Unable to Parse Host URL")
+	}
 	endpoint := fmt.Sprintf("api/v2/stack-report/%s", stackID)
-	reportUrl := buildAPIURL(Host, endpoint, AuthToken)
+	reportURL := url.URL{Host: APIHost.Hostname(), Path: endpoint}
+	reportURL.Scheme = "https"
 	log.Debug().Msgf("Success Building Report Url.")
-	return reportUrl.String()
+	return reportURL.String()
 }
 
 // buildAPIURL builds API Endpoint URL
@@ -80,6 +85,7 @@ func HTTPRequestMultipart(data HTTPRequestType, w *multipart.Writer, buf *bytes.
 		log.Fatal().Err(err).Msgf("Unable to build request")
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
+	req.Header.Set("uuid", data.UserID)
 	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to reach the server. hint: Check your Internet connection.")

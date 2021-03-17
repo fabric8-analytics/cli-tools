@@ -70,6 +70,7 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 		Endpoint:        APIStackAnalyses,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
+		UserID:          requestParams.UserID,
 	}
 	writer := multipart.NewWriter(manifest)
 	fd, err := os.Open(filePath)
