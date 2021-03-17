@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -23,8 +24,17 @@ type HTTPRequestType struct {
 	UserID          string         `json:"user_id,omitempty"`
 }
 
-// BuildAPIURL builds API Endpoint URL
-func BuildAPIURL(host string, endpoint string, threeScale string) url.URL {
+// BuildReportLink builds stack report UI Link
+func BuildReportLink(stackID string) string {
+	log.Debug().Msgf("Building Report Url.")
+	endpoint := fmt.Sprintf("api/v2/stack-report/%s", stackID)
+	reportUrl := buildAPIURL(Host, endpoint, AuthToken)
+	log.Debug().Msgf("Success Building Report Url.")
+	return reportUrl.String()
+}
+
+// buildAPIURL builds API Endpoint URL
+func buildAPIURL(host string, endpoint string, threeScale string) url.URL {
 	log.Debug().Msgf("Building API Url.")
 	APIHost, err := url.Parse(host)
 	if err != nil {
@@ -43,7 +53,7 @@ func BuildAPIURL(host string, endpoint string, threeScale string) url.URL {
 func HTTPRequest(data HTTPRequestType) *http.Response {
 	log.Debug().Msgf("Executing HTTPRequest.")
 	client := &http.Client{}
-	apiURL := BuildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
+	apiURL := buildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
 	payload, _ := json.Marshal(&data.Payload)
 	req, err := http.NewRequest(data.Method, apiURL.String(), bytes.NewBuffer(payload))
 	req.Header.Add("Content-Type", "application/json")
@@ -64,7 +74,7 @@ func HTTPRequest(data HTTPRequestType) *http.Response {
 func HTTPRequestMultipart(data HTTPRequestType, w *multipart.Writer, buf *bytes.Buffer) *http.Response {
 	log.Debug().Msgf("Executing HTTPRequestMultipart.")
 	client := &http.Client{}
-	apiURL := BuildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
+	apiURL := buildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
 	req, err := http.NewRequest(data.Method, apiURL.String(), buf)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to build request")
