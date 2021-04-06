@@ -66,11 +66,12 @@ func runAnalyse(cmd *cobra.Command, args []string) {
 		)
 		os.Exit(1)
 	}
+	manifestPath := getAbsPath(args[0])
 	requestParams := driver.RequestType{
 		UserID:          viper.GetString("crda_key"),
 		ThreeScaleToken: viper.GetString("auth_token"),
 		Host:            viper.GetString("host"),
-		RawManifestFile: args[0],
+		RawManifestFile: manifestPath,
 	}
 	if !jsonOut {
 		fmt.Fprintln(os.Stdout, "Analysing your Dependency Stack! Please wait...")
@@ -80,4 +81,13 @@ func runAnalyse(cmd *cobra.Command, args []string) {
 		// Stack has vulnerability, exit with 2 code
 		os.Exit(2)
 	}
+}
+
+// getAbsPath converts relative path to Abs
+func getAbsPath(givenPath string) string {
+	manifestPath, err := filepath.Abs(givenPath)
+	if err != nil {
+		log.Fatal().Err(err).Msgf("Unable to convert to Absolute file path.")
+	}
+	return manifestPath
 }
