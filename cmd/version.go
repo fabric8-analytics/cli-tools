@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	sa "github.com/fabric8-analytics/cli-tools/analyses/stackanalyses"
+	"github.com/fabric8-analytics/cli-tools/pkgs/version"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +20,6 @@ func init() {
 }
 
 func getVersion(_ *cobra.Command, args []string) {
-	version := sa.BuildVersion()
+	version := version.BuildVersion()
 	fmt.Println(version)
 }
