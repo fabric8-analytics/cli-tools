@@ -22,7 +22,7 @@ var cusColor = &CustomColors{
 }
 
 // ProcessVerbose processes verbose results and decides STDOUT format
-func ProcessVerbose(analysedResult driver.GetResponseType, jsonOut bool) bool {
+func ProcessVerbose(analysedResult *driver.GetResponseType, jsonOut bool) bool {
 	out := getVerboseResult(analysedResult)
 	if jsonOut {
 		outputVerboseJSON(out)
@@ -33,7 +33,7 @@ func ProcessVerbose(analysedResult driver.GetResponseType, jsonOut bool) bool {
 }
 
 // getVerboseResult prepares verbose struct
-func getVerboseResult(analysedResult driver.GetResponseType) *StackVerbose {
+func getVerboseResult(analysedResult *driver.GetResponseType) *StackVerbose {
 	data := processVulnerabilities(analysedResult.AnalysedDeps)
 	out := &StackVerbose{
 		Dependencies:                   data.AnalysedDependencies,

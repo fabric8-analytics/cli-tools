@@ -13,7 +13,7 @@ import (
 )
 
 // ProcessSummary processes summary results, return true if Vul found
-func ProcessSummary(analysedResult driver.GetResponseType, jsonOut bool, showVerboseMsg bool) bool {
+func ProcessSummary(analysedResult *driver.GetResponseType, jsonOut bool, showVerboseMsg bool) bool {
 	out := getResultSummary(analysedResult)
 	if jsonOut {
 		outputSummaryJSON(out)
@@ -24,7 +24,7 @@ func ProcessSummary(analysedResult driver.GetResponseType, jsonOut bool, showVer
 }
 
 // GetResultSummary processes result Summary
-func getResultSummary(analysedResult driver.GetResponseType) *StackSummary {
+func getResultSummary(analysedResult *driver.GetResponseType) *StackSummary {
 	totalDepsScanned := len(analysedResult.AnalysedDeps)
 	data := processVulnerabilities(analysedResult.AnalysedDeps)
 	out := &StackSummary{

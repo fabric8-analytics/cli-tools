@@ -54,6 +54,15 @@ type GetResponseType struct {
 	StackID            string             `json:"external_request_id"`
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type StackAnalysisResponse struct {
+	HasVul bool
+	Error  error
+}
+
 // ReadManifestResponse is arg type of readManifest func
 type ReadManifestResponse struct {
 	DepsTreePath     string `json:"manifest,omitempty"`

@@ -3,11 +3,12 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"os"
 	"regexp"
 	"strings"
 
-	auth "github.com/fabric8-analytics/cli-tools/auth"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
+
+	"github.com/fabric8-analytics/cli-tools/auth"
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
@@ -19,10 +20,9 @@ const (
 	snykURL = "https://app.snyk.io/redhat/snyk-token"
 )
 
-var showUUID bool
 var snykToken string
 
-type promtVars struct {
+type promptVars struct {
 	Name        string
 	Description string
 }
@@ -34,18 +34,24 @@ var authCmd = &cobra.Command{
 	Long: fmt.Sprintf(`Command maps Snyk Token with UUID and Outputs 'crda_key' for further Authentication.
 	
 	To get "Snyk Token" Please click here: %s`, snykURL),
-	Run: main,
+	RunE: runAuth,
 }
 
 func init() {
 	rootCmd.AddCommand(authCmd)
-	authCmd.Flags().StringVarP(&snykToken, "snyk-token", "t", "", "Authenticate with Snyk Token to unlock Verbose stack anaylses.")
+	authCmd.Flags().StringVarP(&snykToken, "snyk-token", "t", "", "Authenticate with Snyk Token to unlock Verbose stack analyses.")
 }
 
-func main(cmd *cobra.Command, args []string) {
+// runAuth is controller for Auth command.
+func runAuth(cmd *cobra.Command, _ []string) error {
 	log.Debug().Msgf("Executing Auth command.")
+	var err error
 	if snykToken == "" {
-		snykToken = promptForToken()
+		snykToken, err = promptForToken()
+		if err != nil {
+			telemetry.SetExitCode(cmd.Context(), 1)
+			return err
+		}
 	}
 	requestParams := auth.RequestServerType{
 		UserID:          viper.GetString("crda_key"),
@@ -55,35 +61,37 @@ func main(cmd *cobra.Command, args []string) {
 	}
 	userID := auth.RequestServer(requestParams)
 
-	fmt.Fprint(os.Stdout, "Successfully Registered. \n\n")
+	fmt.Print("Successfully Registered. \n\n")
 	green := color.New(color.FgHiGreen, color.Bold).SprintFunc()
-	fmt.Fprint(os.Stdout,
-		fmt.Sprintf(green("crda_key: ")+"%s\n\n", color.GreenString(userID)),
-	)
-	fmt.Fprint(os.Stdout, "This key is confidential, Please keep it safe!. \n")
+	fmt.Println(fmt.Sprintf(green("crda_key: ")+"%s\n", color.GreenString(userID)))
+	fmt.Println("This key is confidential, Please keep it safe!")
 
 	viper.Set("crda_key", userID)
-	viper.WriteConfig()
+	err = viper.WriteConfig()
+	if err != nil {
+		telemetry.SetExitCode(cmd.Context(), 1)
+		return err
+	}
+	telemetry.SetExitCode(cmd.Context(), exitCode)
 	log.Debug().Msgf("Successfully Executed Auth command.")
+	return nil
 }
 
-func promptForToken() string {
+func promptForToken() (string, error) {
 	validate := func(input string) error {
 		input = strings.TrimSpace(input)
 		if input == "" {
 			return nil
 		}
-		r := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
+		r := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
 		isValid := r.MatchString(input)
 		if !isValid {
-			return errors.New("Invalid Snyk Token")
+			return errors.New("invalid snyk token")
 		}
 		return nil
 	}
-	fmt.Fprintln(os.Stdout,
-		fmt.Sprintf("To get Snyk Token, Please click %s\n", snykURL),
-	)
-	promtValues := &promtVars{
+	fmt.Println(fmt.Sprintf("To get Snyk Token, Please click %s\n", snykURL))
+	promptValues := &promptVars{
 		Name:        "Snyk Token",
 		Description: "[Press Enter to continue]",
 	}
@@ -94,7 +102,7 @@ func promptForToken() string {
 		Success: "{{ .Name | bold }} {{ .Description | faint}}",
 	}
 	prompt := promptui.Prompt{
-		Label:       promtValues,
+		Label:       promptValues,
 		Validate:    validate,
 		Templates:   templates,
 		Default:     "",
@@ -102,7 +110,8 @@ func promptForToken() string {
 	}
 	snykToken, err := prompt.Run()
 	if err != nil {
-		log.Fatal().Msgf("Unable to read Snyk Token. Please try again. %v\n", err)
+		return "", errors.New(
+			fmt.Sprintf("Unable to read Snyk Token. Please try again. %v\n", err))
 	}
-	return snykToken
+	return snykToken, nil
 }
