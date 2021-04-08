@@ -42,7 +42,7 @@ func TestGetResultSummary(t *testing.T) {
 		TotalScannedDependencies:           1,
 		TotalScannedTransitiveDependencies: 0,
 		TotalVulnerabilities:               1,
-		CommonlyKnownVulnerabilities:       1,
+		PubliclyAvailableVulnerabilities:   1,
 		VulnerabilitiesUniqueToSynk:        0,
 		DirectVulnerableDependencies:       1,
 		CriticalVulnerabilities:            0,
