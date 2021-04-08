@@ -23,10 +23,10 @@ builds:
     - CGO_ENABLED=0 
     main: ./main.go
     ldflags: 
-      - -s -w -X github.com/fabric8-analytics/cli-tools/pkgs/version.version={{.Version}}
-      - "-X 'github.com/fabric8-analytics/cli-tools/pkgs/version.vendorInfo=Red Hat'"
-      - -X github.com/fabric8-analytics/cli-tools/pkgs/version.timestamp={{ .Timestamp }}
-      - -X github.com/fabric8-analytics/cli-tools/pkgs/version.commitHash={{ .ShortCommit }}
+      - -s -w -X github.com/fabric8-analytics/cli-tools/pkg/version.version={{.Version}}
+      - "-X 'github.com/fabric8-analytics/cli-tools/pkg/version.vendorInfo=Red Hat'"
+      - -X github.com/fabric8-analytics/cli-tools/pkg/version.timestamp={{ .Timestamp }}
+      - -X github.com/fabric8-analytics/cli-tools/pkg/version.commitHash={{ .ShortCommit }}
     id: crda
     binary: crda
     goos:

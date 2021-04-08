@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/fabric8-analytics/cli-tools/pkgs/version"
+	"github.com/fabric8-analytics/cli-tools/pkg/version"
 	"github.com/spf13/cobra"
 )
 
