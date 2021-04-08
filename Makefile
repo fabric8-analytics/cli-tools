@@ -7,9 +7,9 @@ REPO=github.com/fabric8-analytics/cli-tools
 VERSION?=0.0.1
 EXPORT_RESULT?=false
 CGO_ENABLED:=0
-LDFLAGS +=-X ${REPO}/cmd.Timestamp=$(shell date +%s)
-LDFLAGS +=-X ${REPO}/cmd.Version=${VERSION}
-LDFLAGS +=-X ${REPO}/cmd.CommitHash=${GITCOMMIT}
+LDFLAGS +=-X ${REPO}/pkg/version.timestamp=$(shell date +%s)
+LDFLAGS +=-X ${REPO}/pkg/version.version=${VERSION}
+LDFLAGS +=-X ${REPO}/pkg/version.commitHash=${GITCOMMIT}
 
 GREEN  := $(shell tput -Txterm setaf 2)
 YELLOW := $(shell tput -Txterm setaf 3)
