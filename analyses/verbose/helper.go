@@ -3,9 +3,10 @@ package verbose
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fabric8-analytics/cli-tools/utils"
 	"os"
 	"sort"
+
+	"github.com/fabric8-analytics/cli-tools/utils"
 
 	"github.com/fatih/color"
 	"github.com/rs/zerolog/log"
@@ -50,11 +51,11 @@ func processVulnerabilities(analysedDeps []driver.AnalysedDepsType) ProcessVulne
 	processedData := &ProcessVulnerabilities{}
 	for _, dep := range analysedDeps {
 		dependency := getDependencyData(dep)
-		dependency.CommonlyKnownVulnerabilities = getVulnerabilities(dep.PublicVulnerabilities)
+		dependency.PubliclyAvailableVulnerabilities = getVulnerabilities(dep.PublicVulnerabilities)
 		dependency.VulnerabilitiesUniqueToSynk = getVulnerabilities(dep.PrivateVulnerabilities)
 		for _, trans := range dep.VulnerableDependencies {
 			transitive := getDependencyData(trans)
-			transitive.CommonlyKnownVulnerabilities = getVulnerabilities(trans.PublicVulnerabilities)
+			transitive.PubliclyAvailableVulnerabilities = getVulnerabilities(trans.PublicVulnerabilities)
 			transitive.VulnerabilitiesUniqueToSynk = getVulnerabilities(trans.PrivateVulnerabilities)
 			dependency.VulnerableTransitives = append(dependency.VulnerableTransitives, transitive)
 			processedData.Severities = getSeverity(trans.PublicVulnerabilities, processedData.Severities)
@@ -154,13 +155,13 @@ func outputVulDeps(deps []DependenciesType) {
 	for _, dep := range deps {
 		pkgName := fmt.Sprintf("%s@%s", cusColor.White(dep.Name), cusColor.White(dep.Version))
 
-		if len(dep.CommonlyKnownVulnerabilities)+len(dep.VulnerabilitiesUniqueToSynk) > 0 {
+		if len(dep.PubliclyAvailableVulnerabilities)+len(dep.VulnerabilitiesUniqueToSynk) > 0 {
 			fmt.Fprint(os.Stdout,
 				fmt.Sprintf("\n\tUpgrade %s ", pkgName),
 				fmt.Sprintf("to %s@%s\n", cusColor.White(dep.Name), cusColor.White(dep.RecommendedVersion)),
 			)
-			dep.CommonlyKnownVulnerabilities = append(dep.CommonlyKnownVulnerabilities, dep.VulnerabilitiesUniqueToSynk...)
-			outputVulType(dep.CommonlyKnownVulnerabilities, pkgName, pkgName)
+			dep.PubliclyAvailableVulnerabilities = append(dep.PubliclyAvailableVulnerabilities, dep.VulnerabilitiesUniqueToSynk...)
+			outputVulType(dep.PubliclyAvailableVulnerabilities, pkgName, pkgName)
 		}
 		if len(dep.VulnerableTransitives) > 0 {
 			fmt.Fprint(os.Stdout,
@@ -172,8 +173,8 @@ func outputVulDeps(deps []DependenciesType) {
 				fmt.Fprint(os.Stdout,
 					fmt.Sprintf("\t \u2712 %s->%s\n", pkgName, transName),
 				)
-				trans.CommonlyKnownVulnerabilities = append(trans.CommonlyKnownVulnerabilities, trans.VulnerabilitiesUniqueToSynk...)
-				outputVulType(trans.CommonlyKnownVulnerabilities, transName, pkgName)
+				trans.PubliclyAvailableVulnerabilities = append(trans.PubliclyAvailableVulnerabilities, trans.VulnerabilitiesUniqueToSynk...)
+				outputVulType(trans.PubliclyAvailableVulnerabilities, transName, pkgName)
 			}
 		}
 	}

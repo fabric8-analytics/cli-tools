@@ -24,14 +24,14 @@ type VulnerabilityType struct {
 
 // DependenciesType verbose output
 type DependenciesType struct {
-	Name                         string              `json:"name"`
-	Version                      string              `json:"version"`
-	Transitives                  []DependenciesType  `json:"transitives"`
-	LatestVersion                string              `json:"latest_version"`
-	RecommendedVersion           string              `json:"recommended_version"`
-	CommonlyKnownVulnerabilities []VulnerabilityType `json:"commonly_known_vulnerabilities"`
-	VulnerabilitiesUniqueToSynk  []VulnerabilityType `json:"vulnerabilities_unique_with_snyk"`
-	VulnerableTransitives        []DependenciesType  `json:"vulnerable_transitives"`
+	Name                             string              `json:"name"`
+	Version                          string              `json:"version"`
+	Transitives                      []DependenciesType  `json:"transitives"`
+	LatestVersion                    string              `json:"latest_version"`
+	RecommendedVersion               string              `json:"recommended_version"`
+	PubliclyAvailableVulnerabilities []VulnerabilityType `json:"publicly_available_vulnerabilities"`
+	VulnerabilitiesUniqueToSynk      []VulnerabilityType `json:"vulnerabilities_unique_with_snyk"`
+	VulnerableTransitives            []DependenciesType  `json:"vulnerable_transitives"`
 }
 
 // SeverityType is Possible Types of Severities from Server
