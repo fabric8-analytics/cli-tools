@@ -7,7 +7,7 @@
 				"version": "1.1"
 			}],
 			"latest_version": "7.1.2",
-			"commonly_known_vulnerabilities": [
+			"publicly_available_vulnerabilities": [
 				{"id": "ABC-PYTHON-CODECOV-12345", "severity": "medium", "title": "Command Injection1"},
 				{"id": "ABC-PYTHON-CODECOV-67890", "severity": "medium", "title": "Command Injection2"},
 				{"id": "ABC-PYTHON-CODECOV-abcde", "severity": "high", "title": "Command Injection3"}

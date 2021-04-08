@@ -77,7 +77,7 @@ func runAnalyse(cmd *cobra.Command, args []string) {
 		fmt.Fprintln(os.Stdout, "Analysing your Dependency Stack! Please wait...")
 	}
 	hasVul := sa.StackAnalyses(requestParams, jsonOut, verboseOut)
-	if hasVul && jsonOut {
+	if hasVul {
 		// Stack has vulnerability, exit with 2 code
 		os.Exit(2)
 	}

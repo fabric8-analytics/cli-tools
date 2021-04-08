@@ -29,7 +29,7 @@ type DependenciesType struct {
 	Transitives                  []DependenciesType  `json:"transitives"`
 	LatestVersion                string              `json:"latest_version"`
 	RecommendedVersion           string              `json:"recommended_version"`
-	CommonlyKnownVulnerabilities []VulnerabilityType `json:"commonly_known_vulnerabilities"`
+	CommonlyKnownVulnerabilities []VulnerabilityType `json:"publicly_available_vulnerabilities"`
 	VulnerabilitiesUniqueToSynk  []VulnerabilityType `json:"vulnerabilities_unique_with_snyk"`
 	VulnerableTransitives        []DependenciesType  `json:"vulnerable_transitives"`
 }
