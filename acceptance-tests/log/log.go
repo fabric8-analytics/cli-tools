@@ -1,22 +1,22 @@
-package acc_log
+package acclog
 
 import (
 	"log"
 	"os"
 )
 
-
+// WarningLogger Logs warnings
 var (
     WarningLogger *log.Logger
     InfoLogger    *log.Logger
     ErrorLogger   *log.Logger
 )
 
-
-func Init_log() {
-	file, log_err := os.OpenFile("logs.txt", os.O_CREATE|os.O_WRONLY, 0666)
-    if log_err != nil {
-        log.Fatal(log_err)
+// Initlog initializes the Log
+func Initlog() {
+	file, logerr := os.OpenFile("logs.txt", os.O_CREATE|os.O_WRONLY, 0666)
+    if logerr != nil {
+        log.Fatal(logerr)
     }
 
     InfoLogger = log.New(file, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)

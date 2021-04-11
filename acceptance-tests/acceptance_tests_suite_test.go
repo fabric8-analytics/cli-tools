@@ -1,12 +1,11 @@
 package acceptance_tests_test
 
 import (
-	"testing"
+	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+	acclog "github.com/fabric8-analytics/cli-tools/acceptance-tests/log"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
-	"github.com/fabric8-analytics/cli-tools/acceptance-tests/log"
-	
+	"testing"
 )
 
 func TestAcceptanceTests(t *testing.T) {
@@ -14,12 +13,12 @@ func TestAcceptanceTests(t *testing.T) {
 	RunSpecs(t, "AcceptanceTests Suite")
 }
 
-
 var _ = BeforeSuite(func() {
-	acc_log.Init_log()
-	helper_cli.CreateData_dir()
+	acclog.Initlog()
+	helper.CreateDataDir()
+	helper.CheckforSynkToken()
 })
 
 var _ = AfterSuite(func() {
-	helper_cli.Cleanup_suite()
+	helper.CleanupSuite()
 })

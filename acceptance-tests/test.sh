@@ -12,6 +12,7 @@ printf 'auth_token: %s\ncrda_key: %s\nhost: %s' "${AUTH_TOKEN}" "${CRDA_KEY}" "$
 
 cat $HOME/.crda/config.yaml
 
-go mod tidy 
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/onsi/gomega/...
 
-go test -test.v -ginkgo.failFast -ginkgo.focus="PR ACCEPTANCE TESTS"
+go test -test.v -ginkgo.failFast -ginkgo.reportFile ginkgo.report -ginkgo.focus="PR ACCEPTANCE TESTS" 

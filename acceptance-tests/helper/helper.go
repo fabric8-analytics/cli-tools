@@ -1,4 +1,4 @@
-package helper_cli
+package helper
 
 import (
 	"errors"
@@ -7,10 +7,12 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"path/filepath"
 )
 
-func Get_abs_path(filepath string) (string, error) {
-	if filepath == "" {
+// Getabspath Gets the Absolute Path
+func Getabspath(path string) (string, error) {
+	if path == "" {
 		return "", errors.New("empty file path supplied")
 	}
 	cmd := exec.Command("pwd")
@@ -20,23 +22,24 @@ func Get_abs_path(filepath string) (string, error) {
 	}
 	pwd := string(stdout)
 	pwd = strings.TrimSpace(pwd)
-	result := pwd + filepath
+	result := pwd + path
 	return result, nil
 
 }
 
-func Cleanup_npm(filepath string) error {
-	fmt.Println(filepath)
-	err := os.RemoveAll(filepath + "/node_modules/")
-	err1 := os.Remove(filepath + "/package-lock.json")
-	err2 := os.Remove(filepath + "/package.json")
-	if err != nil || err1 != nil || err2 != nil{
-		return err
+// CheckforSynkToken Checks for Snyk Token var in env
+func CheckforSynkToken() {
+	_, present := os.LookupEnv("snyk_token")
+	if !present {
+		fmt.Printf("snyk token env variable not present")
+		os.Exit(1)
+	} else {
+		fmt.Println("Snyk Token var present.. Starting Test Suite")
 	}
-	return nil
 }
 
-func CreateData_dir() error {
+// CreateDataDir creates data directory
+func CreateDataDir() error {
 	err := os.Mkdir("data", 0755)
 	if err != nil {
 		return err
@@ -44,7 +47,8 @@ func CreateData_dir() error {
 	return nil
 }
 
-func Cleanup_suite() error {
+// CleanupSuite deletes files used by tests
+func CleanupSuite() error {
 	err := os.RemoveAll("/data")
 	if err != nil {
 		return err
@@ -52,38 +56,23 @@ func Cleanup_suite() error {
 	return nil
 }
 
-func Cleanup_mvn(filepath string) error {
-	fmt.Println(filepath)
-	err := os.Remove(filepath + "/pom.xml")
-	if err != nil{
-		return err
-	}
-	return nil
+// Cleanup global cleanup function
+func Cleanup(path string) error {
+	contents, err := filepath.Glob(path)
+    if err != nil {
+        return err
+    }
+    for _, item := range contents {
+        err = os.RemoveAll(item)
+        if err != nil {
+            return err
+        }
+    }
+    return nil
 }
 
-func Cleanup_go(filepath string) error {
-	fmt.Println(filepath)
-	err := os.Remove(filepath + "/go.sum")
-	err1 := os.Remove(filepath + "/go.mod")
-	err2 := os.Remove(filepath + "/main.go")
-	if err != nil || err1 != nil || err2 != nil{
-		return err
-	}
-	return nil
-}
-
-func Cleanup_pypi(filepath string) error {
-	fmt.Println(filepath)
-	err := os.Remove(filepath + "/requirements.txt")
-	err1 := os.RemoveAll(filepath + "/env/")
-	if err != nil||err1 != nil{
-		return err
-	}
-	return nil
-}
-
-
-func Copy_contents_to_target(filename string, target string) error {
+// CopyContentstoTarget Copies the files to target
+func CopyContentstoTarget(filename string, target string) error {
 	from, err := os.Open(filename)
 	if err != nil {
 		return err
@@ -101,5 +90,3 @@ func Copy_contents_to_target(filename string, target string) error {
 	}
 	return nil
 }
-
-

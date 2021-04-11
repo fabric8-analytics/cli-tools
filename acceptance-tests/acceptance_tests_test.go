@@ -7,10 +7,8 @@ import (
 
 var _ = Describe("AcceptanceTests", func() {
 
+	Describe("PR ACCEPTANCE TESTS", tests.PrCheckSuite)
 
-	Describe("PR ACCEPTANCE TESTS", tests.PR_CHECK_SUITE)
-
-	Describe("NIGHTLY SUITE", tests.NIGHTLY_SUITE)
+	Describe("NIGHTLY SUITE", tests.NightlySuite)
 
 })
-

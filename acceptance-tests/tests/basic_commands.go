@@ -1,60 +1,65 @@
 package tests
 
 import (
-	"github.com/fabric8-analytics/cli-tools/acceptance-tests/log"
-    . "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"os/exec"
 	"runtime"
+
+	acclog "github.com/fabric8-analytics/cli-tools/acceptance-tests/log"
 	
 )
 
-func TestCRDA_version() {
+// TestCRDAVersion checks for version command
+func TestCRDAVersion() {
 
 	It("Runs and Validate CLI version", func() {
-		cmd := exec.Command("./crda", "version")
+		cmd := exec.Command(getCRDAcmd(), "version")
 		stdout, err := cmd.Output()
-		acc_log.InfoLogger.Println(string(stdout))
+		acclog.InfoLogger.Println(string(stdout))
 		Expect(err).NotTo(HaveOccurred())
 
 	})
 
 }
 
+// TestInvalidPath checks for invalid path error
 func TestInvalidPath() {
-	It("Should throw error if i send invalid file path", Validate_invalid_file_path)
+	It("Should throw error if i send invalid file path", ValidateInvalidFilePath)
 }
 
+// TestInvalidCommand checks for invalid sub command
 func TestInvalidCommand() {
-	It("Should throw error when run an invalid command", Validate_invalid_command)
+	It("Should throw error when run an invalid command", ValidateInvalidCommand)
 }
 
+// TestInvalidFlag checks for an invalid flag
 func TestInvalidFlag() {
-	It("Should throw an error when set an invalid flag", Validate_invalid_flag)
+	It("Should throw an error when set an invalid flag", ValidateInvalidFlag)
 }
 
-func TestCRDA_help() {
+// TestCRDAHelp verifies the help command
+func TestCRDAHelp() {
 	It("Runs and Validate Help command", func() {
-		cmd := exec.Command("./crda", "help")
+		cmd := exec.Command(getCRDAcmd(), "help")
 		stdout, err := cmd.Output()
-		acc_log.InfoLogger.Println(string(stdout))
+		acclog.InfoLogger.Println(string(stdout))
 		Expect(err).NotTo(HaveOccurred())
 
 	})
 
 }
 
-func TestCRDA_completion() {
+// TestCRDACompletion verifies the completion command
+func TestCRDACompletion() {
 	It("Runs and Validate completion command", func() {
 		if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
-			cmd := exec.Command("./crda", "completion", "bash")
+			cmd := exec.Command(getCRDAcmd(), "completion", "bash")
 			stdout, err := cmd.Output()
-			acc_log.InfoLogger.Println(string(stdout))
+			acclog.InfoLogger.Println(string(stdout))
 			Expect(err).NotTo(HaveOccurred())
 		} else if runtime.GOOS == "windows" {
-			cmd := exec.Command("./crda", "completion", "powershell")
+			cmd := exec.Command(getCRDAcmd(), "completion", "powershell")
 			stdout, err := cmd.Output()
-			acc_log.InfoLogger.Println(string(stdout))
+			acclog.InfoLogger.Println(string(stdout))
 			Expect(err).NotTo(HaveOccurred())
 
 		} else {
@@ -63,51 +68,51 @@ func TestCRDA_completion() {
 	})
 }
 
-func TestCRDA_all_commands_help() {
+// TestCRDAallCommandsHelp verifies if there is a help page for all sub commands
+func TestCRDAallCommandsHelp() {
 	It("analyse command has help page", func() {
-		cmd := exec.Command("./crda", "analyse", "--help")
+		cmd := exec.Command(getCRDAcmd(), "analyse", "--help")
 		stdout, err := cmd.Output()
-		acc_log.InfoLogger.Println(string(stdout))
+		acclog.InfoLogger.Println(string(stdout))
 		Expect(err).NotTo(HaveOccurred())
 	})
 	It("auth command has help page", func() {
-		cmd := exec.Command("./crda", "auth", "--help")
+		cmd := exec.Command(getCRDAcmd(), "auth", "--help")
 		stdout, err := cmd.Output()
-		acc_log.InfoLogger.Println(string(stdout))
+		acclog.InfoLogger.Println(string(stdout))
 		Expect(err).NotTo(HaveOccurred())
 
 	})
 	It("completion command has help page", func() {
-		cmd := exec.Command("./crda", "completion", "--help")
+		cmd := exec.Command(getCRDAcmd(), "completion", "--help")
 		stdout, err := cmd.Output()
-		acc_log.InfoLogger.Println(string(stdout))
+		acclog.InfoLogger.Println(string(stdout))
 		Expect(err).NotTo(HaveOccurred())
 
 	})
 	It("version command has help page", func() {
-		cmd := exec.Command("./crda", "version", "--help")
+		cmd := exec.Command(getCRDAcmd(), "version", "--help")
 		stdout, err := cmd.Output()
-		acc_log.InfoLogger.Println(string(stdout))
+		acclog.InfoLogger.Println(string(stdout))
 		Expect(err).NotTo(HaveOccurred())
 
 	})
 	It("help command has help page", func() {
-		cmd := exec.Command("./crda", "help", "bash")
+		cmd := exec.Command(getCRDAcmd(), "help", "bash")
 		stdout, err := cmd.Output()
-		acc_log.InfoLogger.Println(string(stdout))
+		acclog.InfoLogger.Println(string(stdout))
 		Expect(err).NotTo(HaveOccurred())
 
 	})
 }
 
-func TestCRDA_analyse_without_file() {
+// TestCRDAanalyseWithoutFile veifies error when no file is provided
+func TestCRDAanalyseWithoutFile() {
 	It("Validate analyse without flile throws error", func() {
-		cmd := exec.Command("./crda", "analyse")
+		cmd := exec.Command(getCRDAcmd(), "analyse")
 		stdout, err := cmd.Output()
-		acc_log.InfoLogger.Println(string(stdout))
+		acclog.InfoLogger.Println(string(stdout))
 		Expect(err).To(HaveOccurred())
 
 	})
 }
-
-
