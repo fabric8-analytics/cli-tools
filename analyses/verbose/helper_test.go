@@ -10,12 +10,12 @@ import (
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 )
 
-func data() driver.GetResponseType {
+func data() *driver.GetResponseType {
 	var body driver.GetResponseType
 	// json.NewDecoder(apiResponse.Body).Decode(&body)
 	plan, _ := ioutil.ReadFile("testdata/getresponse.json")
 	json.Unmarshal(plan, &body)
-	return body
+	return &body
 }
 func verboseData() *StackVerbose {
 	var body StackVerbose

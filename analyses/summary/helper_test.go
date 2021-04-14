@@ -8,7 +8,7 @@ import (
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 )
 
-func data() driver.GetResponseType {
+func data() *driver.GetResponseType {
 	var GetResponse = &driver.GetResponseType{
 		AnalysedDeps: []driver.AnalysedDepsType{
 			{
@@ -26,7 +26,7 @@ func data() driver.GetResponseType {
 		},
 		StackID: "123456789",
 	}
-	return *GetResponse
+	return GetResponse
 }
 
 func TestProcessSummary(t *testing.T) {
