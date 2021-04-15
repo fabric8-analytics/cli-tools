@@ -15,6 +15,7 @@ import (
 
 var jsonOut bool
 var verboseOut bool
+var sarifOut bool
 
 // analyseCmd represents the analyse command
 var analyseCmd = &cobra.Command{
@@ -31,6 +32,7 @@ func init() {
 	rootCmd.AddCommand(analyseCmd)
 	analyseCmd.Flags().BoolVarP(&jsonOut, "json", "j", false, "Set output format to JSON.")
 	analyseCmd.Flags().BoolVarP(&verboseOut, "verbose", "v", false, "Detailed Analyses Report.")
+	analyseCmd.Flags().BoolVarP(&sarifOut, "sarif", "s", false, "Report in Sarif format.")
 }
 
 // destructor deletes intermediary files used to have stack analyses
@@ -81,7 +83,7 @@ func runAnalyse(cmd *cobra.Command, args []string) error {
 		fmt.Println("Analysing your Dependency Stack! Please wait...")
 	}
 	name := sa.GetManifestName(manifestPath)
-	hasVul, err := sa.StackAnalyses(cmd.Context(), requestParams, jsonOut, verboseOut)
+	hasVul, err := sa.StackAnalyses(cmd.Context(), requestParams, jsonOut, verboseOut, sarifOut)
 	telemetry.SetManifest(cmd.Context(), name)
 	if err != nil {
 		telemetry.SetExitCode(cmd.Context(), 1)
