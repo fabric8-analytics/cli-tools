@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 	sa "github.com/fabric8-analytics/cli-tools/analyses/stackanalyses"
@@ -64,12 +63,14 @@ func destructor(_ *cobra.Command, _ []string) error {
 
 //runAnalyse is controller func for analyses cmd.
 func runAnalyse(cmd *cobra.Command, args []string) error {
-	telemetry.SetOS(cmd.Context(), runtime.GOOS)
+	telemetry.SetFlag(cmd.Context(), "json", jsonOut)
+	telemetry.SetFlag(cmd.Context(), "verbose", verboseOut)
 	if !viper.IsSet("crda_key") {
 		telemetry.SetExitCode(cmd.Context(), 1)
 		return errors.New(
 			"please run `crda auth` command first")
 	}
+	telemetry.SetCrdaKey(cmd.Context(), viper.GetString("crda_key"))
 	manifestPath := getAbsPath(args[0])
 	requestParams := driver.RequestType{
 		UserID:          viper.GetString("crda_key"),

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -86,9 +87,12 @@ func (c *Client) Upload(ctx context.Context, action string, duration time.Durati
 
 	properties = properties.
 		Set("success", err == nil).
+		Set("platform", runtime.GOOS).
 		Set("duration", duration.Milliseconds())
+
 	if err != nil {
-		properties = properties.Set("error", telemetry.SetError(err)).
+		properties = properties.
+			Set("error", telemetry.SetError(err)).
 			Set("error-type", errorType(err))
 	}
 

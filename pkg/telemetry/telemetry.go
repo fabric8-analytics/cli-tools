@@ -72,8 +72,11 @@ func SetError(err error) string {
 	return strings.ReplaceAll(withoutHomeDir, currentUser.Username, "$USERNAME")
 }
 
-func SetOS(ctx context.Context, value string) {
-	setContextProperty(ctx, "os", value)
+func SetFlag(ctx context.Context, flag string, value bool) {
+	setContextProperty(ctx, flag, value)
+}
+func SetCrdaKey(ctx context.Context, value string) {
+	setContextProperty(ctx, "crda_key", value)
 }
 
 func SetManifest(ctx context.Context, value string) {
@@ -82,4 +85,8 @@ func SetManifest(ctx context.Context, value string) {
 
 func SetExitCode(ctx context.Context, value int) {
 	setContextProperty(ctx, "exit-code", value)
+}
+
+func SetClient(ctx context.Context, value string) {
+	setContextProperty(ctx, "client", value)
 }

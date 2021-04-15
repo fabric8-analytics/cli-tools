@@ -25,12 +25,16 @@ import (
 var (
 	debug       bool
 	flagNoColor bool
+	jenkins     bool
+	tekton      bool
+	ghActions   bool
 )
 
 // Variables
 var (
 	segmentClient *segment.Client
 	exitCode      = 0
+	ctx           context.Context
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -49,7 +53,9 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	attachMiddleware([]string{}, rootCmd)
-	if err := rootCmd.ExecuteContext(telemetry.NewContext(context.Background())); err != nil {
+	ctx = telemetry.NewContext(context.Background())
+	setClient()
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		// CLI Errors
 		_, _ = fmt.Fprintln(os.Stderr, err.Error())
 		exitCode = 1
@@ -66,6 +72,9 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", utils.Debug, "Sets Log level to Debug.")
 	rootCmd.PersistentFlags().BoolVarP(&flagNoColor, "no-color", "c", false, "Toggle colors in output.")
+	rootCmd.PersistentFlags().BoolVarP(&jenkins, "jenkins", "x", false, "For Jenkins Client.")
+	rootCmd.PersistentFlags().BoolVarP(&tekton, "tekton", "y", false, "Client is Tekton.")
+	rootCmd.PersistentFlags().BoolVarP(&ghActions, "gh-actions", "z", false, "Client is Github Action.")
 
 	// Initiate segment client
 	if segmentClient, err = segment.NewClient(); err != nil {
@@ -97,6 +106,18 @@ func attachMiddleware(names []string, cmd *cobra.Command) {
 func pushToSegment(event string, startTime time.Time, err error) {
 	if serr := segmentClient.Upload(rootCmd.Context(), event, time.Since(startTime), err); serr != nil {
 		log.Info().Msgf("Cannot send data to telemetry: %v", serr)
+	}
+}
+
+func setClient() {
+	if jenkins {
+		telemetry.SetClient(ctx, "jenkins")
+	} else if tekton {
+		telemetry.SetClient(ctx, "tekton")
+	} else if ghActions {
+		telemetry.SetClient(ctx, "gh-actions")
+	} else {
+		telemetry.SetClient(ctx, "terminal")
 	}
 }
 
