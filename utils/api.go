@@ -45,8 +45,7 @@ func buildAPIURL(host string, endpoint string, threeScale string) url.URL {
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to Parse Host URL")
 	}
-	apiURL := url.URL{Host: APIHost.Hostname(), Path: endpoint}
-	apiURL.Scheme = "https"
+	apiURL := url.URL{Host: APIHost.Host, Path: endpoint, Scheme: APIHost.Scheme}
 	q := apiURL.Query()
 	q.Set("user_key", threeScale)
 	apiURL.RawQuery = q.Encode()
