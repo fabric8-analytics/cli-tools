@@ -39,18 +39,18 @@ func BuildReportLink(stackID string) string {
 }
 
 // buildAPIURL builds API Endpoint URL
-func buildAPIURL(host string, endpoint string, threeScale string) url.URL {
+func buildAPIURL(host string, endpoint string, threeScale string) *url.URL {
 	log.Debug().Msgf("Building API Url.")
 	APIHost, err := url.Parse(host)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to Parse Host URL")
 	}
-	apiURL := url.URL{Host: APIHost.Host, Path: endpoint, Scheme: APIHost.Scheme}
-	q := apiURL.Query()
+	APIHost.Path = endpoint
+	q := APIHost.Query()
 	q.Set("user_key", threeScale)
-	apiURL.RawQuery = q.Encode()
+	APIHost.RawQuery = q.Encode()
 	log.Debug().Msgf("Success: Building API Url.")
-	return apiURL
+	return APIHost
 }
 
 // HTTPRequest is generic method for HTTP Requests to server
