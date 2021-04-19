@@ -110,8 +110,8 @@ func promptForToken() (string, error) {
 	}
 	snykToken, err := prompt.Run()
 	if err != nil {
-		return "", errors.New(
-			fmt.Sprintf("Unable to read Snyk Token. Please try again. %v", err))
+		log.Error().Msgf("Unable to read Snyk Token. Please try again. %v", err)
+		return "", err
 	}
 	return snykToken, nil
 }
