@@ -16,7 +16,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	utils "github.com/fabric8-analytics/cli-tools/utils"
+	"github.com/fabric8-analytics/cli-tools/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -192,7 +192,7 @@ func initConfig() {
 }
 
 func telemetryConsent() bool {
-	response := utils.GetTelemetryConsent()
+	response := telemetry.GetTelemetryConsent()
 	if response {
 		fmt.Printf("Thanks for helping us! You can disable telemetry by editing %s \n", viper.ConfigFileUsed())
 	} else {

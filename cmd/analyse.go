@@ -54,8 +54,7 @@ func destructor(_ *cobra.Command, _ []string) error {
 		}
 		e := os.Remove(file)
 		if e != nil {
-			return errors.New(
-				fmt.Sprintf("Error clearing files %s", file))
+			return fmt.Errorf("error clearing files %s", file)
 		}
 	}
 	return nil
@@ -82,13 +81,13 @@ func runAnalyse(cmd *cobra.Command, args []string) error {
 		fmt.Println("Analysing your Dependency Stack! Please wait...")
 	}
 	name := sa.GetManifestName(manifestPath)
-	response := sa.StackAnalyses(requestParams, jsonOut, verboseOut)
+	hasVul, err := sa.StackAnalyses(requestParams, jsonOut, verboseOut)
 	telemetry.SetManifest(cmd.Context(), name)
-	if response.Error != nil {
+	if err != nil {
 		telemetry.SetExitCode(cmd.Context(), 1)
-		return response.Error
+		return err
 	}
-	if response.HasVul {
+	if hasVul {
 		// Stack has vulnerability, exit with 2 code
 		exitCode = 2
 		telemetry.SetExitCode(cmd.Context(), exitCode)

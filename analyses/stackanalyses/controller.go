@@ -38,28 +38,22 @@ const (
 )
 
 //StackAnalyses is main controller function for analyse command. This function is responsible for all communications between cmd and custom packages.
-func StackAnalyses(requestParams driver.RequestType, jsonOut bool, verboseOut bool) *driver.StackAnalysisResponse {
+func StackAnalyses(requestParams driver.RequestType, jsonOut bool, verboseOut bool) (bool, error) {
 	log.Debug().Msgf("Executing StackAnalyses.")
 	var hasVul bool
 	matcher, err := GetMatcher(requestParams.RawManifestFile)
 	if err != nil {
-		return &driver.StackAnalysisResponse{
-			Error: err,
-		}
+		return hasVul, err
 	}
 	mc := NewController(matcher)
 	mc.fileStats = mc.buildFileStats(requestParams.RawManifestFile)
 	postResponse, err := mc.postRequest(requestParams, mc.fileStats.DepsTreePath)
 	if err != nil {
-		return &driver.StackAnalysisResponse{
-			Error: err,
-		}
+		return hasVul, err
 	}
 	getResponse, err := mc.getRequest(requestParams, postResponse)
 	if err != nil {
-		return &driver.StackAnalysisResponse{
-			Error: err,
-		}
+		return hasVul, err
 	}
 	verboseEligible := getResponse.RegistrationStatus == RegisteredStatus
 	showVerboseMsg := verboseOut && !verboseEligible
@@ -71,10 +65,7 @@ func StackAnalyses(requestParams driver.RequestType, jsonOut bool, verboseOut bo
 	}
 
 	log.Debug().Msgf("Success StackAnalyses.")
-	return &driver.StackAnalysisResponse{
-		HasVul: hasVul,
-		Error:  nil,
-	}
+	return hasVul, nil
 }
 
 // postRequest performs Stack Analyses POST Request to CRDA server.
@@ -91,17 +82,17 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 	writer := multipart.NewWriter(manifest)
 	fd, err := os.Open(filePath)
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, err
 	}
 	defer fd.Close()
 
 	fw, err := writer.CreateFormFile("manifest", mc.m.DepsTreeFileName())
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, err
 	}
 	_, err = io.Copy(fw, fd)
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, err
 	}
 	_ = writer.WriteField("ecosystem", mc.m.Ecosystem())
 	_ = writer.WriteField("file_path", "/tmp/bin")
