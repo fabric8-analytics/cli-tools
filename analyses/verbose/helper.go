@@ -1,8 +1,10 @@
 package verbose
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"os"
 	"sort"
 
@@ -22,14 +24,16 @@ var cusColor = &CustomColors{
 }
 
 // ProcessVerbose processes verbose results and decides STDOUT format
-func ProcessVerbose(analysedResult *driver.GetResponseType, jsonOut bool) bool {
+func ProcessVerbose(ctx context.Context, analysedResult *driver.GetResponseType, jsonOut bool) bool {
 	out := getVerboseResult(analysedResult)
 	if jsonOut {
 		outputVerboseJSON(out)
 	} else {
 		outputVerbosePlain(out)
 	}
-	return out.TotalDirectVulnerabilities+out.TotalTransitiveVulnerabilities > 0
+	TotalVul := out.TotalDirectVulnerabilities + out.TotalTransitiveVulnerabilities
+	telemetry.SetVulnerability(ctx, TotalVul)
+	return TotalVul > 0
 }
 
 // getVerboseResult prepares verbose struct

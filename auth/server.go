@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"net/http"
 
 	utils "github.com/fabric8-analytics/cli-tools/utils"
@@ -37,7 +39,7 @@ const (
 )
 
 // RequestServer is auth request to CRDA server
-func RequestServer(requestParams RequestServerType) (string, error) {
+func RequestServer(ctx context.Context, requestParams RequestServerType) (string, error) {
 	log.Debug().Msgf("Executing Request Server.")
 	var payload Payload
 	// var resData UserResponse
@@ -71,6 +73,7 @@ func RequestServer(requestParams RequestServerType) (string, error) {
 		if err != nil {
 			return "", err
 		}
+		telemetry.SetSnykTokenAssociation(ctx, true)
 	}
 	log.Debug().Msgf("Successfully executed RequestServer.")
 	return requestParams.UserID, nil

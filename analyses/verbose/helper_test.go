@@ -1,7 +1,9 @@
 package verbose
 
 import (
+	"context"
 	"encoding/json"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"io/ioutil"
 	"testing"
 
@@ -25,7 +27,8 @@ func verboseData() *StackVerbose {
 }
 
 func TestProcessSummary(t *testing.T) {
-	got := ProcessVerbose(data(), false)
+	var ctx = telemetry.NewContext(context.Background())
+	got := ProcessVerbose(ctx, data(), false)
 	if got != true {
 		t.Errorf("Error in ProcessSummary.")
 	}

@@ -59,7 +59,7 @@ func runAuth(cmd *cobra.Command, _ []string) error {
 		ThreeScaleToken: viper.GetString("auth_token"),
 		Host:            viper.GetString("host"),
 	}
-	userID, err := auth.RequestServer(requestParams)
+	userID, err := auth.RequestServer(cmd.Context(), requestParams)
 	if err != nil {
 		telemetry.SetExitCode(cmd.Context(), 1)
 		return err

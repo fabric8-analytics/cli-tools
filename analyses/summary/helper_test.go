@@ -1,6 +1,8 @@
 package summary
 
 import (
+	"context"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -30,7 +32,8 @@ func data() *driver.GetResponseType {
 }
 
 func TestProcessSummary(t *testing.T) {
-	got := ProcessSummary(data(), false, false)
+	var ctx = telemetry.NewContext(context.Background())
+	got := ProcessSummary(ctx, data(), false, false)
 	if got != true {
 		t.Errorf("Error in ProcessSummary.")
 	}

@@ -2,6 +2,7 @@ package stackanalyses
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -38,7 +39,7 @@ const (
 )
 
 //StackAnalyses is main controller function for analyse command. This function is responsible for all communications between cmd and custom packages.
-func StackAnalyses(requestParams driver.RequestType, jsonOut bool, verboseOut bool) (bool, error) {
+func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOut bool, verboseOut bool) (bool, error) {
 	log.Debug().Msgf("Executing StackAnalyses.")
 	var hasVul bool
 	matcher, err := GetMatcher(requestParams.RawManifestFile)
@@ -59,9 +60,9 @@ func StackAnalyses(requestParams driver.RequestType, jsonOut bool, verboseOut bo
 	showVerboseMsg := verboseOut && !verboseEligible
 
 	if verboseOut && verboseEligible {
-		hasVul = verbose.ProcessVerbose(getResponse, jsonOut)
+		hasVul = verbose.ProcessVerbose(ctx, getResponse, jsonOut)
 	} else {
-		hasVul = summary.ProcessSummary(getResponse, jsonOut, showVerboseMsg)
+		hasVul = summary.ProcessSummary(ctx, getResponse, jsonOut, showVerboseMsg)
 	}
 
 	log.Debug().Msgf("Success StackAnalyses.")

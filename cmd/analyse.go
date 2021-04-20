@@ -81,7 +81,7 @@ func runAnalyse(cmd *cobra.Command, args []string) error {
 		fmt.Println("Analysing your Dependency Stack! Please wait...")
 	}
 	name := sa.GetManifestName(manifestPath)
-	hasVul, err := sa.StackAnalyses(requestParams, jsonOut, verboseOut)
+	hasVul, err := sa.StackAnalyses(cmd.Context(), requestParams, jsonOut, verboseOut)
 	telemetry.SetManifest(cmd.Context(), name)
 	if err != nil {
 		telemetry.SetExitCode(cmd.Context(), 1)

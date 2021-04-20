@@ -125,3 +125,11 @@ func SetExitCode(ctx context.Context, value int) {
 func SetClient(ctx context.Context, value string) {
 	setContextProperty(ctx, "client", value)
 }
+
+func SetVulnerability(ctx context.Context, value int) {
+	setContextProperty(ctx, "total-vulnerabilities", value)
+}
+
+func SetSnykTokenAssociation(ctx context.Context, value bool) {
+	setContextProperty(ctx, "snyk-token-associated", value)
+}
