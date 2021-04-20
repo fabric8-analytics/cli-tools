@@ -25,9 +25,7 @@ import (
 var (
 	debug       bool
 	flagNoColor bool
-	jenkins     bool
-	tekton      bool
-	ghActions   bool
+	client      string
 )
 
 // Variables
@@ -54,7 +52,7 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	attachMiddleware([]string{}, rootCmd)
 	ctx = telemetry.NewContext(context.Background())
-	setClient()
+
 	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		// CLI Errors
 		_, _ = fmt.Fprintln(os.Stderr, err.Error())
@@ -72,9 +70,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", utils.Debug, "Sets Log level to Debug.")
 	rootCmd.PersistentFlags().BoolVarP(&flagNoColor, "no-color", "c", false, "Toggle colors in output.")
-	rootCmd.PersistentFlags().BoolVarP(&jenkins, "jenkins", "x", false, "For Jenkins Client.")
-	rootCmd.PersistentFlags().BoolVarP(&tekton, "tekton", "y", false, "Client is Tekton.")
-	rootCmd.PersistentFlags().BoolVarP(&ghActions, "gh-actions", "z", false, "Client is Github Action.")
+	rootCmd.PersistentFlags().StringVarP(&client, "client", "m", "terminal", "Client [tekton/jenkins/gh-actions]")
 
 	// Initiate segment client
 	if segmentClient, err = segment.NewClient(); err != nil {
@@ -91,6 +87,7 @@ func executeWithLogging(fullCmd string, input func(cmd *cobra.Command, args []st
 		return err
 	}
 }
+
 func attachMiddleware(names []string, cmd *cobra.Command) {
 	if cmd.HasSubCommands() {
 		for _, command := range cmd.Commands() {
@@ -109,22 +106,9 @@ func pushToSegment(event string, startTime time.Time, err error) {
 	}
 }
 
-func setClient() {
-	if jenkins {
-		telemetry.SetClient(ctx, "jenkins")
-	} else if tekton {
-		telemetry.SetClient(ctx, "tekton")
-	} else if ghActions {
-		telemetry.SetClient(ctx, "gh-actions")
-	} else {
-		telemetry.SetClient(ctx, "terminal")
-	}
-}
-
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	color.NoColor = flagNoColor
-
 	// Log Level Settings
 	logLevel := zerolog.InfoLevel
 	if debug {
@@ -186,6 +170,12 @@ func initConfig() {
 	if err != nil {
 		return
 	}
+	err = validateFlagValues(client)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	telemetry.SetClient(ctx, client)
 	crdaConfig.ViperUnMarshal()
 	log.Debug().Msgf("Using config file %s.\n", viper.ConfigFileUsed())
 	log.Debug().Msgf("Successfully configured config files %s.", viper.ConfigFileUsed())
