@@ -192,6 +192,7 @@ func initConfig() {
 }
 
 func telemetryConsent() bool {
+	fmt.Println("CRDA CLI is constantly improving and we would like to know more about usage")
 	response := telemetry.GetTelemetryConsent()
 	if response {
 		fmt.Printf("Thanks for helping us! You can disable telemetry by editing %s \n", viper.ConfigFileUsed())

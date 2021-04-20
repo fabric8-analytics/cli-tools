@@ -21,7 +21,6 @@ type Properties struct {
 }
 
 func GetTelemetryConsent() bool {
-	fmt.Println("CRDA CLI is constantly improving and we would like to know more about usage")
 	prompt := promptui.Prompt{
 		Label:       "Would you like to contribute anonymous usage statistics [y/n]",
 		HideEntered: true,
