@@ -59,8 +59,11 @@ func runAuth(cmd *cobra.Command, _ []string) error {
 		ThreeScaleToken: viper.GetString("auth_token"),
 		Host:            viper.GetString("host"),
 	}
-	userID := auth.RequestServer(requestParams)
-
+	userID, err := auth.RequestServer(requestParams)
+	if err != nil {
+		telemetry.SetExitCode(cmd.Context(), 1)
+		return err
+	}
 	fmt.Print("Successfully Registered. \n\n")
 	green := color.New(color.FgHiGreen, color.Bold).SprintFunc()
 	fmt.Println(fmt.Sprintf(green("crda_key: ")+"%s\n", color.GreenString(userID)))
@@ -72,7 +75,7 @@ func runAuth(cmd *cobra.Command, _ []string) error {
 		telemetry.SetExitCode(cmd.Context(), 1)
 		return err
 	}
-	telemetry.SetExitCode(cmd.Context(), exitCode)
+	telemetry.SetExitCode(cmd.Context(), 0)
 	log.Debug().Msgf("Successfully Executed Auth command.")
 	return nil
 }
