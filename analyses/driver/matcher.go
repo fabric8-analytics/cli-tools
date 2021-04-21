@@ -54,6 +54,11 @@ type GetResponseType struct {
 	StackID            string             `json:"external_request_id"`
 }
 
+// ErrorResponse is a struct to unmarshal API Error response
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // ReadManifestResponse is arg type of readManifest func
 type ReadManifestResponse struct {
 	DepsTreePath     string `json:"manifest,omitempty"`
