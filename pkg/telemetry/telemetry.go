@@ -110,9 +110,6 @@ func SetError(err error) string {
 func SetFlag(ctx context.Context, flag string, value bool) {
 	setContextProperty(ctx, flag, value)
 }
-func SetCrdaKey(ctx context.Context, value string) {
-	setContextProperty(ctx, "crda_key", value)
-}
 
 func SetManifest(ctx context.Context, value string) {
 	setContextProperty(ctx, "manifest", value)
