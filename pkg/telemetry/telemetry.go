@@ -15,11 +15,13 @@ type contextKey struct{}
 
 var key = contextKey{}
 
+// Properties maintain state of Telemetry event Properties.
 type Properties struct {
 	lock    sync.Mutex
 	storage map[string]interface{}
 }
 
+// GetTelemetryConsent fires telemetry consent popup.
 func GetTelemetryConsent() bool {
 	prompt := promptui.Prompt{
 		Label:       "Would you like to contribute anonymous usage statistics [y/n]",
@@ -36,6 +38,7 @@ func GetTelemetryConsent() bool {
 	return userResponse
 }
 
+// Find compared user input string with accepted values
 func Find(val string) bool {
 	yes := []string{"y", "Y", "1"}
 	no := []string{"n", "N", "0"}
@@ -77,10 +80,12 @@ func propertiesFromContext(ctx context.Context) *Properties {
 	return nil
 }
 
+// NewContext creates a New Context
 func NewContext(ctx context.Context) context.Context {
 	return context.WithValue(ctx, key, &Properties{storage: make(map[string]interface{})})
 }
 
+// GetContextProperties returns current property state
 func GetContextProperties(ctx context.Context) map[string]interface{} {
 	properties := propertiesFromContext(ctx)
 	if properties == nil {
@@ -96,6 +101,7 @@ func setContextProperty(ctx context.Context, key string, value interface{}) {
 	}
 }
 
+// SetError replaces sensitive data from error recording
 func SetError(err error) string {
 	// Mask username if present in the error string
 	currentUser, err1 := user.Current()
@@ -107,26 +113,32 @@ func SetError(err error) string {
 	return strings.ReplaceAll(withoutHomeDir, currentUser.Username, "$USERNAME")
 }
 
+// SetFlag records Json, verbose flags
 func SetFlag(ctx context.Context, flag string, value bool) {
 	setContextProperty(ctx, flag, value)
 }
 
+// SetManifest sets manifest name property
 func SetManifest(ctx context.Context, value string) {
 	setContextProperty(ctx, "manifest", value)
 }
 
+// SetExitCode sets exit code property
 func SetExitCode(ctx context.Context, value int) {
 	setContextProperty(ctx, "exit-code", value)
 }
 
+// SetClient sets cient property: Ex: terminal, jenkins, etc
 func SetClient(ctx context.Context, value string) {
 	setContextProperty(ctx, "client", value)
 }
 
+// SetVulnerability sets total vulnerability found property
 func SetVulnerability(ctx context.Context, value int) {
 	setContextProperty(ctx, "total-vulnerabilities", value)
 }
 
+// SetSnykTokenAssociation sets synk-token-associated property
 func SetSnykTokenAssociation(ctx context.Context, value bool) {
 	setContextProperty(ctx, "snyk-token-associated", value)
 }

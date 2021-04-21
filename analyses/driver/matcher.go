@@ -54,6 +54,7 @@ type GetResponseType struct {
 	StackID            string             `json:"external_request_id"`
 }
 
+// ErrorResponse is a struct to unmarshal API Error response
 type ErrorResponse struct {
 	Error string `json:"error"`
 }

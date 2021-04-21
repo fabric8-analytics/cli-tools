@@ -158,7 +158,7 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
 		log.Error().Msgf("Stack Analyses Post Request Failed.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"")
-		return nil, errors.New(fmt.Sprintf("SA POST Request Failed. status code: %d", apiResponse.StatusCode))
+		return nil, fmt.Errorf("SA POST Request Failed. status code: %d", apiResponse.StatusCode)
 	}
 	log.Debug().Msgf("Success validatePostResponse.")
 	return &body, nil
@@ -174,7 +174,7 @@ func (mc *Controller) validateGetResponse(apiResponse *http.Response) (*driver.G
 		var body driver.ErrorResponse
 		json.NewDecoder(apiResponse.Body).Decode(&body)
 		log.Error().Msgf("Stack Analyses Get Request Failed.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"")
-		return nil, errors.New(fmt.Sprintf("SA GET Request Failed. status code: %d", apiResponse.StatusCode))
+		return nil, fmt.Errorf("SA GET Request Failed. status code: %d", apiResponse.StatusCode)
 	}
 	log.Debug().Msgf("Success validateGetResponse.")
 	return &body, err
@@ -216,6 +216,7 @@ func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestRe
 	return stats
 }
 
+// GetManifestName extracts manifest name from user input path
 func GetManifestName(manifestFile string) string {
 	stats, err := os.Stat(manifestFile)
 	if err != nil {

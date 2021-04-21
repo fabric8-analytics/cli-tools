@@ -11,8 +11,11 @@ type viperConfigs struct {
 	ConsentTelemetry string `mapstructure:"consent_telemetry"`
 }
 
+// ActiveConfigValues Maintain state of viper configurations
 var ActiveConfigValues = &viperConfigs{}
 
+
+// ViperUnMarshal loads viper configs into ActiveConfigValues
 func ViperUnMarshal() {
 
 	err := viper.Unmarshal(&ActiveConfigValues)

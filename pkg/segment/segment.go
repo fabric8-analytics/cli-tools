@@ -22,13 +22,16 @@ import (
 	"github.com/segmentio/analytics-go"
 )
 
-var WriteKey = "MW6rAYP7Q6AAiSAZ3Ussk6eMebbVcchD" // test
+// writeKey is segment project key 
+var writeKey = "MW6rAYP7Q6AAiSAZ3Ussk6eMebbVcchD" // test
 
+// Client is a segment client struct
 type Client struct {
 	segmentClient     analytics.Client
 	telemetryFilePath string
 }
 
+// NewClient initiates segment client
 func NewClient() (*Client, error) {
 	configHome, _ := homedir.Dir()
 	return newCustomClient(
@@ -37,7 +40,7 @@ func NewClient() (*Client, error) {
 }
 
 func newCustomClient(telemetryFilePath, segmentEndpoint string) (*Client, error) {
-	client, err := analytics.NewWithConfig(WriteKey, analytics.Config{
+	client, err := analytics.NewWithConfig(writeKey, analytics.Config{
 		Endpoint: segmentEndpoint,
 		DefaultContext: &analytics.Context{
 			App: analytics.AppInfo{
@@ -60,10 +63,12 @@ func newCustomClient(telemetryFilePath, segmentEndpoint string) (*Client, error)
 	}, nil
 }
 
+// Close closes segment client
 func (c *Client) Close() error {
 	return c.segmentClient.Close()
 }
 
+// Upload sends telemetry data to segment
 func (c *Client) Upload(ctx context.Context, action string, duration time.Duration, err error) error {
 	if config.ActiveConfigValues.ConsentTelemetry != "1" {
 		return nil
