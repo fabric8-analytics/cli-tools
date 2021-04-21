@@ -69,7 +69,6 @@ func runAnalyse(cmd *cobra.Command, args []string) error {
 		return errors.New(
 			"please run `crda auth` command first")
 	}
-	telemetry.SetCrdaKey(cmd.Context(), viper.GetString("crda_key"))
 	manifestPath := getAbsPath(args[0])
 	requestParams := driver.RequestType{
 		UserID:          viper.GetString("crda_key"),

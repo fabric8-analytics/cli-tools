@@ -142,8 +142,3 @@ func SetVulnerability(ctx context.Context, value int) {
 func SetSnykTokenAssociation(ctx context.Context, value bool) {
 	setContextProperty(ctx, "snyk-token-associated", value)
 }
-
-// SetCrdaKey sets crda key
-func SetCrdaKey(ctx context.Context, value string) {
-	setContextProperty(ctx, "crda_key", value)
-}
