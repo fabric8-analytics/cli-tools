@@ -1,6 +1,10 @@
 package tests
 
-import "github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+import (
+	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper" 
+	. "github.com/onsi/ginkgo"
+)
+	
 
 // BasicTestMaven tests Basic maven functionality
 func BasicTestMaven() {
@@ -9,6 +13,7 @@ func BasicTestMaven() {
 	It("I should perform cleanup", Cleanup)
 }
 
+// BasicTestMavenVulns tests basic maven functionality with vulnerablities
 func BasicTestMavenVulns() {
 	BeforeEach(func() {
 		file, target = helper.CommonBeforeEach("/pom2.xml", "maven")

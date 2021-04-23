@@ -1,9 +1,10 @@
 package tests
 
 import (
-	"fmt"
 	"runtime"
 	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 // TestCRDAVersion checks for version command
@@ -11,7 +12,7 @@ func TestCRDAVersion() {
 
 	It("Runs and Validate CLI version", func() {
 		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse", "version")
-		fmt.Println(GinkgoWriter, string(session))
+		helper.PrintWithGinkgo(session)
 
 	})
 
@@ -36,7 +37,7 @@ func TestInvalidFlag() {
 func TestCRDAHelp() {
 	It("Runs and Validate Help command", func() {
 		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse", "help")
-		fmt.Println(GinkgoWriter, string(session))
+		helper.PrintWithGinkgo(session)
 
 	})
 
@@ -59,26 +60,26 @@ func TestCRDACompletion() {
 func TestCRDAallCommandsHelp() {
 	It("analyse command has help page", func() {
 		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse", "--help")
-		fmt.Println(GinkgoWriter, string(session))
+		helper.PrintWithGinkgo(session)
 	})
 	It("auth command has help page", func() {
 		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "auth", "--help")
-		fmt.Println(GinkgoWriter, string(session))
+		helper.PrintWithGinkgo(session)
 
 	})
 	It("completion command has help page", func() {
 		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "completion", "--help")
-		fmt.Println(GinkgoWriter, string(session))
+		helper.PrintWithGinkgo(session)
 
 	})
 	It("version command has help page", func() {
 		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "version", "--help")
-		fmt.Println(GinkgoWriter, string(session))
+		helper.PrintWithGinkgo(session)
 
 	})
 	It("help command has help page", func() {
 		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "help", "--help")
-		fmt.Println(GinkgoWriter, string(session))
+		helper.PrintWithGinkgo(session)
 
 	})
 }
@@ -87,7 +88,7 @@ func TestCRDAallCommandsHelp() {
 func TestCRDAanalyseWithoutFile() {
 	It("Validate analyse without flile throws error", func() {
 		session := helper.CmdShouldFailWithExit1(getCRDAcmd(), "analyse")
-		fmt.Println(GinkgoWriter, session)
+		helper.PrintWithGinkgo(session)
 		Expect(string(session)).To(ContainSubstring("requires valid manifest file path"))
 
 	})

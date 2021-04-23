@@ -8,17 +8,25 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 )
 
+// runningCmd is the function which logs the running command
 func runningCmd(cmd *exec.Cmd) string {
 	prog := filepath.Base(cmd.Path)
 	return fmt.Sprintf("Running %s with args %v", prog, cmd.Args)
 }
 
+// PrintWithGinkgo is the function used for logging
+func PrintWithGinkgo(data string){
+	prefix := fmt.Sprintf("[%s] ", "Test Log")
+	prefixWriter := gexec.NewPrefixedWriter(prefix, GinkgoWriter)
+	fmt.Fprintln(prefixWriter, data)
+}
+
+// CmdRunner is the function used to run a command 
 func CmdRunner(program string, args ...string) *gexec.Session {
 	//prefix ginkgo verbose output with program name
 	prefix := fmt.Sprintf("[%s] ", filepath.Base(program))
@@ -30,24 +38,28 @@ func CmdRunner(program string, args ...string) *gexec.Session {
 	return session
 }
 
+// CmdShouldPassWithExit2 asserts the command passed with exit 2 
 func CmdShouldPassWithExit2(program string, args ...string) string {
 	session := CmdRunner(program, args...)
 	Eventually(session).Should(gexec.Exit(2), runningCmd(session.Command))
 	return string(session.Out.Contents())
 }
 
+// CmdShouldPassWithExit1 asserts the command passed with exit 1
 func CmdShouldPassWithExit1(program string, args ...string) string {
 	session := CmdRunner(program, args...)
 	Eventually(session).Should(gexec.Exit(1), runningCmd(session.Command))
 	return string(session.Out.Contents())
 }
 
+// CmdShouldFailWithExit1 asserts the command passed with exit 1
 func CmdShouldFailWithExit1(program string, args ...string) string {
 	session := CmdRunner(program, args...)
 	Eventually(session).Should(gexec.Exit(1), runningCmd(session.Command))
 	return string(session.Err.Contents())
 }
 
+// CmdShouldPassWithoutError asserts if the command is passed without error 
 func CmdShouldPassWithoutError(program string, args ...string) string {
 	session := CmdRunner(program, args...)
 	Eventually(session).ShouldNot(gexec.Exit(1),runningCmd(session.Command))
@@ -111,7 +123,7 @@ func CreateDataDir() error {
 
 // CleanupSuite deletes files used by tests
 func CleanupSuite() error {
-	err := os.RemoveAll("/data")
+	err := os.RemoveAll("data")
 	if err != nil {
 		return err
 	}

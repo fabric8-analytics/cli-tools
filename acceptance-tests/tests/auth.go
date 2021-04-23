@@ -1,9 +1,10 @@
 package tests
 
 import (
-	"fmt"
 	"os"
 	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 // TestCRDAauth implements Test Cases to test auth crda command
@@ -28,7 +29,7 @@ func TestCRDAauth() {
 				Skip("Running in PR Check")
 			}
 			session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "auth", "--snyk-token", string(validToken))
-			fmt.Println(GinkgoWriter, session)
+			helper.PrintWithGinkgo(session)
 		})
 
 	})

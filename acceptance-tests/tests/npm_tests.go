@@ -1,13 +1,15 @@
 package tests
 
-import "github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+import (
+	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+	. "github.com/onsi/ginkgo"
+	
+)
 
 // NpmTestSuitePR runs on each PR check
 func NpmTestSuitePR() {
 	
 	BeforeEach(func() {
-		// file = "/package.json"
-		// target = "/package.json"
 		file, target = helper.CommonBeforeEach("/package.json", "npm")
 	})
 	When("I test analyse for npm with vulns", TestCRDAanalyseNpm)
@@ -49,7 +51,6 @@ func TestCRDAanalyseNpmJSON() {
 // TestCRDAanalyseNpmJSONNoVulns tests functionality with json and no vulns
 func TestCRDAanalyseNpmJSONNoVulns() {
 	BeforeEach(func() {
-		// file = "/vulns.json"
 		file, target = helper.CommonBeforeEach("/vulns.json", "npm")
 	})
 	It("I should Copy Manifest", CopyManifests)
@@ -91,8 +92,6 @@ func TestCRDAanalyseNpmAllFlags() {
 // TestCRDAanalyseWithAbsolutePathNpm tests functionality with abs path
 func TestCRDAanalyseWithAbsolutePathNpm() {
 	BeforeEach(func() {
-		// file = "/package.json"
-		// target = "/package.json"
 		file, target = helper.CommonBeforeEach("/package.json", "npm")
 	})
 	When("I Test for analyse command with absolute path npm", func() {

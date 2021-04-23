@@ -1,5 +1,9 @@
 package tests
 
+import (
+	. "github.com/onsi/ginkgo"
+)
+
 // PrCheckSuite runs checks on every PR
 func PrCheckSuite() {
 

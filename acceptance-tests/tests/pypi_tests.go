@@ -1,6 +1,10 @@
 package tests
 
-import "github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+import (
+	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+	. "github.com/onsi/ginkgo"
+
+)
 
 // BasicTestPypi tests Basic functionality
 func BasicTestPypi() {
@@ -66,7 +70,6 @@ func PypiTestSuite() {
 	})
 	When("I test analyse command for pypi without vulns", func() {
 		BeforeEach(func() {
-			//file = "/requirements2.txt" 
 			file, target = helper.CommonBeforeEach("/requirements2.txt", "pypi")
 		})
 		It("I should Copy Manifest", CopyManifests)
@@ -76,7 +79,6 @@ func PypiTestSuite() {
 	})
 	When("I test analyse command for pypi without vulns json", func() {
 		BeforeEach(func() {
-			// file = "/requirements2.txt"
 			file, target = helper.CommonBeforeEach("/requirements2.txt", "pypi")
 		})
 		It("I should Copy Manifest", CopyManifests)
