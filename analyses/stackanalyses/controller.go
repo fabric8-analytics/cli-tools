@@ -2,8 +2,10 @@ package stackanalyses
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -37,32 +39,38 @@ const (
 )
 
 //StackAnalyses is main controller function for analyse command. This function is responsible for all communications between cmd and custom packages.
-func StackAnalyses(requestParams driver.RequestType, jsonOut bool, verboseOut bool) bool {
+func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOut bool, verboseOut bool) (bool, error) {
 	log.Debug().Msgf("Executing StackAnalyses.")
 	var hasVul bool
 	matcher, err := GetMatcher(requestParams.RawManifestFile)
 	if err != nil {
-		log.Fatal().Msgf(err.Error())
+		return hasVul, err
 	}
 	mc := NewController(matcher)
 	mc.fileStats = mc.buildFileStats(requestParams.RawManifestFile)
-	postResponse := mc.postRequest(requestParams, mc.fileStats.DepsTreePath)
-	getResponse := mc.getRequest(requestParams, postResponse)
+	postResponse, err := mc.postRequest(requestParams, mc.fileStats.DepsTreePath)
+	if err != nil {
+		return hasVul, err
+	}
+	getResponse, err := mc.getRequest(requestParams, postResponse)
+	if err != nil {
+		return hasVul, err
+	}
 	verboseEligible := getResponse.RegistrationStatus == RegisteredStatus
 	showVerboseMsg := verboseOut && !verboseEligible
 
 	if verboseOut && verboseEligible {
-		hasVul = verbose.ProcessVerbose(getResponse, jsonOut)
+		hasVul = verbose.ProcessVerbose(ctx, getResponse, jsonOut)
 	} else {
-		hasVul = summary.ProcessSummary(getResponse, jsonOut, showVerboseMsg)
+		hasVul = summary.ProcessSummary(ctx, getResponse, jsonOut, showVerboseMsg)
 	}
 
 	log.Debug().Msgf("Success StackAnalyses.")
-	return hasVul
+	return hasVul, nil
 }
 
 // postRequest performs Stack Analyses POST Request to CRDA server.
-func (mc *Controller) postRequest(requestParams driver.RequestType, filePath string) driver.PostResponseType {
+func (mc *Controller) postRequest(requestParams driver.RequestType, filePath string) (*driver.PostResponseType, error) {
 	log.Debug().Msgf("Executing: postRequest.")
 	manifest := &bytes.Buffer{}
 	requestData := utils.HTTPRequestType{
@@ -75,34 +83,37 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 	writer := multipart.NewWriter(manifest)
 	fd, err := os.Open(filePath)
 	if err != nil {
-		log.Fatal().Err(err).Msgf(err.Error())
+		return nil, err
 	}
 	defer fd.Close()
 
 	fw, err := writer.CreateFormFile("manifest", mc.m.DepsTreeFileName())
 	if err != nil {
-		log.Fatal().Err(err).Msgf(err.Error())
+		return nil, err
 	}
 	_, err = io.Copy(fw, fd)
 	if err != nil {
-		log.Fatal().Err(err).Msgf(err.Error())
+		return nil, err
 	}
 	_ = writer.WriteField("ecosystem", mc.m.Ecosystem())
 	_ = writer.WriteField("file_path", "/tmp/bin")
 	err = writer.Close()
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Error closing Buffer Writer in Stack Analyses Request.")
+		return nil, errors.New("error closing Buffer Writer in Stack Analyses Request")
 	}
 	log.Debug().Msgf("Hitting: Stack Analyses Post API.")
 	apiResponse := utils.HTTPRequestMultipart(requestData, writer, manifest)
-	body := mc.validatePostResponse(apiResponse)
+	body, err := mc.validatePostResponse(apiResponse)
+	if err != nil {
+		return nil, err
+	}
 	log.Debug().Msgf("Got Stack Analyses Post Response Stack Id: %s", body.ID)
 	log.Debug().Msgf("Success: postRequest.")
-	return body
+	return body, nil
 }
 
 // getRequest performs Stack Analyses GET Request to CRDA Server.
-func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse driver.PostResponseType) driver.GetResponseType {
+func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse *driver.PostResponseType) (*driver.GetResponseType, error) {
 	log.Debug().Msgf("Executing: getRequest.")
 	polling := &backoff.Backoff{
 		Min:    5 * time.Second,
@@ -129,34 +140,44 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 		}
 		log.Debug().Msgf("Retrying...")
 	}
-	body := mc.validateGetResponse(apiResponse)
-	return body
+	body, err := mc.validateGetResponse(apiResponse)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
 }
 
 // validatePostResponse validates Stack Analyses POST API Response.
-func (mc *Controller) validatePostResponse(apiResponse *http.Response) driver.PostResponseType {
+func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.PostResponseType, error) {
 	log.Debug().Msgf("Executing validatePostResponse.")
 	var body driver.PostResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
+	if err != nil {
+		return nil, err
+	}
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
-		log.Fatal().Err(err).Msgf("Stack Analyses Post Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
+		log.Error().Msgf("Stack Analyses Post Request Failed.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"")
+		return nil, fmt.Errorf("SA POST Request Failed. status code: %d", apiResponse.StatusCode)
 	}
 	log.Debug().Msgf("Success validatePostResponse.")
-	return body
+	return &body, nil
 }
 
 // validateGetResponse validates Stack Analyses GET API Response.
-func (mc *Controller) validateGetResponse(apiResponse *http.Response) driver.GetResponseType {
+func (mc *Controller) validateGetResponse(apiResponse *http.Response) (*driver.GetResponseType, error) {
 	log.Debug().Msgf("Executing validateGetResponse.")
 	var body driver.GetResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
-		log.Fatal().Err(err).Msgf("Stack Analyses Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
+		var body driver.ErrorResponse
+		json.NewDecoder(apiResponse.Body).Decode(&body)
+		log.Error().Msgf("Stack Analyses Get Request Failed.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"")
+		return nil, fmt.Errorf("SA GET Request Failed. status code: %d", apiResponse.StatusCode)
 	}
 	log.Debug().Msgf("Success validateGetResponse.")
-	return body
+	return &body, err
 }
 
 // NewController is a constructor for a Controller
@@ -187,7 +208,7 @@ func GetMatcher(manifestFile string) (driver.StackAnalysisInterface, error) {
 func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestResponse {
 	stats := &driver.ReadManifestResponse{
 		Ecosystem:        mc.m.Ecosystem(),
-		RawFileName:      mc.getManifestName(manifestFile),
+		RawFileName:      GetManifestName(manifestFile),
 		RawFilePath:      manifestFile,
 		DepsTreePath:     mc.m.GeneratorDependencyTree(manifestFile),
 		DepsTreeFileName: mc.m.DepsTreeFileName(),
@@ -195,7 +216,8 @@ func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestRe
 	return stats
 }
 
-func (mc *Controller) getManifestName(manifestFile string) string {
+// GetManifestName extracts manifest name from user input path
+func GetManifestName(manifestFile string) string {
 	stats, err := os.Stat(manifestFile)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Error fetching manifest name.")

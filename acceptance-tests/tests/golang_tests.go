@@ -1,5 +1,6 @@
 package tests
 
+import "github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
 
 // BasicTestGO tests Basic Go functionality
 func BasicTestGO() {
@@ -27,8 +28,10 @@ func TestCRDAanalyseWithAbsolutePathGo() {
 // GolangTestSuitePR tests golang on each PR
 func GolangTestSuitePR() {
 	BeforeEach(func() {
-		file = "/go.mod.template"
-		target = "/go.mod"
+		
+		// file = "/go.mod.template"
+		// target = "/go.mod"
+		file, target = helper.CommonBeforeEach("/go.mod.template", "go")
 	})
 	When("I test analyse command for Go with vulns", BasicTestGO)
 	When("I test analyse command for Go absolute path", TestCRDAanalyseWithAbsolutePathGo)
@@ -38,8 +41,9 @@ func GolangTestSuitePR() {
 // GolangTestSuite works on the nightly test suite
 func GolangTestSuite() {
 	BeforeEach(func() {
-		file = "/go.mod.template"
-		target = "/go.mod"
+		// file = "/go.mod.template"
+		// target = "/go.mod"
+		file, target = helper.CommonBeforeEach("/go.mod.template", "go")
 	})
 	When("I test analyse command for Go with vulns", BasicTestGO)
 	When("I test analyse command for Go absolute path", TestCRDAanalyseWithAbsolutePathGo)
@@ -79,8 +83,9 @@ func GolangTestSuite() {
 	})
 	When("I test analyse command for Go without vulns", func() {
 		BeforeEach(func() {
-			file = "/go2.mod.template"
+			// file = "/go2.mod.template"
 			GoMainFile = "/main2.go.template"
+			file, target = helper.CommonBeforeEach("/go2.mod.template", "go")
 		})
 		It("Should be able to get the absolute path", GetAbsPath)
 		It("I should Copy Manifest", CopyManifests)
@@ -91,8 +96,9 @@ func GolangTestSuite() {
 	})
 	When("I test analyse command for Go without vulns json", func() {
 		BeforeEach(func() {
-			file = "/go2.mod.template"
+			// file = "/go2.mod.template"
 			GoMainFile = "/main2.go.template"
+			file, target = helper.CommonBeforeEach("/go2.mod.template", "go")
 		})
 		It("Should be able to get the absolute path", GetAbsPath)
 		It("I should Copy Manifest", CopyManifests)

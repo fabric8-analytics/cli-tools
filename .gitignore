@@ -45,3 +45,5 @@ target/
 
 # Programatically generated files
 generate_pylist.py
+
+node_modules/

@@ -1,8 +1,10 @@
 package summary
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"os"
 
 	"github.com/fatih/color"
@@ -13,18 +15,19 @@ import (
 )
 
 // ProcessSummary processes summary results, return true if Vul found
-func ProcessSummary(analysedResult driver.GetResponseType, jsonOut bool, showVerboseMsg bool) bool {
+func ProcessSummary(ctx context.Context, analysedResult *driver.GetResponseType, jsonOut bool, showVerboseMsg bool) bool {
 	out := getResultSummary(analysedResult)
 	if jsonOut {
 		outputSummaryJSON(out)
 	} else {
 		outputSummaryPlain(out, showVerboseMsg)
 	}
+	telemetry.SetVulnerability(ctx, out.TotalVulnerabilities)
 	return out.TotalVulnerabilities > 0
 }
 
 // GetResultSummary processes result Summary
-func getResultSummary(analysedResult driver.GetResponseType) *StackSummary {
+func getResultSummary(analysedResult *driver.GetResponseType) *StackSummary {
 	totalDepsScanned := len(analysedResult.AnalysedDeps)
 	data := processVulnerabilities(analysedResult.AnalysedDeps)
 	out := &StackSummary{

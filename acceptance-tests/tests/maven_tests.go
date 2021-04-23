@@ -1,5 +1,7 @@
 package tests
 
+import "github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+
 // BasicTestMaven tests Basic maven functionality
 func BasicTestMaven() {
 	It("Copy Manifest", CopyManifests)
@@ -20,8 +22,9 @@ func TestCRDAanalyseWithAbsolutePathMvn() {
 // MavenTestSuitePR runs on each PR
 func MavenTestSuitePR() {
 	BeforeEach(func() {
-		file = "/pom2.xml"
-		target = "/pom.xml"
+		// file = "/pom2.xml"
+		// target = "/pom.xml"
+		file, target = helper.CommonBeforeEach("/pom2.xml", "maven")
 	})
 	When("I test analyse command for Maven with no vulns", BasicTestMaven)
 	When("I test analyse command for Maven absolute path", TestCRDAanalyseWithAbsolutePathMvn)
@@ -33,6 +36,7 @@ func MavenTestSuite() {
 	BeforeEach(func() {
 		file = "/pom.xml"
 		target = "/pom.xml"
+		file, target = helper.CommonBeforeEach("/pom.xml", "maven")
 	})
 	When("I test analyse command for Maven with no vulns", BasicTestMaven)
 	When("I test analyse command for Maven absolute path", TestCRDAanalyseWithAbsolutePathMvn)
@@ -43,7 +47,8 @@ func MavenTestSuite() {
 	})
 	When("I test analyse command for Maven with vulns", func() {
 		BeforeEach(func() {
-			file = "/pom2.xml"
+			// file = "/pom2.xml"
+			file, target = helper.CommonBeforeEach("/pom2.xml", "maven")
 		})
 		It("Copy Manifest", CopyManifests)
 		It("Should be able to run analyse without error", ValidateAnalse)
@@ -52,7 +57,8 @@ func MavenTestSuite() {
 	})
 	When("I test analyse command for Maven with vulns and json", func() {
 		BeforeEach(func() {
-			file = "/pom2.xml"
+			// file = "/pom2.xml"
+			file, target = helper.CommonBeforeEach("/pom2.xml", "maven")
 		})
 		It("Copy Manifest", CopyManifests)
 		It("Should be able to run analyse without error", ValidateAnalseJSONVulns)
@@ -61,7 +67,8 @@ func MavenTestSuite() {
 	})
 	When("I test analyse command for Maven with vulns and verbose", func() {
 		BeforeEach(func() {
-			file = "/pom2.xml"
+			// file = "/pom2.xml"
+			file, target = helper.CommonBeforeEach("/pom2.xml", "maven")
 		})
 		It("Copy Manifest", CopyManifests)
 		It("Should be able to run analyse without error", ValidateAnalseVulnVerbose)
@@ -70,7 +77,8 @@ func MavenTestSuite() {
 	})
 	When("I test analyse command for Maven with vulns and debug", func() {
 		BeforeEach(func() {
-			file = "/pom2.xml"
+			// file = "/pom2.xml"
+			file, target = helper.CommonBeforeEach("/pom2.xml", "maven")
 		})
 		It("Copy Manifest", CopyManifests)
 		It("Should be able to run analyse without error", ValidateAnalseVulnDebug)
@@ -79,7 +87,8 @@ func MavenTestSuite() {
 	})
 	When("I test analyse command for Maven with vulns and all flags true", func() {
 		BeforeEach(func() {
-			file = "/pom2.xml"
+			// file = "/pom2.xml"
+			file, target = helper.CommonBeforeEach("/pom2.xml", "maven")
 		})
 		It("Copy Manifest", CopyManifests)
 		It("Should be able to run analyse without error", ValidateAnalseAllFlags)

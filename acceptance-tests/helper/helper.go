@@ -6,9 +6,35 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"strings"
 	"path/filepath"
+	"strings"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gexec"
 )
+
+func runningCmd(cmd *exec.Cmd) string {
+	prog := filepath.Base(cmd.Path)
+	return fmt.Sprintf("Running %s with args %v", prog, cmd.Args)
+}
+
+func CmdRunner(program string, args ...string) *gexec.Session {
+	//prefix ginkgo verbose output with program name
+	prefix := fmt.Sprintf("[%s] ", filepath.Base(program))
+	prefixWriter := gexec.NewPrefixedWriter(prefix, GinkgoWriter)
+	command := exec.Command(program, args...)
+	fmt.Fprintln(GinkgoWriter, runningCmd(command))
+	session, err := gexec.Start(command, prefixWriter, prefixWriter)
+	Expect(err).NotTo(HaveOccurred())
+	return session
+}
+
+func CmdShouldPassWithExit2(program string, args ...string) string {
+	session := CmdRunner(program, args...)
+	Eventually(session).Should(gexec.Exit(2), runningCmd(session.Command))
+	return string(session.Out.Contents())
+}
 
 // Getabspath Gets the Absolute Path
 func Getabspath(path string) (string, error) {
@@ -25,6 +51,22 @@ func Getabspath(path string) (string, error) {
 	result := pwd + path
 	return result, nil
 
+}
+
+// CommonBeforeEach is a common before each function
+func CommonBeforeEach(file string, target string) (string, string) {
+	
+	if target == "npm" {
+		return file, "/package.json"
+	}else if target == "pypi"{
+		return file, "/requirements.txt"
+	}else if target == "go"{
+		return file, "/go.mod"
+	}else if target == "maven"{
+		return file, "/pom.xml"
+	}else {
+		return "", ""
+	}
 }
 
 // CheckforSynkToken Checks for Snyk Token var in env

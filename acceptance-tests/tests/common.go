@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"os/exec"
 	"runtime"
+
 	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
 	acclog "github.com/fabric8-analytics/cli-tools/acceptance-tests/log"
-	"github.com/onsi/gomega"
 	"github.com/onsi/ginkgo"
+	"github.com/onsi/gomega"
+	//"github.com/onsi/gomega/gbytes"
+	//"github.com/onsi/gomega/gexec"
 )
 
 // Done Declarations for Ginkgo DSL
@@ -202,14 +205,8 @@ func RunPipInstall() {
 
 // ValidateAnalse runs analyse command
 func ValidateAnalse() {
-	cmd := exec.Command(getCRDAcmd(), "analyse", "data"+target)
-	fmt.Println(cmd.String())
-	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
-	e := err.(*exec.ExitError)
-	acclog.InfoLogger.Println(e.ExitCode())
-	Expect(e.ExitCode()).To(Equal(2))
-
+	session := helper.CmdShouldPassWithExit2(getCRDAcmd(), "analyse","data"+target)
+	fmt.Println(GinkgoWriter, string(session))
 }
 
 // ValidateAnalseJSONVulns runs analyse command with json

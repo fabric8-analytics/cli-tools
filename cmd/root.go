@@ -1,15 +1,22 @@
 package cmd
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
+	crdaConfig "github.com/fabric8-analytics/cli-tools/pkg/config"
+	"github.com/fabric8-analytics/cli-tools/pkg/segment"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"github.com/fatih/color"
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	constants "github.com/fabric8-analytics/cli-tools/utils"
+	"github.com/fabric8-analytics/cli-tools/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -17,8 +24,15 @@ import (
 // Flags
 var (
 	debug       bool
-	cfgFile     string
 	flagNoColor bool
+	client      string
+)
+
+// Variables
+var (
+	segmentClient *segment.Client
+	exitCode      = 0
+	ctx           context.Context
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -28,29 +42,73 @@ var rootCmd = &cobra.Command{
 	Long: `Cli tool to interact with CRDA Platform. This tool performs token Authentication and verbose Analyses of Dependency Stack. 
 	
 	Authenticated token can be used as Auth Token to interact with CRDA Platform.`,
-	Args: cobra.ExactValidArgs(1),
+	Args:          cobra.ExactValidArgs(1),
+	SilenceUsage:  true,
+	SilenceErrors: true,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		log.Fatal().Err(err).Msgf("Error Executing crda command. Please raise at https://github.com/fabric8-analytics/cli-tools/issues, if issue persists.")
+	attachMiddleware([]string{}, rootCmd)
+	ctx = telemetry.NewContext(context.Background())
+
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
+		// CLI Errors
+		_, _ = fmt.Fprintln(os.Stderr, err.Error())
+		exitCode = 1
 	}
+	err := segmentClient.Close()
+	if err != nil {
+		return
+	}
+	os.Exit(exitCode)
 }
 
 func init() {
+	var err error
 	cobra.OnInitialize(initConfig)
-
-	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", constants.Debug, "Sets Log level to Debug.")
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", utils.Debug, "Sets Log level to Debug.")
 	rootCmd.PersistentFlags().BoolVarP(&flagNoColor, "no-color", "c", false, "Toggle colors in output.")
+	rootCmd.PersistentFlags().StringVarP(&client, "client", "m", "terminal", "Client [tekton/jenkins/gh-actions]")
 
+	// Initiate segment client
+	if segmentClient, err = segment.NewClient(); err != nil {
+		log.Fatal().Err(err).Msgf(err.Error())
+	}
+}
+
+func executeWithLogging(fullCmd string, input func(cmd *cobra.Command, args []string) error) func(cmd *cobra.Command, args []string) error {
+	return func(cmd *cobra.Command, args []string) error {
+		log.Debug().Msgf("Running '%s'", fullCmd)
+		startTime := time.Now()
+		err := input(cmd, args)
+		pushToSegment(fullCmd, startTime, err)
+		return err
+	}
+}
+
+func attachMiddleware(names []string, cmd *cobra.Command) {
+	if cmd.HasSubCommands() {
+		for _, command := range cmd.Commands() {
+			attachMiddleware(append(names, cmd.Name()), command)
+		}
+	} else if cmd.RunE != nil {
+		fullCmd := strings.Join(append(names, cmd.Name()), " ")
+		src := cmd.RunE
+		cmd.RunE = executeWithLogging(fullCmd, src)
+	}
+}
+
+func pushToSegment(event string, startTime time.Time, err error) {
+	if serr := segmentClient.Upload(rootCmd.Context(), event, time.Since(startTime), err); serr != nil {
+		log.Info().Msgf("Cannot send data to telemetry: %v", serr)
+	}
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	color.NoColor = flagNoColor
-
 	// Log Level Settings
 	logLevel := zerolog.InfoLevel
 	if debug {
@@ -82,8 +140,11 @@ func initConfig() {
 			// Config file not found, Creating one
 			if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
 				log.Debug().Msgf("Creating config file.")
-				os.MkdirAll(configPath, os.ModePerm)
-				_, err := os.Create(configFilePath + ".yaml")
+				err := os.MkdirAll(configPath, os.ModePerm)
+				if err != nil {
+					return
+				}
+				_, err = os.Create(configFilePath + ".yaml")
 				if err != nil {
 					log.Fatal().Err(err).Msgf(err.Error())
 				}
@@ -95,12 +156,38 @@ func initConfig() {
 		}
 	}
 	if !viper.IsSet("host") {
-		viper.Set("host", constants.Host)
+		viper.Set("host", utils.Host)
 	}
 	if !viper.IsSet("auth_token") {
-		viper.Set("auth_token", constants.AuthToken)
+		viper.Set("auth_token", utils.AuthToken)
 	}
-	viper.WriteConfig()
+	if !viper.IsSet("consent_telemetry") {
+		response := telemetryConsent()
+		viper.Set("consent_telemetry", response)
+	}
+
+	err = viper.WriteConfig()
+	if err != nil {
+		return
+	}
+	err = validateFlagValues(client)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	telemetry.SetClient(ctx, client)
+	crdaConfig.ViperUnMarshal()
 	log.Debug().Msgf("Using config file %s.\n", viper.ConfigFileUsed())
 	log.Debug().Msgf("Successfully configured config files %s.", viper.ConfigFileUsed())
+}
+
+func telemetryConsent() bool {
+	fmt.Println("CRDA CLI is constantly improving and we would like to know more about usage")
+	response := telemetry.GetTelemetryConsent()
+	if response {
+		fmt.Printf("Thanks for helping us! You can disable telemetry by editing %s \n", viper.ConfigFileUsed())
+	} else {
+		fmt.Printf("No worry, you can still enable telemetry manually by editing %s \n", viper.ConfigFileUsed())
+	}
+	return response
 }

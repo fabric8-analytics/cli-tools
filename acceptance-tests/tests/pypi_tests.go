@@ -1,5 +1,7 @@
 package tests
 
+import "github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
+
 // BasicTestPypi tests Basic functionality
 func BasicTestPypi() {
 	It("I should Copy Manifest", CopyManifests)
@@ -22,8 +24,9 @@ func TestCRDAanalyseWithAbsolutePathPypi() {
 // PypiTestSuitePR runs on each PR check
 func PypiTestSuitePR() {
 	BeforeEach(func() {
-		file = "/requirements.txt"
-		target = "/requirements.txt"
+		// file = "/requirements.txt"
+		// target = "/requirements.txt"
+		file, target = helper.CommonBeforeEach("/requirements.txt", "pypi")
 	})
 	When("I test analyse command for pypi with vulns", BasicTestPypi)
 	When("I test analyse command for pypi absolute path", TestCRDAanalyseWithAbsolutePathPypi)
@@ -33,8 +36,9 @@ func PypiTestSuitePR() {
 // PypiTestSuite runs on a nightly basis
 func PypiTestSuite() {
 	BeforeEach(func() {
-		file = "/requirements.txt"
-		target = "/requirements.txt"
+		// file = "/requirements.txt"
+		// target = "/requirements.txt"
+		file, target = helper.CommonBeforeEach("/requirements.txt", "pypi")
 	})
 	When("I test analyse command for pypi with vulns", BasicTestPypi)
 	When("I test analyse command for pypi absolute path", TestCRDAanalyseWithAbsolutePathPypi)
@@ -66,7 +70,8 @@ func PypiTestSuite() {
 	})
 	When("I test analyse command for pypi without vulns", func() {
 		BeforeEach(func() {
-			file = "/requirements2.txt"
+			//file = "/requirements2.txt" 
+			file, target = helper.CommonBeforeEach("/requirements2.txt", "pypi")
 		})
 		It("I should Copy Manifest", CopyManifests)
 		It("I should able to run pip install", RunPipInstall)
@@ -75,7 +80,8 @@ func PypiTestSuite() {
 	})
 	When("I test analyse command for pypi without vulns json", func() {
 		BeforeEach(func() {
-			file = "/requirements2.txt"
+			// file = "/requirements2.txt"
+			file, target = helper.CommonBeforeEach("/requirements2.txt", "pypi")
 		})
 		It("I should Copy Manifest", CopyManifests)
 		It("I should able to run pip install", RunPipInstall)

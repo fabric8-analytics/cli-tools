@@ -1,11 +1,14 @@
 package tests
 
+import "github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
 
 // NpmTestSuitePR runs on each PR check
 func NpmTestSuitePR() {
+	
 	BeforeEach(func() {
-		file = "/package.json"
-		target = "/package.json"
+		// file = "/package.json"
+		// target = "/package.json"
+		file, target = helper.CommonBeforeEach("/package.json", "npm")
 	})
 	When("I test analyse for npm with vulns", TestCRDAanalyseNpm)
 	When("Test analyse with absolute path", TestCRDAanalyseWithAbsolutePathNpm)
@@ -15,8 +18,7 @@ func NpmTestSuitePR() {
 // NpmTestSuite runs on a Nightly Check
 func NpmTestSuite() {
 	BeforeEach(func() {
-		file = "/package.json"
-		target = "/package.json"
+		file, target = helper.CommonBeforeEach("/package.json", "npm")
 	})
 	When("I test analyse for npm with vulns", TestCRDAanalyseNpm)
 	When("I test analyse for npm with vulns with json", TestCRDAanalyseNpmJSON)
@@ -47,7 +49,8 @@ func TestCRDAanalyseNpmJSON() {
 // TestCRDAanalyseNpmJSONNoVulns tests functionality with json and no vulns
 func TestCRDAanalyseNpmJSONNoVulns() {
 	BeforeEach(func() {
-		file = "/vulns.json"
+		// file = "/vulns.json"
+		file, target = helper.CommonBeforeEach("/vulns.json", "npm")
 	})
 	It("I should Copy Manifest", CopyManifests)
 	It("I should Install Dependencies to run Stack analyses", InstallNpmDeps)
@@ -82,8 +85,9 @@ func TestCRDAanalyseNpmAllFlags() {
 // TestCRDAanalyseWithAbsolutePathNpm tests functionality with abs path
 func TestCRDAanalyseWithAbsolutePathNpm() {
 	BeforeEach(func() {
-		file = "/package.json"
-		target = "/package.json"
+		// file = "/package.json"
+		// target = "/package.json"
+		file, target = helper.CommonBeforeEach("/package.json", "npm")
 	})
 	When("I Test for analyse command with absolute path npm", func() {
 		It("Should be able to get the absolute path", GetAbsPath)
