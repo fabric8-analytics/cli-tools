@@ -21,8 +21,21 @@ type Properties struct {
 	storage map[string]interface{}
 }
 
-// GetTelemetryConsent fires telemetry consent popup.
 func GetTelemetryConsent() bool {
+	fmt.Println("CRDA CLI is constantly improving and we would like to know more about usage (more details at https://developers.redhat.com/article/tool-data-collection)")
+	fmt.Println("Your preference can be changed manually if desired using 'crda config set consent_telemetry <true/false>'")
+
+	response := telemetryConsent()
+	if response {
+		fmt.Printf("Thanks for helping us! You can disable telemetry by `crda config set consent_telemetry false` \n\n")
+	} else {
+		fmt.Printf("No worry, you can still enable telemetry by `crda config set consent_telemetry true` \n\n")
+	}
+	return response
+}
+
+// telemetryConsent fires telemetry consent popup.
+func telemetryConsent() bool {
 	prompt := promptui.Prompt{
 		Label:       "Would you like to contribute anonymous usage statistics [y/n]",
 		HideEntered: true,
@@ -136,6 +149,11 @@ func SetClient(ctx context.Context, value string) {
 // SetVulnerability sets total vulnerability found property
 func SetVulnerability(ctx context.Context, value int) {
 	setContextProperty(ctx, "total-vulnerabilities", value)
+}
+
+// SetEcosystem sets ecosystem property
+func SetEcosystem(ctx context.Context, value string) {
+	setContextProperty(ctx, "ecosystem", value)
 }
 
 // SetSnykTokenAssociation sets synk-token-associated property

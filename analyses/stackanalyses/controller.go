@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -64,7 +65,7 @@ func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOu
 	} else {
 		hasVul = summary.ProcessSummary(ctx, getResponse, jsonOut, showVerboseMsg)
 	}
-
+	telemetry.SetEcosystem(ctx, mc.fileStats.Ecosystem)
 	log.Debug().Msgf("Success StackAnalyses.")
 	return hasVul, nil
 }

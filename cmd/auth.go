@@ -45,6 +45,7 @@ func init() {
 // runAuth is controller for Auth command.
 func runAuth(cmd *cobra.Command, _ []string) error {
 	log.Debug().Msgf("Executing Auth command.")
+	askTelemetryConsent()
 	var err error
 	if snykToken == "" {
 		snykToken, err = promptForToken()
