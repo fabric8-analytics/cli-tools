@@ -60,14 +60,20 @@ func TestCRDAanalyseNpmJSONNoVulns() {
 
 // TestCRDAanalyseNpmVerbose tests functionality with verbose
 func TestCRDAanalyseNpmVerbose() {
+	BeforeEach(func() {
+		file, target = helper.CommonBeforeEach("/vulns.json", "npm")
+	})
 	It("I should Copy Manifest", CopyManifests)
 	It("I should Install Dependencies to run Stack analyses", InstallNpmDeps)
-	It("I should Validate analyse for npm ecosystem with vulns json and verbose", ValidateAnalseVulnVerbose)
+	It("I should Validate analyse for npm ecosystem with vulns verbose", ValidateAnalseVulnVerbose)
 	It("I should Cleanup", Cleanup)
 }
 
 // TestCRDAanalyseNpmDebug tests functionality with debug
 func TestCRDAanalyseNpmDebug() {
+	BeforeEach(func() {
+		file, target = helper.CommonBeforeEach("/vulns.json", "npm")
+	})
 	It("I should Copy Manifest", CopyManifests)
 	It("I should Install Dependencies to run Stack analyses", InstallNpmDeps)
 	It("I should Validate analyse for npm ecosystem with vulns with debug", ValidateAnalseVulnDebug)

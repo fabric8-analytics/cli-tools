@@ -24,8 +24,6 @@ func TestCRDAanalyseWithAbsolutePathPypi() {
 // PypiTestSuitePR runs on each PR check
 func PypiTestSuitePR() {
 	BeforeEach(func() {
-		// file = "/requirements.txt"
-		// target = "/requirements.txt"
 		file, target = helper.CommonBeforeEach("/requirements.txt", "pypi")
 	})
 	When("I test analyse command for pypi with vulns", BasicTestPypi)
@@ -36,8 +34,6 @@ func PypiTestSuitePR() {
 // PypiTestSuite runs on a nightly basis
 func PypiTestSuite() {
 	BeforeEach(func() {
-		// file = "/requirements.txt"
-		// target = "/requirements.txt"
 		file, target = helper.CommonBeforeEach("/requirements.txt", "pypi")
 	})
 	When("I test analyse command for pypi with vulns", BasicTestPypi)
@@ -75,7 +71,7 @@ func PypiTestSuite() {
 		})
 		It("I should Copy Manifest", CopyManifests)
 		It("I should able to run pip install", RunPipInstall)
-		It("I Should be able to run analyse without error", ValidateAnalse)
+		It("I Should be able to run analyse without error", ValidateAnalseNoVulns)
 		It("I should perform cleanup", Cleanup)
 	})
 	When("I test analyse command for pypi without vulns json", func() {

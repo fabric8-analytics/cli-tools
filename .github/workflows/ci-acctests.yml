@@ -3,7 +3,7 @@ name: CI-Acceptance-Tests
 
 on:
   push:
-    branches: [ main ]
+    # branches: [ main ]
   repository_dispatch:
     types: [acceptance-command]
 
@@ -49,6 +49,9 @@ jobs:
     - name: build binary [Windows]
       if: runner.os == 'Windows'
       run: go build -o acceptance-tests/crda.exe
+    
+    - name: Install dependencies
+      run: go mod vendor
     
     - name: Run Tests
       working-directory: ./acceptance-tests 

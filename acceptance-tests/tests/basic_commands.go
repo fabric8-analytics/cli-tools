@@ -1,21 +1,17 @@
 package tests
 
 import (
-	"os/exec"
+	"fmt"
 	"runtime"
-
-	acclog "github.com/fabric8-analytics/cli-tools/acceptance-tests/log"
-	
+	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
 )
 
 // TestCRDAVersion checks for version command
 func TestCRDAVersion() {
 
 	It("Runs and Validate CLI version", func() {
-		cmd := exec.Command(getCRDAcmd(), "version")
-		stdout, err := cmd.Output()
-		acclog.InfoLogger.Println(string(stdout))
-		Expect(err).NotTo(HaveOccurred())
+		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse", "version")
+		fmt.Println(GinkgoWriter, string(session))
 
 	})
 
@@ -39,10 +35,8 @@ func TestInvalidFlag() {
 // TestCRDAHelp verifies the help command
 func TestCRDAHelp() {
 	It("Runs and Validate Help command", func() {
-		cmd := exec.Command(getCRDAcmd(), "help")
-		stdout, err := cmd.Output()
-		acclog.InfoLogger.Println(string(stdout))
-		Expect(err).NotTo(HaveOccurred())
+		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse", "help")
+		fmt.Println(GinkgoWriter, string(session))
 
 	})
 
@@ -52,16 +46,9 @@ func TestCRDAHelp() {
 func TestCRDACompletion() {
 	It("Runs and Validate completion command", func() {
 		if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
-			cmd := exec.Command(getCRDAcmd(), "completion", "bash")
-			stdout, err := cmd.Output()
-			acclog.InfoLogger.Println(string(stdout))
-			Expect(err).NotTo(HaveOccurred())
+			_ = helper.CmdShouldPassWithoutError(getCRDAcmd(), "completion", "bash")
 		} else if runtime.GOOS == "windows" {
-			cmd := exec.Command(getCRDAcmd(), "completion", "powershell")
-			stdout, err := cmd.Output()
-			acclog.InfoLogger.Println(string(stdout))
-			Expect(err).NotTo(HaveOccurred())
-
+			_ = helper.CmdShouldPassWithoutError(getCRDAcmd(), "completion", "powershell")
 		} else {
 			Skip("No supporting operating system")
 		}
@@ -71,37 +58,27 @@ func TestCRDACompletion() {
 // TestCRDAallCommandsHelp verifies if there is a help page for all sub commands
 func TestCRDAallCommandsHelp() {
 	It("analyse command has help page", func() {
-		cmd := exec.Command(getCRDAcmd(), "analyse", "--help")
-		stdout, err := cmd.Output()
-		acclog.InfoLogger.Println(string(stdout))
-		Expect(err).NotTo(HaveOccurred())
+		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse", "--help")
+		fmt.Println(GinkgoWriter, string(session))
 	})
 	It("auth command has help page", func() {
-		cmd := exec.Command(getCRDAcmd(), "auth", "--help")
-		stdout, err := cmd.Output()
-		acclog.InfoLogger.Println(string(stdout))
-		Expect(err).NotTo(HaveOccurred())
+		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "auth", "--help")
+		fmt.Println(GinkgoWriter, string(session))
 
 	})
 	It("completion command has help page", func() {
-		cmd := exec.Command(getCRDAcmd(), "completion", "--help")
-		stdout, err := cmd.Output()
-		acclog.InfoLogger.Println(string(stdout))
-		Expect(err).NotTo(HaveOccurred())
+		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "completion", "--help")
+		fmt.Println(GinkgoWriter, string(session))
 
 	})
 	It("version command has help page", func() {
-		cmd := exec.Command(getCRDAcmd(), "version", "--help")
-		stdout, err := cmd.Output()
-		acclog.InfoLogger.Println(string(stdout))
-		Expect(err).NotTo(HaveOccurred())
+		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "version", "--help")
+		fmt.Println(GinkgoWriter, string(session))
 
 	})
 	It("help command has help page", func() {
-		cmd := exec.Command(getCRDAcmd(), "help", "bash")
-		stdout, err := cmd.Output()
-		acclog.InfoLogger.Println(string(stdout))
-		Expect(err).NotTo(HaveOccurred())
+		session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "help", "--help")
+		fmt.Println(GinkgoWriter, string(session))
 
 	})
 }
@@ -109,10 +86,9 @@ func TestCRDAallCommandsHelp() {
 // TestCRDAanalyseWithoutFile veifies error when no file is provided
 func TestCRDAanalyseWithoutFile() {
 	It("Validate analyse without flile throws error", func() {
-		cmd := exec.Command(getCRDAcmd(), "analyse")
-		stdout, err := cmd.Output()
-		acclog.InfoLogger.Println(string(stdout))
-		Expect(err).To(HaveOccurred())
+		session := helper.CmdShouldFailWithExit1(getCRDAcmd(), "analyse")
+		fmt.Println(GinkgoWriter, session)
+		Expect(string(session)).To(ContainSubstring("requires valid manifest file path"))
 
 	})
 }

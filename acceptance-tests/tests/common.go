@@ -1,17 +1,12 @@
 package tests
 
 import (
-	"bufio"
 	"fmt"
 	"os/exec"
 	"runtime"
-
 	"github.com/fabric8-analytics/cli-tools/acceptance-tests/helper"
-	acclog "github.com/fabric8-analytics/cli-tools/acceptance-tests/log"
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
-	//"github.com/onsi/gomega/gbytes"
-	//"github.com/onsi/gomega/gexec"
 )
 
 // Done Declarations for Ginkgo DSL
@@ -156,7 +151,7 @@ func getCRDAcmd() string {
 func GetAbsPath() {
 	pwd, err = helper.Getabspath(Path)
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
 }
 
@@ -164,9 +159,9 @@ func GetAbsPath() {
 func InitVirtualEnv() {
 	cmd := exec.Command("/bin/sh", "-c", "cd "+pwd+"; python3 -m venv env; source env/bin/activate; pip3 install -r requirements.txt;")
 	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
+	fmt.Println(GinkgoWriter, stdout)
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
 }
 
@@ -175,9 +170,9 @@ func InstallNpmDeps() {
 	cmd := exec.Command("npm", "install")
 	cmd.Dir = "data"
 	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
+	fmt.Println(GinkgoWriter, string(stdout))
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
 }
 
@@ -186,9 +181,9 @@ func RunGoModTidy() {
 	cmd := exec.Command("go", "mod", "tidy")
 	cmd.Dir = "data"
 	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
+	fmt.Println(GinkgoWriter, stdout)
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
 }
 
@@ -197,9 +192,9 @@ func RunPipInstall() {
 	cmd := exec.Command("pip", "install", "-r", "requirements.txt")
 	cmd.Dir = "data"
 	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
+	fmt.Println(GinkgoWriter, stdout)
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
 }
 
@@ -209,97 +204,71 @@ func ValidateAnalse() {
 	fmt.Println(GinkgoWriter, string(session))
 }
 
+// ValidateAnalse runs analyse command
+func ValidateAnalseNoVulns() {
+	session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse","data"+target)
+	fmt.Println(GinkgoWriter, string(session))
+}
+
 // ValidateAnalseJSONVulns runs analyse command with json
 func ValidateAnalseJSONVulns() {
-	cmd := exec.Command(getCRDAcmd(), "analyse", "data"+target, "-j")
-	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
-	e := err.(*exec.ExitError)
-	acclog.InfoLogger.Println(e.ExitCode())
-	Expect(e.ExitCode()).To(Equal(2))
+	session := helper.CmdShouldPassWithExit2(getCRDAcmd(), "analyse","data"+target, "-j")
+	fmt.Println(GinkgoWriter, string(session))
 
 }
 
 // ValidateAnalseJSONNoVulns runs analyse command with json no vulns
 func ValidateAnalseJSONNoVulns() {
-	cmd := exec.Command(getCRDAcmd(), "analyse", "data"+target, "-j")
-	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
-	e := err.(*exec.ExitError)
-	acclog.InfoLogger.Println(e.ExitCode())
-	Expect(e.ExitCode()).To(Equal(2))
+	session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse","data"+target, "-j")
+	fmt.Println(GinkgoWriter, string(session))
+
 
 }
 
 // ValidateAnalseVulnVerbose runs analyse command with verbose
 func ValidateAnalseVulnVerbose() {
-	cmd := exec.Command(getCRDAcmd(), "analyse", "data"+target, "-v")
-	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
-	Expect(err).NotTo(HaveOccurred())
+	session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse","data"+target, "-v")
+	fmt.Println(GinkgoWriter, string(session))
 
 }
 
 // ValidateInvalidFilePath runs analyse command with invalid file path
 func ValidateInvalidFilePath() {
-	cmd := exec.Command(getCRDAcmd(), "analyse", "/package.json", "-v")
-	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
-	Expect(err).To(HaveOccurred())
+	session := helper.CmdShouldFailWithExit1(getCRDAcmd(), "analyse","/package.json")
+	fmt.Println(GinkgoWriter, session)
+	Expect(string(session)).To(ContainSubstring("invalid file path: /package.json"))
 }
 
 // ValidateInvalidCommand runs invalid command
 func ValidateInvalidCommand() {
-	cmd := exec.Command(getCRDAcmd(), "analysess")
-	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
-	Expect(err).NotTo(HaveOccurred())
+	session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyseess")
+	fmt.Println(GinkgoWriter, string(session))
 }
 
 // ValidateInvalidFlag runs analyse command with invalid flag
 func ValidateInvalidFlag() {
-	cmd := exec.Command(getCRDAcmd(), "analyse", "-ghghd")
-	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
-	Expect(err).To(HaveOccurred())
-	e := err.(*exec.ExitError)
-	Expect(e.ExitCode()).To(Equal(1))
+	session := helper.CmdShouldFailWithExit1(getCRDAcmd(), "analyse","-y")
+	fmt.Println(GinkgoWriter, string(session))
+	Expect(string(session)).To(ContainSubstring("unknown shorthand flag: 'y' in -y"))
 }
 
 // ValidateAnalseVulnDebug runs analyse command with debug
 func ValidateAnalseVulnDebug() {
-	cmd := exec.Command(getCRDAcmd(), "analyse", "data"+target, "-d")
-	cmdReader, _ := cmd.StdoutPipe()
-	scanner := bufio.NewScanner(cmdReader)
-	done := make(chan bool)
-	go func() {
-		for scanner.Scan() {
-			acclog.InfoLogger.Printf(scanner.Text())
-		}
-		done <- true
-	}()
-	cmd.Start()
-	<-done
-	err = cmd.Wait()
-	Expect(err).NotTo(HaveOccurred())
+	session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "analyse","data"+target, "-d")
+	fmt.Println(GinkgoWriter, string(session))
 }
 
 // ValidateAnalseAllFlags runs analyse command with all flags set true
 func ValidateAnalseAllFlags() {
-	cmd := exec.Command(getCRDAcmd(), "analyse", "data"+target, "-v", "-j", "-d")
-	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
-	e := err.(*exec.ExitError)
-	acclog.InfoLogger.Println(e.ExitCode())
-	Expect(e.ExitCode()).To(Equal(2))
-
+	session := helper.CmdShouldPassWithExit2(getCRDAcmd(), "analyse", "data"+target, "-v", "-j", "-d")
+	fmt.Println(GinkgoWriter, string(session))
 }
 
 // Cleanup cleans the data dir 
 func Cleanup(){
 	err := helper.Cleanup("data/*")
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
 }
 
@@ -307,14 +276,14 @@ func Cleanup(){
 func CopyManifests() {
 	dir1, err := helper.Getabspath(manifests)
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
 	dir2, err := helper.Getabspath(Path)
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
-	acclog.InfoLogger.Println(dir1 + file)
-	acclog.InfoLogger.Println(dir2 + target)
+	fmt.Println(GinkgoWriter, dir1+ file)
+	fmt.Println(GinkgoWriter, dir2 + target)
 	err = helper.CopyContentstoTarget("manifests"+file, "data"+target)
 	Expect(err).NotTo(HaveOccurred())
 }
@@ -323,30 +292,27 @@ func CopyManifests() {
 func CopyManinfile() {
 	dir1, err := helper.Getabspath(manifests)
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
 	dir2, err := helper.Getabspath(Path)
 	if err != nil {
-		acclog.ErrorLogger.Println(err)
+		fmt.Println(GinkgoWriter, err)
 	}
-	acclog.InfoLogger.Println(dir1 + GoMainFile)
-	acclog.InfoLogger.Println(dir2 + GoMainFileT)
+	fmt.Println(GinkgoWriter, dir1 + GoMainFile)
+	fmt.Println(GinkgoWriter, dir2 + GoMainFileT)
 	err = helper.CopyContentstoTarget("manifests"+GoMainFile, "data"+GoMainFileT)
 	Expect(err).NotTo(HaveOccurred())
 }
 
 // RunAnalyseAbsolute runs analyse with abs path
 func RunAnalyseAbsolute() {
-	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		cmd = exec.Command(getCRDAcmd(), "analyse", "data"+target)
+		session := helper.CmdShouldPassWithExit2(getCRDAcmd(), "analyse", "data"+target)
+		fmt.Println(GinkgoWriter, string(session))
 	} else {
-		cmd = exec.Command(getCRDAcmd(), "analyse", pwd+target)
+		session := helper.CmdShouldPassWithExit2(getCRDAcmd(), "analyse", pwd+target)
+		fmt.Println(GinkgoWriter, string(session))
 	}
-	stdout, err := cmd.Output()
-	acclog.InfoLogger.Println(string(stdout))
-	e := err.(*exec.ExitError)
-	acclog.InfoLogger.Println(e.ExitCode())
-	Expect(e.ExitCode()).To(Equal(2))
+	
 
 }

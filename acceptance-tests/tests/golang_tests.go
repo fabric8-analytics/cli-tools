@@ -91,7 +91,7 @@ func GolangTestSuite() {
 		It("I should Copy Manifest", CopyManifests)
 		It("I should be able to copy the main file", CopyManinfile)
 		It("I should able to run go mod tidy", RunGoModTidy)
-		It("I Should be able to run analyse without error", ValidateAnalse)
+		It("I Should be able to run analyse without error", ValidateAnalseNoVulns)
 		It("I should perform cleanup", Cleanup)
 	})
 	When("I test analyse command for Go without vulns json", func() {

@@ -4,7 +4,7 @@ package tests
 func PrCheckSuite() {
 
 	When("Run Crda version", TestCRDAVersion)
-	//When("Test CRDA auth command", TestCRDAauth)
+	When("Test CRDA auth command", TestCRDAauth)
 	When("Test for invalid path throws error", TestInvalidPath)
 	When("Test for invalid command", TestInvalidCommand)
 	When("Test for invalid flag throws error", TestInvalidFlag)
@@ -15,7 +15,7 @@ func PrCheckSuite() {
 	When("Test CRDA analyse Go", GolangTestSuitePR)
 	When("Test CRDA analyse Maven", MavenTestSuitePR)
 	When("Test CRDA analyse Npm", NpmTestSuitePR)
-	//When("Test CRDA analyse Pypi", PypiTestSuitePR) 
+	When("Test CRDA analyse Pypi", PypiTestSuitePR) 
 
 }
 
@@ -23,7 +23,6 @@ func PrCheckSuite() {
 func NightlySuite() {
 
 	When("Test CRDA auth command", TestCRDAauth)
-	When("Test CRDA analyse Go", GolangTestSuite)
 	When("Test for invalid path throws error", TestInvalidPath)
 	When("Test for invalid command", TestInvalidCommand)
 	When("Test for invalid flag throws error", TestInvalidFlag)
@@ -34,6 +33,7 @@ func NightlySuite() {
 	When("Run Crda analyse without any file", TestCRDAanalyseWithoutFile)
 	When("Test CRDA analyse Maven", MavenTestSuite)
 	When("Test CRDA analyse Npm", NpmTestSuite)
+	When("Test CRDA analyse Go", GolangTestSuite)
 	When("Test CRDA analyse Pypi", PypiTestSuite)
 
 }

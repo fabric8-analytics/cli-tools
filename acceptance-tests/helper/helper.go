@@ -36,6 +36,26 @@ func CmdShouldPassWithExit2(program string, args ...string) string {
 	return string(session.Out.Contents())
 }
 
+func CmdShouldPassWithExit1(program string, args ...string) string {
+	session := CmdRunner(program, args...)
+	Eventually(session).Should(gexec.Exit(1), runningCmd(session.Command))
+	return string(session.Out.Contents())
+}
+
+func CmdShouldFailWithExit1(program string, args ...string) string {
+	session := CmdRunner(program, args...)
+	Eventually(session).Should(gexec.Exit(1), runningCmd(session.Command))
+	return string(session.Err.Contents())
+}
+
+func CmdShouldPassWithoutError(program string, args ...string) string {
+	session := CmdRunner(program, args...)
+	Eventually(session).ShouldNot(gexec.Exit(1),runningCmd(session.Command))
+	Eventually(session).ShouldNot(gexec.Exit(2),runningCmd(session.Command))
+	Eventually(session).Should(gexec.Exit(), runningCmd(session.Command))
+	return string(session.Out.Contents())
+}
+
 // Getabspath Gets the Absolute Path
 func Getabspath(path string) (string, error) {
 	if path == "" {
