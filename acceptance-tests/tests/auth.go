@@ -24,6 +24,9 @@ func TestCRDAauth() {
 	When("I run crda auth with valid snyk token", func() {
 		validToken := os.Getenv("snyk_token")
 		It("it should not throw error", func() {
+			if validToken== ""{
+				Skip("Running in PR Check")
+			}
 			session := helper.CmdShouldPassWithoutError(getCRDAcmd(), "auth", "--snyk-token", string(validToken))
 			fmt.Println(GinkgoWriter, session)
 		})
