@@ -22,7 +22,7 @@ import (
 	"github.com/segmentio/analytics-go"
 )
 
-// writeKey is segment project key 
+// writeKey is segment project key
 var writeKey = "MW6rAYP7Q6AAiSAZ3Ussk6eMebbVcchD" // test
 
 // Client is a segment client struct
@@ -70,7 +70,7 @@ func (c *Client) Close() error {
 
 // Upload sends telemetry data to segment
 func (c *Client) Upload(ctx context.Context, action string, duration time.Duration, err error) error {
-	if config.ActiveConfigValues.ConsentTelemetry != "1" {
+	if config.ActiveConfigValues.ConsentTelemetry != "true" {
 		return nil
 	}
 	log.Debug().Msgf("Sending Segment Info")
