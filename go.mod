@@ -9,6 +9,8 @@ require (
 	github.com/jpillora/backoff v1.0.0
 	github.com/manifoldco/promptui v0.8.0
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/onsi/ginkgo v1.16.1
+	github.com/onsi/gomega v1.11.0
 	github.com/pborman/uuid v1.2.1
 	github.com/rs/zerolog v1.20.0
 	github.com/segmentio/analytics-go v3.0.1+incompatible

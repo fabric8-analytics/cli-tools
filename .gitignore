@@ -16,6 +16,13 @@
 .DS_Store
 .devcontainer
 
+.env
+data/
+*.coverprofile
+logs.txt
+coverage/
+.ginkgo.report
+
 
 # Python excludes because bilingual repository
 __pycache__/

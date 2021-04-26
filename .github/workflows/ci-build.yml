@@ -62,7 +62,7 @@ jobs:
           go mod tidy
           git diff --exit-code go.mod
     - name: Unit Test
-      run:  go test -gcflags=-l -v  -coverprofile=coverage.txt -covermode=atomic ./...
+      run:  go test `go list ./... | grep -v acceptance-tests` -gcflags=-l -v  -coverprofile=coverage.txt -covermode=atomic
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
