@@ -75,6 +75,7 @@ Executable supports following commands:
 - `--debug`: (bool) (Optional): Debug Flag. Enables Debug Logs
 - `--no-color`: (bool) (Optional): Toggles colors in output.
 - `--help` : help about binary functionalities.
+- `--client`: Telemetry Client indentification [tekton/jenkins/gh-actions/terminal].
 
 ### EXIT CODES
 

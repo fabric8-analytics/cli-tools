@@ -25,7 +25,7 @@ builds:
     ldflags: 
       - -s -w -X github.com/fabric8-analytics/cli-tools/pkg/version.version={{.Version}}
       - "-X 'github.com/fabric8-analytics/cli-tools/pkg/version.vendorInfo=Red Hat'"
-      - -X 'github.com/fabric8-analytics/cli-tools/pkg/segment.writeKey=XVVwgAtJHhr4YiuoFURmycI2oKVD8mxV
+      - -X github.com/fabric8-analytics/cli-tools/pkg/segment.writeKey=XVVwgAtJHhr4YiuoFURmycI2oKVD8mxV
       - -X github.com/fabric8-analytics/cli-tools/pkg/version.timestamp={{ .Timestamp }}
       - -X github.com/fabric8-analytics/cli-tools/pkg/version.commitHash={{ .ShortCommit }}
     id: crda
