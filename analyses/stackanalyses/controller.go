@@ -153,6 +153,14 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 	log.Debug().Msgf("Executing validatePostResponse.")
 	var body driver.PostResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
+
+	// In Case of Authentication Failure, json is not return from API, Need to catch before decoding.
+	if apiResponse.StatusCode == http.StatusForbidden {
+		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
+		log.Error().Msgf("Stack Analyses Post Request Failed.  Please check auth token and try again.")
+		return nil, fmt.Errorf("invalid authentication token")
+	}
+
 	if err != nil {
 		return nil, err
 	}

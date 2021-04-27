@@ -139,8 +139,8 @@ func BuildManifest(depPackages *map[string]DepPackage) Manifest {
 			}
 		}
 	}
-	log.Info().Msgf("Source code imports: \t%d", len(sourceImports))
-	log.Info().Msgf("Direct dependencies: \t%d", len(manifest.Packages))
+	log.Debug().Msgf("Source code imports: \t%d", len(sourceImports))
+	log.Debug().Msgf("Direct dependencies: \t%d", len(manifest.Packages))
 
 	return manifest
 }
