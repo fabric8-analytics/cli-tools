@@ -181,5 +181,10 @@ func askTelemetryConsent() {
 	if !viper.IsSet("consent_telemetry") {
 		response := telemetry.GetTelemetryConsent()
 		viper.Set("consent_telemetry", strconv.FormatBool(response))
+		err := viper.WriteConfig()
+		if err != nil {
+			log.Error().Msgf("unable to write config")
+			return
+		}
 	}
 }
