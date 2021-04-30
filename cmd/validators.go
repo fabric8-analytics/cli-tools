@@ -19,7 +19,7 @@ func validateFileArg(cmd *cobra.Command, args []string) error {
 }
 
 func validateFlagValues(flag string) error {
-	validValues := []string{"jenkins", "terminal", "tekton", "gh-actions"}
+	validValues := []string{"jenkins", "terminal", "tekton", "gh-actions", "intellij"}
 	for _, item := range validValues {
 		if item == flag {
 			return nil
