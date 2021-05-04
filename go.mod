@@ -19,4 +19,5 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
 	github.com/xtgo/uuid v0.0.0-20140804021211-a0b114877d4c // indirect
+	gopkg.in/yaml.v2 v2.4.0
 )

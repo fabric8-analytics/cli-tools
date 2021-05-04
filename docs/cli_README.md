@@ -10,6 +10,17 @@ As of now, CLI supports following stacks:
 ![screenshot of summary](https://github.com/fabric8-analytics/cli-tools/blob/b407d2a7c595a47e3126ad62a816dc107bd148d2/summary.png)
 ![screenshot of analyse](https://github.com/fabric8-analytics/cli-tools/blob/71198735d0dee3173ed3082a5ab1dee41dfa9ce8/analyse.png)
 
+### Usage data
+
+The first time CRDA CLI is run, you will be asked to opt-in to Red Hat’s telemetry collection program.
+
+With your approval, CRDA CLI collects pseudonymized usage data and sends it to Red Hat servers to help improve our products and services. To learn more, Please visit https://developers.redhat.com/article/tool-data-collection 
+
+Manually configuring usage data collection
+
+You can manually change your preference about usage data collection by running in `crda config set consent_telemetry false/true`.
+
+
 ### Installation:
 - Select, Download and Install latest binary from [Releases](https://github.com/fabric8-analytics/cli-tools/releases)
 
@@ -17,22 +28,22 @@ As of now, CLI supports following stacks:
 
 - ##### For Linux
 ```
-$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.0.1/crda_0.0.1_Linux_64bit.tar.gz | tar xvz -C .
+$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_Linux_64bit.tar.gz | tar xvz -C .
 ```
 - ##### For Linux - Fedora/CentOS/RHEL
 ```
-$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.0.1/crda_0.0.1_Linux-64bit.rpm 
+$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_Linux-64bit.rpm 
 ```
 - ##### For MacOS
 ```
-$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.0.1/crda_0.0.1_macOS_64bit.tar.gz | tar xvz -C .
+$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_macOS_64bit.tar.gz | tar xvz -C .
 ```
 - ##### For MacOS - Apple Silicon
 ```
-$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.0.1/crda_0.0.1_macOS_ARM64.tar.gz | tar xvz -C .
+$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_macOS_ARM64.tar.gz | tar xvz -C .
 ```
 - ##### For Windows
-Click [here](https://github.com/fabric8-analytics/cli-tools/releases/download/v0.0.1/crda_0.0.1_Windows_64bit.tar.gz) to start download.
+Click [here](https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_Windows_64bit.tar.gz) to start download.
 
 ### Usage:
 Executable supports following commands:
@@ -55,11 +66,16 @@ Executable supports following commands:
 
 - `crda version`: This outputs version details of Binary.
 
+- `crda config set $CONFIG-KEY $VALUE`: Sets configuration values
+
+- `crda config get $CONFIG-KEY`: Gets configuration values
+
 
 #### Global Flags:
 - `--debug`: (bool) (Optional): Debug Flag. Enables Debug Logs
 - `--no-color`: (bool) (Optional): Toggles colors in output.
 - `--help` : help about binary functionalities.
+- `--client`: (string) Telemetry client identification [tekton/jenkins/gh-actions/intellij/terminal].
 
 ### EXIT CODES
 

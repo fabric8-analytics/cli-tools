@@ -76,6 +76,6 @@ func GetDeps(cmd GoList) (map[string]DepPackage, error) {
 	if err := cmd.Wait(); err != nil {
 		return nil, fmt.Errorf("%v: `go list` failed, use `go mod tidy` to known more", err)
 	}
-	log.Info().Msgf("Total packages: \t\t%d", len(depPackagesMap))
+	log.Debug().Msgf("Total packages: \t\t%d", len(depPackagesMap))
 	return depPackagesMap, nil
 }

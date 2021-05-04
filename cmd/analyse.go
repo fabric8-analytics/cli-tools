@@ -3,15 +3,14 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
-
 	"github.com/fabric8-analytics/cli-tools/analyses/driver"
 	sa "github.com/fabric8-analytics/cli-tools/analyses/stackanalyses"
 	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
+	"path/filepath"
 )
 
 var jsonOut bool
@@ -62,6 +61,8 @@ func destructor(_ *cobra.Command, _ []string) error {
 
 //runAnalyse is controller func for analyses cmd.
 func runAnalyse(cmd *cobra.Command, args []string) error {
+	log.Debug().Msgf("Executing Analyse command.")
+	askTelemetryConsent()
 	telemetry.SetFlag(cmd.Context(), "json", jsonOut)
 	telemetry.SetFlag(cmd.Context(), "verbose", verboseOut)
 	if !viper.IsSet("crda_key") {

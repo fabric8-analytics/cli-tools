@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -64,7 +65,7 @@ func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOu
 	} else {
 		hasVul = summary.ProcessSummary(ctx, getResponse, jsonOut, showVerboseMsg)
 	}
-
+	telemetry.SetEcosystem(ctx, mc.fileStats.Ecosystem)
 	log.Debug().Msgf("Success StackAnalyses.")
 	return hasVul, nil
 }
@@ -152,6 +153,14 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 	log.Debug().Msgf("Executing validatePostResponse.")
 	var body driver.PostResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
+
+	// In Case of Authentication Failure, json is not return from API, Need to catch before decoding.
+	if apiResponse.StatusCode == http.StatusForbidden {
+		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
+		log.Error().Msgf("Stack Analyses Post Request Failed.  Please check auth token and try again.")
+		return nil, fmt.Errorf("invalid authentication token")
+	}
+
 	if err != nil {
 		return nil, err
 	}

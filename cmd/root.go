@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -43,7 +44,6 @@ var rootCmd = &cobra.Command{
 	
 	Authenticated token can be used as Auth Token to interact with CRDA Platform.`,
 	Args:          cobra.ExactValidArgs(1),
-	SilenceUsage:  true,
 	SilenceErrors: true,
 }
 
@@ -52,7 +52,6 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	attachMiddleware([]string{}, rootCmd)
 	ctx = telemetry.NewContext(context.Background())
-
 	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		// CLI Errors
 		_, _ = fmt.Fprintln(os.Stderr, err.Error())
@@ -161,10 +160,6 @@ func initConfig() {
 	if !viper.IsSet("auth_token") {
 		viper.Set("auth_token", utils.AuthToken)
 	}
-	if !viper.IsSet("consent_telemetry") {
-		response := telemetryConsent()
-		viper.Set("consent_telemetry", response)
-	}
 
 	err = viper.WriteConfig()
 	if err != nil {
@@ -181,13 +176,15 @@ func initConfig() {
 	log.Debug().Msgf("Successfully configured config files %s.", viper.ConfigFileUsed())
 }
 
-func telemetryConsent() bool {
-	fmt.Println("CRDA CLI is constantly improving and we would like to know more about usage")
-	response := telemetry.GetTelemetryConsent()
-	if response {
-		fmt.Printf("Thanks for helping us! You can disable telemetry by editing %s \n", viper.ConfigFileUsed())
-	} else {
-		fmt.Printf("No worry, you can still enable telemetry manually by editing %s \n", viper.ConfigFileUsed())
+// askTelemetryConsent fires Telemetry Consent Prompt
+func askTelemetryConsent() {
+	if !viper.IsSet("consent_telemetry") {
+		response := telemetry.GetTelemetryConsent()
+		viper.Set("consent_telemetry", strconv.FormatBool(response))
+		err := viper.WriteConfig()
+		if err != nil {
+			log.Error().Msgf("unable to write config")
+			return
+		}
 	}
-	return response
 }
