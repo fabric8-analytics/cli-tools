@@ -29,7 +29,7 @@ func GetTelemetryConsent() bool {
 	if response {
 		fmt.Printf("Thanks for helping us! You can disable telemetry by `crda config set consent_telemetry false` \n\n")
 	} else {
-		fmt.Printf("No worry, you can still enable telemetry by `crda config set consent_telemetry true` \n\n")
+		fmt.Printf("No worries, you can still enable telemetry by `crda config set consent_telemetry true` \n\n")
 	}
 	return response
 }
@@ -37,7 +37,7 @@ func GetTelemetryConsent() bool {
 // telemetryConsent fires telemetry consent popup.
 func telemetryConsent() bool {
 	prompt := promptui.Prompt{
-		Label:       "Would you like to contribute anonymous usage statistics [y/n]",
+		Label:       "Would you like to contribute towards anonymous usage statistics [y/n]",
 		HideEntered: true,
 	}
 	userInput, err := prompt.Run()

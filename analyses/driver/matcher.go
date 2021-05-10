@@ -14,6 +14,7 @@ type PostResponseType struct {
 	SubmittedAt string `json:"submitted_at,omitempty"`
 	Status      string `json:"status,omitempty"`
 	ID          string `json:"id,omitempty"`
+	Error       string `json:"error,omitempty"`
 }
 
 // VulnerabilitiesType is a Vulnerability Response structure
@@ -52,11 +53,7 @@ type GetResponseType struct {
 	AnalysedDeps       []AnalysedDepsType `json:"analyzed_dependencies"`
 	RegistrationStatus string             `json:"registration_status"`
 	StackID            string             `json:"external_request_id"`
-}
-
-// ErrorResponse is a struct to unmarshal API Error response
-type ErrorResponse struct {
-	Error string `json:"error"`
+	Error              string             `json:"error,omitempty"`
 }
 
 // ReadManifestResponse is arg type of readManifest func
