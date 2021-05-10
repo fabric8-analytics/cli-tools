@@ -80,6 +80,7 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
 		UserID:          requestParams.UserID,
+		Client:          requestParams.Client,
 	}
 	writer := multipart.NewWriter(manifest)
 	fd, err := os.Open(filePath)
@@ -129,6 +130,7 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
 		UserID:          requestParams.UserID,
+		Client:          requestParams.Client,
 	}
 	for {
 		d := polling.Duration()
