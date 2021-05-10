@@ -166,8 +166,8 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 	}
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
-		log.Error().Msgf("Stack Analyses Post Request Failed.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"")
-		return nil, fmt.Errorf("SA POST Request Failed. status code: %d", apiResponse.StatusCode)
+		log.Error().Msgf("Stack Analyses Post Request Failed with status code %d.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"", apiResponse.StatusCode)
+		return nil, fmt.Errorf("message from server: %s", body.Error)
 	}
 	log.Debug().Msgf("Success validatePostResponse.")
 	return &body, nil
@@ -180,10 +180,8 @@ func (mc *Controller) validateGetResponse(apiResponse *http.Response) (*driver.G
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
-		var body driver.ErrorResponse
-		json.NewDecoder(apiResponse.Body).Decode(&body)
-		log.Error().Msgf("Stack Analyses Get Request Failed.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"")
-		return nil, fmt.Errorf("SA GET Request Failed. status code: %d", apiResponse.StatusCode)
+		log.Error().Msgf("Stack Analyses Get Request Failed with status code %d.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"", apiResponse.StatusCode)
+		return nil, fmt.Errorf("message from server: %s", body.Error)
 	}
 	log.Debug().Msgf("Success validateGetResponse.")
 	return &body, err
