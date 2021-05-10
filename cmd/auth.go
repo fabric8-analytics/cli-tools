@@ -54,11 +54,16 @@ func runAuth(cmd *cobra.Command, _ []string) error {
 			return err
 		}
 	}
+	client, err := telemetry.GetContextProperty(ctx, "client")
+	if err != nil {
+		return err
+	}
 	requestParams := auth.RequestServerType{
 		UserID:          viper.GetString("crda_key"),
 		SynkToken:       snykToken,
 		ThreeScaleToken: viper.GetString("auth_token"),
 		Host:            viper.GetString("host"),
+		Client:          client,
 	}
 	userID, err := auth.RequestServer(cmd.Context(), requestParams)
 	if err != nil {

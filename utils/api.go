@@ -22,6 +22,7 @@ type HTTPRequestType struct {
 	ThreeScaleToken string         `json:"threeScale,omitempty"`
 	Host            string         `json:"host,omitempty"`
 	UserID          string         `json:"user_id,omitempty"`
+	Client          string         `json:"client,omitempty"`
 }
 
 // BuildReportLink builds stack report UI Link
@@ -60,12 +61,13 @@ func HTTPRequest(data HTTPRequestType) *http.Response {
 	apiURL := buildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
 	payload, _ := json.Marshal(&data.Payload)
 	req, err := http.NewRequest(data.Method, apiURL.String(), bytes.NewBuffer(payload))
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("uuid", data.UserID)
-
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to build request")
 	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("uuid", data.UserID)
+	req.Header.Add("client", data.Client)
+
 	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to reach the server. hint: Check your Internet connection.")
@@ -85,6 +87,7 @@ func HTTPRequestMultipart(data HTTPRequestType, w *multipart.Writer, buf *bytes.
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	req.Header.Set("uuid", data.UserID)
+	req.Header.Set("client", data.Client)
 	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to reach the server. hint: Check your Internet connection.")

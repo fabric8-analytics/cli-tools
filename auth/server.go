@@ -17,6 +17,7 @@ type RequestServerType struct {
 	UserID          string
 	Host            string
 	ThreeScaleToken string
+	Client          string
 }
 
 // Payload is format for auth requests to Server
@@ -42,13 +43,14 @@ const (
 func RequestServer(ctx context.Context, requestParams RequestServerType) (string, error) {
 	log.Debug().Msgf("Executing Request Server.")
 	var payload Payload
-	// var resData UserResponse
+
 	requestData := utils.HTTPRequestType{
 		Payload:         payload,
 		Method:          http.MethodPost,
 		Endpoint:        APIUsers,
 		ThreeScaleToken: requestParams.ThreeScaleToken,
 		Host:            requestParams.Host,
+		Client:          requestParams.Client,
 	}
 
 	if requestParams.UserID == "" {

@@ -65,6 +65,10 @@ func runAnalyse(cmd *cobra.Command, args []string) error {
 	askTelemetryConsent()
 	telemetry.SetFlag(cmd.Context(), "json", jsonOut)
 	telemetry.SetFlag(cmd.Context(), "verbose", verboseOut)
+	client, err := telemetry.GetContextProperty(ctx, "client")
+	if err != nil {
+		return err
+	}
 	if !viper.IsSet("crda_key") {
 		telemetry.SetExitCode(cmd.Context(), 1)
 		return errors.New(
@@ -75,6 +79,7 @@ func runAnalyse(cmd *cobra.Command, args []string) error {
 		UserID:          viper.GetString("crda_key"),
 		ThreeScaleToken: viper.GetString("auth_token"),
 		Host:            viper.GetString("host"),
+		Client:          client,
 		RawManifestFile: manifestPath,
 	}
 	if !jsonOut {

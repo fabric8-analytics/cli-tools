@@ -2,6 +2,7 @@ package telemetry
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/manifoldco/promptui"
 	"github.com/mitchellh/go-homedir"
@@ -105,6 +106,19 @@ func GetContextProperties(ctx context.Context) map[string]interface{} {
 		return make(map[string]interface{})
 	}
 	return properties.values()
+}
+
+// GetContextProperty returns single property state
+func GetContextProperty(ctx context.Context, property string) (string, error) {
+	properties := propertiesFromContext(ctx)
+	if properties == nil {
+		return "", errors.New("properties context is not set")
+	}
+	allValues := properties.values()
+	if _, found := allValues[property]; found {
+		return allValues[property].(string), nil
+	}
+	return "", fmt.Errorf("no such property found %s", property)
 }
 
 func setContextProperty(ctx context.Context, key string, value interface{}) {
