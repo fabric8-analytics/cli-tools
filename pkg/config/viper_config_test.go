@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	// "github.com/spf13/viper"
 )
 
 func TestViperUnMarshal(t *testing.T) {
