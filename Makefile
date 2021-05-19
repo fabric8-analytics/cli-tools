@@ -4,7 +4,7 @@ GOVET=$(GOCMD) vet
 BINARY_NAME=crda
 GITCOMMIT:=$(shell git rev-parse --short HEAD)
 REPO=github.com/fabric8-analytics/cli-tools
-VERSION?=0.0.1
+VERSION?=0.2.2
 EXPORT_RESULT?=false
 CGO_ENABLED:=0
 LDFLAGS +=-X ${REPO}/pkg/version.timestamp=$(shell date +%s)
