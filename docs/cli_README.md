@@ -22,28 +22,28 @@ You can manually change your preference about usage data collection by running i
 
 
 ### Installation:
-- Select, Download and Install latest binary from [Releases](https://github.com/fabric8-analytics/cli-tools/releases)
+- Select, Download and Install the latest binary from [Releases](https://github.com/fabric8-analytics/cli-tools/releases)
 
 #### curl
 
 - ##### For Linux
 ```
-$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_Linux_64bit.tar.gz | tar xvz -C .
+$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.2/crda_0.2.2_Linux_64bit.tar.gz | tar xvz -C .
 ```
 - ##### For Linux - Fedora/CentOS/RHEL
 ```
-$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_Linux-64bit.rpm 
+$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.2/crda_0.2.2_Linux-64bit.rpm 
 ```
 - ##### For MacOS
 ```
-$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_macOS_64bit.tar.gz | tar xvz -C .
+$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.2/crda_0.2.2_macOS_64bit.tar.gz | tar xvz -C .
 ```
 - ##### For MacOS - Apple Silicon
 ```
-$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_macOS_ARM64.tar.gz | tar xvz -C .
+$ curl -s -L https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.2/crda_0.2.2_macOS_ARM64.tar.gz | tar xvz -C .
 ```
 - ##### For Windows
-Click [here](https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.0/crda_0.2.0_Windows_64bit.tar.gz) to start download.
+Click [here](https://github.com/fabric8-analytics/cli-tools/releases/download/v0.2.2/crda_0.2.2_Windows_64bit.tar.gz) to start download.
 
 ### Usage:
 Executable supports following commands:
@@ -81,15 +81,15 @@ Executable supports following commands:
 
 Possible exit codes and their meaning:
 
-- 0: success, no vulns found
+- 0: success, no vulnerabilities found
 - 1: failure, try to re-run command
-- 2: action_needed, vulns found
+- 2: action_needed, vulnerabilities found
 
 
 #### Build:
 
 ```go
-go build -o crda
+make build
 ```
 
 
