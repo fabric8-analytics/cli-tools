@@ -53,7 +53,7 @@ Executable supports following commands:
 - `crda auth`: This command is used to enable user to Authenticate with CRDA Server. It outputs a unique UUID. This command generates and saves `crda_key` in `$HOME/.crda/config.yaml`
 
     Supported Flags:
-    * `--synk-token` (string) (OPTIONAL): Can be obtained from [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9). If not set, Freemium a/c with limited functionality will be created.
+    * `--snyk-token` (string) (OPTIONAL): Can be obtained from [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9). If not set, Freemium a/c with limited functionality will be created.
     Please note, New Token generated is confidential and is mapped to your Synk Account. Keep it safe!
     * `--help` (Optional): Command level Help.
 
