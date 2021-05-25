@@ -77,7 +77,7 @@ CLI can be integrated in Pipelines, popular ones include Jenkins, Tekton etc
 - Use `--client=jenkins/tekton/intellij` for telemetry purposes. 
 - Use `--json` flag to feed output to subsequent subsystems.
 
-> CLI needs Project dependencies to be installed in same namespace as its execution. If Pipeline has multiple tasks, ideal way is to use Volumes to install dependencies. 
+> CLI needs Project dependencies to be installed in same namespace as its execution. If Pipeline has multiple tasks, recommended way is to use Volumes to install dependencies. 
 
 Examples of Projects using CLI:
     - Jenkins: https://github.com/jenkinsci/redhat-codeready-dependency-analysis-plugin 
