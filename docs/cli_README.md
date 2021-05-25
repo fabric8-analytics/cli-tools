@@ -80,9 +80,9 @@ CLI can be integrated in Pipelines, popular ones include Jenkins, Tekton etc
 > CLI needs Project dependencies to be installed in same namespace as its execution. If Pipeline has multiple tasks, recommended way is to use Volumes to install dependencies. 
 
 Examples of Projects using CLI:
-    - Jenkins: https://github.com/jenkinsci/redhat-codeready-dependency-analysis-plugin 
-    - Github Actions: https://github.com/fabric8-analytics/gh-actions 
-    - Tekton: https://github.com/tektoncd/catalog/tree/main/task/redhat-codeready-dependency-analysis/0.1 
+- Jenkins: https://github.com/jenkinsci/redhat-codeready-dependency-analysis-plugin
+- Github Actions: https://github.com/fabric8-analytics/gh-actions
+- Tekton: https://github.com/tektoncd/catalog/tree/main/task/redhat-codeready-dependency-analysis/0.1 
 
 
 #### Global Flags:
