@@ -71,13 +71,13 @@ Executable supports following commands:
 - `crda config get $CONFIG-KEY`: Gets configuration values
 
 #### Pipeline Usage:
-    CLI can be integrated in Pipelines, popular ones include Jenkins, Tekton etc
+CLI can be integrated in Pipelines, popular ones include Jenkins, Tekton etc
 
-    - Set Telemetry Consent: Set Environment variable `CONSENT_TELEMETRY="true"`. 
-    - Use `--client=jenkins/tekton/intellij` for telemetry purposes. 
-    - Use `--json` flag to feed output to subsequent subsystems.
-    
-    CLI needs Project dependencies to be installed in same namespace as its execution. If Pipeline has multiple tasks, ideal way is to use Volumes to install dependencies. 
+- Set Telemetry Consent: Set Environment variable `CONSENT_TELEMETRY="true"`. 
+- Use `--client=jenkins/tekton/intellij` for telemetry purposes. 
+- Use `--json` flag to feed output to subsequent subsystems.
+
+CLI needs Project dependencies to be installed in same namespace as its execution. If Pipeline has multiple tasks, ideal way is to use Volumes to install dependencies. 
 
 #### Global Flags:
 - `--debug`: (bool) (Optional): Debug Flag. Enables Debug Logs
