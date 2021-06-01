@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
 )
 
 func data() *driver.GetResponseType {

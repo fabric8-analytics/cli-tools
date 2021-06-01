@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
-	"github.com/fabric8-analytics/cli-tools/analyses/maven"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/maven"
 )
 
 type isSupportedManifestTestcase struct {

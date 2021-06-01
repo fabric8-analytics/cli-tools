@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
-	"github.com/fabric8-analytics/cli-tools/analyses/npm"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/npm"
 )
 
 type isSupportedManifestTestcase struct {
@@ -69,7 +69,7 @@ func TestMatcher(t *testing.T) {
 
 // TestDepsTree tests the npm Tree Generator.
 func TestDepsTree(t *testing.T) {
-	testdata, _ :=  filepath.Abs("testdata")
+	testdata, _ := filepath.Abs("testdata")
 	tt := []depsTreeTestCase{
 		{
 			ManifestFile: filepath.Join(testdata, "package.json"),
