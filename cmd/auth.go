@@ -8,7 +8,7 @@ import (
 
 	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 
-	"github.com/fabric8-analytics/cli-tools/auth"
+	"github.com/fabric8-analytics/cli-tools/pkg/auth"
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
