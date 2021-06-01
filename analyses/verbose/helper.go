@@ -9,7 +9,6 @@ import (
 	"sort"
 
 	"github.com/fabric8-analytics/cli-tools/utils"
-
 	"github.com/fatih/color"
 	"github.com/rs/zerolog/log"
 

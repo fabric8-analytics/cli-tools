@@ -40,7 +40,8 @@ const (
 )
 
 //StackAnalyses is main controller function for analyse command. This function is responsible for all communications between cmd and custom packages.
-func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOut bool, verboseOut bool) (bool, error) {
+
+func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOut bool, verboseOut bool, sarifFmt bool) (bool, error) {
 	log.Debug().Msgf("Executing StackAnalyses.")
 	var hasVul bool
 	matcher, err := GetMatcher(requestParams.RawManifestFile)
@@ -60,7 +61,13 @@ func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOu
 	verboseEligible := getResponse.RegistrationStatus == RegisteredStatus
 	showVerboseMsg := verboseOut && !verboseEligible
 
-	if verboseOut && verboseEligible {
+	if verboseEligible && sarifFmt {
+		hasVul, err = verbose.ProcessSarif(getResponse, mc.fileStats.RawFilePath)
+		if err != nil {
+			log.Fatal().Err(err)
+			return hasVul, err
+		}
+	} else if verboseOut && verboseEligible {
 		hasVul = verbose.ProcessVerbose(ctx, getResponse, jsonOut)
 	} else {
 		hasVul = summary.ProcessSummary(ctx, getResponse, jsonOut, showVerboseMsg)
