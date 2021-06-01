@@ -1,12 +1,12 @@
-package golang_test
+package npm_test
 
 import (
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
-	"github.com/fabric8-analytics/cli-tools/analyses/golang"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/npm"
 )
 
 type isSupportedManifestTestcase struct {
@@ -21,7 +21,7 @@ type depsTreeTestCase struct {
 	Matcher      driver.StackAnalysisInterface
 }
 
-func (tc isSupportedManifestTestcase) isSupportedManifest(t *testing.T) {
+func (tc isSupportedManifestTestcase) TestIsSupportedManifest(t *testing.T) {
 	got := tc.Matcher.IsSupportedManifestFormat(tc.Name)
 	want := tc.Want
 	if got != want {
@@ -29,7 +29,7 @@ func (tc isSupportedManifestTestcase) isSupportedManifest(t *testing.T) {
 	}
 }
 
-func (dt depsTreeTestCase) generatorDependencyTree(t *testing.T) {
+func (dt depsTreeTestCase) TestGeneratorDependencyTree(t *testing.T) {
 	want := dt.Want
 	got := dt.Matcher.GeneratorDependencyTree(dt.ManifestFile)
 	if got != want {
@@ -37,46 +37,47 @@ func (dt depsTreeTestCase) generatorDependencyTree(t *testing.T) {
 	}
 }
 
-// TestMatcher tests the golang matcher.
+// TestMatcher tests the npm matcher.
 func TestMatcher(t *testing.T) {
 	tt := []isSupportedManifestTestcase{
 		{
 			Name:    "testdata/requirements.txt",
 			Want:    false,
-			Matcher: &golang.Matcher{},
+			Matcher: &npm.Matcher{},
 		},
 		{
 			Name:    "testdata/pom.txt",
 			Want:    false,
-			Matcher: &golang.Matcher{},
+			Matcher: &npm.Matcher{},
 		},
 		{
-			Name:    "testdata/go.mod",
+			Name:    "testdata/package.json",
 			Want:    true,
-			Matcher: &golang.Matcher{},
+			Matcher: &npm.Matcher{},
 		},
 		{
-			Name:    "testdata/pom.xml",
+			Name:    "testdata/abc.xml",
 			Want:    false,
-			Matcher: &golang.Matcher{},
+			Matcher: &npm.Matcher{},
 		},
 	}
 
 	for _, tc := range tt {
-		t.Run(tc.Name, tc.isSupportedManifest)
+		t.Run(tc.Name, tc.TestIsSupportedManifest)
 	}
 }
 
-// TestDepsTree tests the golang Tree Generator.
+// TestDepsTree tests the npm Tree Generator.
 func TestDepsTree(t *testing.T) {
+	testdata, _ := filepath.Abs("testdata")
 	tt := []depsTreeTestCase{
 		{
-			ManifestFile: "go.mod",
-			Want:         filepath.Join(os.TempDir(), "golist.json"),
-			Matcher:      &golang.Matcher{},
+			ManifestFile: filepath.Join(testdata, "package.json"),
+			Want:         filepath.Join(os.TempDir(), "npmlist.json"),
+			Matcher:      &npm.Matcher{},
 		},
 	}
 	for _, dt := range tt {
-		t.Run(dt.ManifestFile, dt.generatorDependencyTree)
+		t.Run(dt.ManifestFile, dt.TestGeneratorDependencyTree)
 	}
 }
