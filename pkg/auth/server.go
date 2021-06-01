@@ -7,7 +7,7 @@ import (
 	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"net/http"
 
-	utils "github.com/fabric8-analytics/cli-tools/utils"
+	"github.com/fabric8-analytics/cli-tools/utils"
 	"github.com/rs/zerolog/log"
 )
 

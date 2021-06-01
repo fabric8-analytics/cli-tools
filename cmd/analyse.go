@@ -77,8 +77,8 @@ func runAnalyse(cmd *cobra.Command, args []string) error {
 	manifestPath := getAbsPath(args[0])
 	requestParams := driver.RequestType{
 		UserID:          viper.GetString("crda_key"),
-		ThreeScaleToken: viper.GetString("auth_token"),
-		Host:            viper.GetString("host"),
+		ThreeScaleToken: viper.GetString("crda_auth_token"),
+		Host:            viper.GetString("crda_host"),
 		Client:          client,
 		RawManifestFile: manifestPath,
 	}

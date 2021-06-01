@@ -8,8 +8,8 @@ import (
 )
 
 func TestViperUnMarshal(t *testing.T) {
-	os.Setenv("HOST", "host")
-	os.Setenv("AUTH_TOKEN", "token")
+	os.Setenv("CRDA_HOST", "host")
+	os.Setenv("CRDA_AUTH_TOKEN", "token")
 	os.Setenv("CONSENT_TELEMETRY", "false")
 	os.Setenv("CRDA_KEY", "abc")
 	want := &viperConfigs{
