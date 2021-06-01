@@ -3,8 +3,8 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
-	sa "github.com/fabric8-analytics/cli-tools/analyses/stackanalyses"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
+	sa "github.com/fabric8-analytics/cli-tools/pkg/analyses/stackanalyses"
 	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"

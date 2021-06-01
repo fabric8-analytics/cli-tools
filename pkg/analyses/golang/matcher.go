@@ -8,7 +8,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
 	gomanifest "github.com/fabric8-analytics/cli-tools/gomanifest/generator"
 )
 

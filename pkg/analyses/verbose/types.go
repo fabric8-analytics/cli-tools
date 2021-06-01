@@ -1,7 +1,7 @@
 package verbose
 
 import (
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
 )
 
 // StackVerbose is SA Result Verbose output

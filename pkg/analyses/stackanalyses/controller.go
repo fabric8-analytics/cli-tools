@@ -16,13 +16,13 @@ import (
 	"github.com/jpillora/backoff"
 	"github.com/rs/zerolog/log"
 
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
-	"github.com/fabric8-analytics/cli-tools/analyses/golang"
-	"github.com/fabric8-analytics/cli-tools/analyses/maven"
-	"github.com/fabric8-analytics/cli-tools/analyses/npm"
-	"github.com/fabric8-analytics/cli-tools/analyses/pypi"
-	"github.com/fabric8-analytics/cli-tools/analyses/summary"
-	"github.com/fabric8-analytics/cli-tools/analyses/verbose"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/golang"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/maven"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/npm"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/pypi"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/summary"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/verbose"
 	"github.com/fabric8-analytics/cli-tools/utils"
 )
 

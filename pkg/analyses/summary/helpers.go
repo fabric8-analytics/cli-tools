@@ -10,7 +10,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/rs/zerolog/log"
 
-	"github.com/fabric8-analytics/cli-tools/analyses/driver"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
 	"github.com/fabric8-analytics/cli-tools/utils"
 )
 
