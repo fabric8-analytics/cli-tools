@@ -61,8 +61,8 @@ func runAuth(cmd *cobra.Command, _ []string) error {
 	requestParams := auth.RequestServerType{
 		UserID:          viper.GetString("crda_key"),
 		SynkToken:       snykToken,
-		ThreeScaleToken: viper.GetString("auth_token"),
-		Host:            viper.GetString("host"),
+		ThreeScaleToken: viper.GetString("crda_auth_token"),
+		Host:            viper.GetString("crda_host"),
 		Client:          client,
 	}
 	userID, err := auth.RequestServer(cmd.Context(), requestParams)

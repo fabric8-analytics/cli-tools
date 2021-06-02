@@ -6,8 +6,8 @@ import (
 )
 
 type viperConfigs struct {
-	Host             string `mapstructure:"HOST" yaml:"host"`
-	AuthToken        string `mapstructure:"AUTH_TOKEN" yaml:"auth_token"`
+	Host             string `mapstructure:"CRDA_HOST" yaml:"crda_host"`
+	AuthToken        string `mapstructure:"CRDA_AUTH_TOKEN" yaml:"crda_auth_token"`
 	CrdaKey          string `mapstructure:"CRDA_KEY" yaml:"crda_key"`
 	ConsentTelemetry string `mapstructure:"CONSENT_TELEMETRY" yaml:"consent_telemetry"`
 }
@@ -20,8 +20,8 @@ func ViperUnMarshal() *viperConfigs {
 	viper.AutomaticEnv()
 	// Have to bind individual variables: https://github.com/spf13/viper/issues/188
 	viper.BindEnv("CONSENT_TELEMETRY")
-	viper.BindEnv("AUTH_TOKEN")
-	viper.BindEnv("HOST")
+	viper.BindEnv("CRDA_AUTH_TOKEN")
+	viper.BindEnv("CRDA_HOST")
 	viper.BindEnv("CRDA_KEY")
 	err := viper.Unmarshal(&ActiveConfigValues)
 	if err != nil {
