@@ -93,6 +93,7 @@ func (c *Client) Upload(ctx context.Context, action string, duration time.Durati
 	properties = properties.
 		Set("success", err == nil).
 		Set("platform", runtime.GOOS).
+		Set("version", version.GetCRDAVersion()).
 		Set("duration", duration.Milliseconds())
 
 	if err != nil {

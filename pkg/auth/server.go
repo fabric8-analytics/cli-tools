@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"net/http"
 
-	"github.com/fabric8-analytics/cli-tools/utils"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
+
+	"github.com/fabric8-analytics/cli-tools/pkg/utils"
 	"github.com/rs/zerolog/log"
 )
 

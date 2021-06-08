@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -23,7 +22,8 @@ import (
 	"github.com/fabric8-analytics/cli-tools/pkg/analyses/pypi"
 	"github.com/fabric8-analytics/cli-tools/pkg/analyses/summary"
 	"github.com/fabric8-analytics/cli-tools/pkg/analyses/verbose"
-	"github.com/fabric8-analytics/cli-tools/utils"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
+	"github.com/fabric8-analytics/cli-tools/pkg/utils"
 )
 
 // Controller is a control structure.

@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"os"
+
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 
 	"github.com/fatih/color"
 	"github.com/rs/zerolog/log"
 
 	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
-	"github.com/fabric8-analytics/cli-tools/utils"
+	"github.com/fabric8-analytics/cli-tools/pkg/utils"
 )
 
 // ProcessSummary processes summary results, return true if Vul found
