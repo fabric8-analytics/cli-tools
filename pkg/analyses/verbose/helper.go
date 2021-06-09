@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
 	"os"
 	"sort"
 
-	"github.com/fabric8-analytics/cli-tools/utils"
+	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
+
+	"github.com/fabric8-analytics/cli-tools/pkg/utils"
 
 	"github.com/fatih/color"
 	"github.com/rs/zerolog/log"

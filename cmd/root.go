@@ -17,7 +17,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"github.com/fabric8-analytics/cli-tools/utils"
+	"github.com/fabric8-analytics/cli-tools/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
