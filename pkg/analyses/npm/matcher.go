@@ -1,6 +1,7 @@
 package npm
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -44,7 +45,12 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	npmList.Stdout = outfile
 
 	log.Debug().Msgf("Dependency Tree Command: %s", npmList)
+
+	var stderr bytes.Buffer
+	npmList.Stderr = &stderr
+
 	if err := npmList.Run(); err != nil {
+		log.Error().Msg("Failed to Execute "+npmList.String()+"\n"+stderr.String())
 		log.Fatal().Err(err).Msgf(err.Error())
 	}
 	npmList.Wait()
