@@ -62,8 +62,13 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	}
 	manifestDir := filepath.Dir(manifestFilePath)
 	treePath, _ := filepath.Abs(filepath.Join(os.TempDir(), m.DepsTreeFileName()))
-	generate(golang, manifestDir, treePath)
-	log.Debug().Msgf("Success: Generate golist.json")
+	err = generate(golang, manifestDir, treePath)
+	if err == nil {
+		log.Debug().Msgf("Success: Generate golist.json")
+	} else {
+		log.Error().Err(err).Msg("Failed to Generate golist.json")
+	}
+
 	return treePath
 }
 
