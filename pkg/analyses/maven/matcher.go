@@ -47,7 +47,7 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 		log.Fatal().Err(err).Msgf(err.Error())
 	}
 	if err := dependencyTree.Run(); err != nil {
-		log.Debug().Err(err).Msgf("ERROR - Failed to execute: ",dependencyTree.String(),"\n",stdout.String())
+		log.Debug().Err(err).Msg("ERROR - Failed to execute: "+dependencyTree.String()+"\n"+stdout.String())
 		log.Fatal().Err(err).Msgf("Missing, or Unable to Resolve Certain Dependencies or Artifacts")
 	}
 	log.Debug().Msgf("Success: buildDepsTree")
