@@ -74,7 +74,6 @@ func init() {
 
 	// Initiate segment client
 	if segmentClient, err = segment.NewClient(); err != nil {
-
 		log.Fatal().Err(err).Msg("Failed to Create Segment Client: " + err.Error())
 	}
 }
