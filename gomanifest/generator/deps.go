@@ -74,7 +74,7 @@ func GetDeps(cmd GoList) (map[string]DepPackage, error) {
 	}
 	// Wait for the `go list` command to complete.
 	if err := cmd.Wait(); err != nil {
-		return nil, fmt.Errorf("%v: `go list` failed, use `go mod tidy` from the directory where the manifest file is present to known more", err)
+		return nil, fmt.Errorf("%v: `go list` failed, use `go mod tidy` from the directory where the manifest file is present to know more", err)
 	}
 	log.Debug().Msgf("Total packages: \t\t%d", len(depPackagesMap))
 	return depPackagesMap, nil
