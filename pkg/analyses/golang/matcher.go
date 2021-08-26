@@ -66,7 +66,7 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	if err == nil {
 		log.Debug().Msgf("Success: Generate golist.json")
 	} else {
-		log.Error().Err(err).Msg("Failed to Generate golist.json")
+		log.Fatal().Err(err).Msg("Failed to Generate golist.json")
 	}
 
 	return treePath
