@@ -2,8 +2,8 @@ package utils
 
 // Flag Defaults
 const (
-	CRDAHost      string = "https://f8a-analytics-2445582058137.production.gw.apicast.io"
-	CRDAAuthToken string = "9e7da76708fe374d8c10fa752e72989f"
+	CRDAHost      string = "https://gw.api.openshift.io"
+	CRDAAuthToken string = "207c527cfc2a6b8dcf4fa43ad7a976da"
 	Debug         bool   = false
 	ActualHost    string = "https://recommender.api.openshift.io"
 )
