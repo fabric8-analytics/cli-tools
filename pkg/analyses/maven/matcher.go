@@ -1,6 +1,7 @@
 package maven
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -36,13 +37,18 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	outcmd := fmt.Sprintf("-DoutputFile=%s", treePath)
 	cleanRepo := exec.Command(maven, "--quiet", "clean", "-f", manifestFilePath)
 	dependencyTree := exec.Command(maven, "--quiet", "org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree", "-f", manifestFilePath, outcmd, "-DoutputType=dot", "-DappendOutput=true")
+
+	var stdout bytes.Buffer
+	dependencyTree.Stdout = &stdout
+
 	log.Debug().Msgf("Clean Repo Command: %s", cleanRepo)
 	log.Debug().Msgf("dependencyTree Command: %s", dependencyTree)
 	if err := cleanRepo.Run(); err != nil {
 		log.Fatal().Err(err).Msgf(err.Error())
 	}
 	if err := dependencyTree.Run(); err != nil {
-		log.Fatal().Err(err).Msgf(err.Error())
+		log.Debug().Err(err).Msg("ERROR - Failed to execute: "+dependencyTree.String()+"\n"+stdout.String())
+		log.Fatal().Err(err).Msgf("Missing, or Unable to Resolve Certain Dependencies or Artifacts")
 	}
 	log.Debug().Msgf("Success: buildDepsTree")
 	return treePath

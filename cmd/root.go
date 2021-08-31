@@ -59,6 +59,7 @@ func Execute() {
 	}
 	err := segmentClient.Close()
 	if err != nil {
+		log.Debug().Msgf("ERROR: Failed to Close Segment Client: " + err.Error())
 		return
 	}
 	os.Exit(exitCode)
@@ -73,7 +74,8 @@ func init() {
 
 	// Initiate segment client
 	if segmentClient, err = segment.NewClient(); err != nil {
-		log.Fatal().Err(err).Msgf(err.Error())
+
+		log.Fatal().Err(err).Msg("Failed to Create Segment Client: " + err.Error())
 	}
 }
 

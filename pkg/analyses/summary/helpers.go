@@ -122,6 +122,9 @@ func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 		blue("Low Vulnerabilities: "), blue(result.LowVulnerabilities), "\n\n",
 		white("Full Report: "), result.ReportLink, "\n\n",
 	)
+	if result.TotalScannedDependencies == 0 {
+		fmt.Fprint(os.Stdout, yellow("Could not generate Dependency tree,  Please make sure all packages present in manifest are installed.\n\n"))
+	}
 	fmt.Fprint(os.Stdout, "(Powered by Snyk)\n\n")
 	if verboseMsg {
 		fmt.Fprint(os.Stdout, "tip: Register with Snyk and add token by running `crda auth`.\n")
