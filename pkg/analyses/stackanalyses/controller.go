@@ -181,7 +181,10 @@ func (mc *Controller) validateGetResponse(apiResponse *http.Response) (*driver.G
 	log.Debug().Msgf("Executing validateGetResponse.")
 	var body driver.GetResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
-
+	if err != nil {
+		log.Error().Msgf("analyse failed: Stack Analyses Get Request Failed Due to An Internal Error. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
+		return nil, fmt.Errorf("stack analysis failed due to an internal error")
+	}
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
 		log.Error().Msgf("Stack Analyses Get Request Failed with status code %d.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"", apiResponse.StatusCode)
