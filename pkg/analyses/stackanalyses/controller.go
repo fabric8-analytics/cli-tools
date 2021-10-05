@@ -153,8 +153,6 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 // validatePostResponse validates Stack Analyses POST API Response.
 func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.PostResponseType, error) {
 	log.Debug().Msgf("Executing validatePostResponse.")
-	var body driver.PostResponseType
-	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 
 	// In Case of Authentication Failure, json is not return from API, Need to catch before decoding.
 	if apiResponse.StatusCode == http.StatusForbidden {
@@ -162,6 +160,9 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 		log.Error().Msgf("Stack Analyses Post Request Failed.  Please check auth token and try again.")
 		return nil, fmt.Errorf("invalid authentication token")
 	}
+
+	var body driver.PostResponseType
+	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 
 	if err != nil {
 		return nil, err
@@ -180,6 +181,10 @@ func (mc *Controller) validateGetResponse(apiResponse *http.Response) (*driver.G
 	log.Debug().Msgf("Executing validateGetResponse.")
 	var body driver.GetResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
+	if err != nil {
+		log.Error().Msgf("analyse failed: Stack Analyses Get Request Failed Due to An Internal Error. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
+		return nil, fmt.Errorf("stack analysis failed due to an internal error")
+	}
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
 		log.Error().Msgf("Stack Analyses Get Request Failed with status code %d.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"", apiResponse.StatusCode)
@@ -211,7 +216,7 @@ func GetMatcher(manifestFile string) (driver.StackAnalysisInterface, error) {
 			return matcher, nil
 		}
 	}
-	return nil, errors.New("ecosystem not supported yet")
+	return nil, errors.New("analyse failed: \""+manifestFile+"\" does not appear to be a supported dependency manifest file. Supported manifest files include \"pom.xml\", \"package.json\", \"go.mod\", \"requirements.txt\". Please provide the path of a valid manifest file for analysis. ")
 }
 
 func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestResponse {
