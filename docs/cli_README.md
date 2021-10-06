@@ -81,7 +81,7 @@ CLI can be integrated in Pipelines, popular ones include Jenkins, Tekton etc
 
 Examples of Projects using CLI:
 - Jenkins: https://github.com/jenkinsci/redhat-codeready-dependency-analysis-plugin
-- Github Actions: https://github.com/fabric8-analytics/gh-actions
+- Github Actions: https://github.com/marketplace/actions/codeready-dependency-analytics
 - Tekton: https://github.com/tektoncd/catalog/tree/main/task/redhat-codeready-dependency-analysis/0.1 
 
 
