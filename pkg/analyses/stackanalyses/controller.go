@@ -164,6 +164,7 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 
 	var body driver.PostResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
+
 	if err != nil {
 
 		return nil, err
