@@ -78,8 +78,8 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodPost,
 		Endpoint:        APIStackAnalyses,
-		ThreeScaleToken: "3e42fa66f65124e6b1266a23431e3d08",
-		Host:            "https://f8a-analytics-preview-2445582058137.production.gw.apicast.io",
+		ThreeScaleToken: requestParams.ThreeScaleToken,
+		Host:            requestParams.Host,
 		UserID:          requestParams.UserID,
 		Client:          requestParams.Client,
 	}
@@ -128,8 +128,8 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodGet,
 		Endpoint:        APIStackAnalyses + "/" + postResponse.ID,
-		ThreeScaleToken: "3e42fa66f65124e6b1266a23431e3d08",
-		Host:            "https://f8a-analytics-preview-2445582058137.production.gw.apicast.io",
+		ThreeScaleToken: requestParams.ThreeScaleToken,
+		Host:            requestParams.Host,
 		UserID:          requestParams.UserID,
 		Client:          requestParams.Client,
 	}
