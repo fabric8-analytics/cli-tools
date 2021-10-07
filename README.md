@@ -12,7 +12,7 @@
       </a>
 </p>
 
-This repo would server as an interface between the different CRDA clients and the platform. It contains tools that will be used by clients inorder to generate required input for platform APIs. One such tool is `gomanifest`.
+This repo would serve as an interface between the different CRDA clients and the platform. It contains tools that will be used by clients inorder to generate required input for platform APIs. One such tool is `gomanifest`.
 ### Tools and Packages:
 
   * `CRDA Cli`:  CLI Tools to interact with CRDA Platform. [Learn more](docs/cli_README.md)

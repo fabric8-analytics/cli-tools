@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -153,8 +154,6 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 // validatePostResponse validates Stack Analyses POST API Response.
 func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.PostResponseType, error) {
 	log.Debug().Msgf("Executing validatePostResponse.")
-	var body driver.PostResponseType
-	err := json.NewDecoder(apiResponse.Body).Decode(&body)
 
 	// In Case of Authentication Failure, json is not return from API, Need to catch before decoding.
 	if apiResponse.StatusCode == http.StatusForbidden {
@@ -163,7 +162,11 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 		return nil, fmt.Errorf("invalid authentication token")
 	}
 
+	var body driver.PostResponseType
+	err := json.NewDecoder(apiResponse.Body).Decode(&body)
+
 	if err != nil {
+
 		return nil, err
 	}
 	if apiResponse.StatusCode != http.StatusOK {
@@ -179,7 +182,18 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 func (mc *Controller) validateGetResponse(apiResponse *http.Response) (*driver.GetResponseType, error) {
 	log.Debug().Msgf("Executing validateGetResponse.")
 	var body driver.GetResponseType
-	err := json.NewDecoder(apiResponse.Body).Decode(&body)
+	var buf bytes.Buffer
+
+	//use TeeReader to duplicate the contents of the Response Body of type io.ReaderCloser since data is streamed from the response body.
+	r := io.TeeReader(apiResponse.Body, &buf)
+	responseBodyContents, _ :=ioutil.ReadAll(r)
+	err := json.NewDecoder(&buf).Decode(&body)
+
+	if err != nil {
+		log.Error().Msg("analyse failed: Stack Analyses Get Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
+		return nil, fmt.Errorf("Message from Server: "+string(responseBodyContents))
+	}
+
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
 		log.Error().Msgf("Stack Analyses Get Request Failed with status code %d.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"", apiResponse.StatusCode)
@@ -211,7 +225,7 @@ func GetMatcher(manifestFile string) (driver.StackAnalysisInterface, error) {
 			return matcher, nil
 		}
 	}
-	return nil, errors.New("ecosystem not supported yet")
+	return nil, errors.New("analyse failed: \""+manifestFile+"\" does not appear to be a supported dependency manifest file. Supported manifest files include \"pom.xml\", \"package.json\", \"go.mod\", \"requirements.txt\". Please provide the path of a valid manifest file for analysis. ")
 }
 
 func (mc *Controller) buildFileStats(manifestFile string) *driver.ReadManifestResponse {
