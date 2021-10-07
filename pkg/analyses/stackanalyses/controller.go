@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -77,8 +78,8 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodPost,
 		Endpoint:        APIStackAnalyses,
-		ThreeScaleToken: requestParams.ThreeScaleToken,
-		Host:            requestParams.Host,
+		ThreeScaleToken: "3e42fa66f65124e6b1266a23431e3d08",
+		Host:            "https://f8a-analytics-preview-2445582058137.production.gw.apicast.io",
 		UserID:          requestParams.UserID,
 		Client:          requestParams.Client,
 	}
@@ -127,8 +128,8 @@ func (mc *Controller) getRequest(requestParams driver.RequestType, postResponse 
 	requestData := utils.HTTPRequestType{
 		Method:          http.MethodGet,
 		Endpoint:        APIStackAnalyses + "/" + postResponse.ID,
-		ThreeScaleToken: requestParams.ThreeScaleToken,
-		Host:            requestParams.Host,
+		ThreeScaleToken: "3e42fa66f65124e6b1266a23431e3d08",
+		Host:            "https://f8a-analytics-preview-2445582058137.production.gw.apicast.io",
 		UserID:          requestParams.UserID,
 		Client:          requestParams.Client,
 	}
@@ -163,8 +164,8 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 
 	var body driver.PostResponseType
 	err := json.NewDecoder(apiResponse.Body).Decode(&body)
-
 	if err != nil {
+
 		return nil, err
 	}
 	if apiResponse.StatusCode != http.StatusOK {
@@ -180,11 +181,18 @@ func (mc *Controller) validatePostResponse(apiResponse *http.Response) (*driver.
 func (mc *Controller) validateGetResponse(apiResponse *http.Response) (*driver.GetResponseType, error) {
 	log.Debug().Msgf("Executing validateGetResponse.")
 	var body driver.GetResponseType
-	err := json.NewDecoder(apiResponse.Body).Decode(&body)
+	var buf bytes.Buffer
+
+	//use TeeReader to duplicate the contents of the Response Body of type io.ReaderCloser since data is streamed from the response body.
+	r := io.TeeReader(apiResponse.Body, &buf)
+	responseBodyContents, _ :=ioutil.ReadAll(r)
+	err := json.NewDecoder(&buf).Decode(&body)
+
 	if err != nil {
-		log.Error().Msgf("analyse failed: Stack Analyses Get Request Failed Due to An Internal Error. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
-		return nil, fmt.Errorf("stack analysis failed due to an internal error")
+		log.Error().Msg("analyse failed: Stack Analyses Get Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
+		return nil, fmt.Errorf("Message from Server: "+string(responseBodyContents))
 	}
+
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
 		log.Error().Msgf("Stack Analyses Get Request Failed with status code %d.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"", apiResponse.StatusCode)
