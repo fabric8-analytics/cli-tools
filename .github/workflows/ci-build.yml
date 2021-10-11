@@ -27,7 +27,6 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with: 
           version: v1.29
-          working-directory: gomanifest
           skip-build-cache: true
           skip-pkg-cache: true
   golint:
