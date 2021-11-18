@@ -8,6 +8,7 @@ type RequestType struct {
 	RawManifestFile string
 	DepsTreePath    string
 	Client          string
+	Ignore          map[string][]string
 }
 
 // PostResponseType is a argtype of RequestServer func
@@ -72,4 +73,5 @@ type StackAnalysisInterface interface {
 	Ecosystem() string
 	IsSupportedManifestFormat(string) bool
 	GeneratorDependencyTree(string) string
+	IgnoreVulnerabilities(string) (map[string][]string, error)
 }

@@ -16,13 +16,14 @@ type GenericPayload interface{}
 
 // HTTPRequestType is request type HTTPRequest Method accepts
 type HTTPRequestType struct {
-	Payload         GenericPayload `json:"payload,omitempty"`
-	Method          string         `json:"method,omitempty"`
-	Endpoint        string         `json:"endpoint,omitempty"`
-	ThreeScaleToken string         `json:"threeScale,omitempty"`
-	Host            string         `json:"host,omitempty"`
-	UserID          string         `json:"user_id,omitempty"`
-	Client          string         `json:"client,omitempty"`
+	Payload         GenericPayload      `json:"payload,omitempty"`
+	Method          string              `json:"method,omitempty"`
+	Endpoint        string              `json:"endpoint,omitempty"`
+	ThreeScaleToken string              `json:"threeScale,omitempty"`
+	Host            string              `json:"host,omitempty"`
+	UserID          string              `json:"user_id,omitempty"`
+	Client          string              `json:"client,omitempty"`
+	Ignore          map[string][]string `json:"ignore,omitempty"`
 }
 
 // BuildReportLink builds stack report UI Link
@@ -88,6 +89,8 @@ func HTTPRequestMultipart(data HTTPRequestType, w *multipart.Writer, buf *bytes.
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	req.Header.Set("uuid", data.UserID)
 	req.Header.Set("client", data.Client)
+
+	fmt.Println(req)
 	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to reach the server. hint: Check your Internet connection.")
