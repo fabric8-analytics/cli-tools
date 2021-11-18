@@ -51,7 +51,6 @@ func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOu
 	ignore, err := matcher.IgnoreVulnerabilities(requestParams.RawManifestFile)
 	requestParams.Ignore = ignore
 
-	fmt.Println(ignore)
 	if err != nil {
 		log.Error().Msg("Failed to Fetch List of Vulnerabilities to Ignore " +
 			"in the appropriate format")
@@ -96,7 +95,6 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 		Client:          requestParams.Client,
 		Ignore:          requestParams.Ignore,
 	}
-	//fmt.Println(requestData.Ignore)
 	writer := multipart.NewWriter(manifest)
 	fd, err := os.Open(filePath)
 	if err != nil {
@@ -269,39 +267,3 @@ func GetManifestName(manifestFile string) string {
 	}
 	return stats.Name()
 }
-
-//func GetIgnoreVulns(manifestPath string) map[string][]string {
-//
-//	ignoreVulns := make(map[string][]string)
-//	b, err := ioutil.ReadFile(manifestPath)
-//
-//	if err != nil {
-//		fmt.Print(err)
-//	}
-//
-//	str := string(b) // convert content to a 'string'
-//	temp := strings.Split(str, "\n")
-//		for _, packageWithVersion := range temp {
-//			if strings.Contains(packageWithVersion, utils.CRDAIGNORE) {
-//				split := strings.TrimSpace(packageWithVersion)
-//				split1 := strings.Split(split, " ")
-//				pkgVersion := split1[0]
-//				pkgVersionSplit := strings.Split(pkgVersion,"==")
-//				packageName := pkgVersionSplit[0]
-//				var listOfVulns []string
-//
-//				if strings.Contains(split1[len(split1)-1], utils.CRDAIGNORE) {
-//					ignoreVulns[packageName] = listOfVulns
-//					continue
-//				}
-//
-//				vulns := split1[len(split1)-1]
-//				vulnsList := vulns[1:len(vulns)-1]
-//				fmt.Println(vulnsList)
-//				vulnSlice := strings.Split(vulnsList,",")
-//				ignoreVulns[packageName] = vulnSlice
-//			}
-//		}
-//
-//	return ignoreVulns
-//}

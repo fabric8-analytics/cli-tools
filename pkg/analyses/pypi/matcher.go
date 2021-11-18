@@ -4,7 +4,6 @@ package pypi
 
 import (
 	"errors"
-	"fmt"
 	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
 	"github.com/fabric8-analytics/cli-tools/pkg/utils"
 	"github.com/rs/zerolog/log"
@@ -47,7 +46,6 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 			pkgVersionIgnore := strings.Split(packageWithVersion, " ") //split package, version and crdaignore for further processing
 			pkgVersion := pkgVersionIgnore[0]                          // retrieve package and version in the format 'package==version' from the slice after splitting
 			pkgVersionSplit := strings.Split(pkgVersion, "==")
-			fmt.Println(pkgVersionSplit)//separately extract package and version
 			packageName := pkgVersionSplit[0]
 			var listOfVulnerabilities []string
 

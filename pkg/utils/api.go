@@ -90,7 +90,6 @@ func HTTPRequestMultipart(data HTTPRequestType, w *multipart.Writer, buf *bytes.
 	req.Header.Set("uuid", data.UserID)
 	req.Header.Set("client", data.Client)
 
-	fmt.Println(req)
 	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to reach the server. hint: Check your Internet connection.")

@@ -2,7 +2,6 @@ package golang
 
 import (
 	"errors"
-	"fmt"
 	"github.com/fabric8-analytics/cli-tools/pkg/utils"
 	"io/ioutil"
 	"os"
@@ -66,9 +65,7 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 			//extract list of vulnerabilities between '[' and ']'
 			vulnerabilitiesToIgnore := packageWithVersion[strings.Index(packageWithVersion, "[")+1 : strings.Index(packageWithVersion, "]")]
 			vulnerabilitiesToIgnore = strings.ReplaceAll(vulnerabilitiesToIgnore, " ", "")
-			fmt.Println(vulnerabilitiesToIgnore)
 			listOfVulnerabilities = strings.Split(vulnerabilitiesToIgnore, ",")
-			fmt.Println(listOfVulnerabilities)
 			ignoreVulnerabilities[packageName] = listOfVulnerabilities
 		}
 	}
