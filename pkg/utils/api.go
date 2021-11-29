@@ -89,7 +89,6 @@ func HTTPRequestMultipart(data HTTPRequestType, w *multipart.Writer, buf *bytes.
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	req.Header.Set("uuid", data.UserID)
 	req.Header.Set("client", data.Client)
-	req.Header.Set("x-3scale-account-secret", "not-set")
 
 	res, err := client.Do(req)
 	if err != nil {
