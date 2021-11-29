@@ -23,7 +23,7 @@ type HTTPRequestType struct {
 	Host            string              `json:"host,omitempty"`
 	UserID          string              `json:"user_id,omitempty"`
 	Client          string              `json:"client,omitempty"`
-	Ignore          map[string][]string `json:"ignore,omitempty"`
+	Ignore          map[string]map[string][]string `json:"ignore,omitempty"`
 }
 
 // BuildReportLink builds stack report UI Link
@@ -68,7 +68,6 @@ func HTTPRequest(data HTTPRequestType) *http.Response {
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("uuid", data.UserID)
 	req.Header.Add("client", data.Client)
-
 	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to reach the server. hint: Check your Internet connection.")
@@ -83,12 +82,14 @@ func HTTPRequestMultipart(data HTTPRequestType, w *multipart.Writer, buf *bytes.
 	client := &http.Client{}
 	apiURL := buildAPIURL(data.Host, data.Endpoint, data.ThreeScaleToken)
 	req, err := http.NewRequest(data.Method, apiURL.String(), buf)
+
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Unable to build request")
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	req.Header.Set("uuid", data.UserID)
 	req.Header.Set("client", data.Client)
+	req.Header.Set("x-3scale-account-secret", "not-set")
 
 	res, err := client.Do(req)
 	if err != nil {
