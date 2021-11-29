@@ -86,7 +86,7 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 				if strings.Contains(dependencyDetail, utils.CRDAIGNORE) {
 					if !(strings.Contains(dependencyDetail, "[") && strings.Contains(dependencyDetail, "]")) { //if list of vulnerabilities not entered, or
 						//entered incorrectly, return an empty slice of vulnerabilities for that package
-						ignoreVulnerabilities[packageName] = listOfVulnerabilities
+						ignoreVulnerabilities[packageName] = make([]string, 0)
 						break
 					}
 					vulnerabilitiesToIgnore := dependencyDetail[strings.Index(dependencyDetail, "[")+1 : strings.Index(dependencyDetail, "]")] //extract list of vulnerabilities

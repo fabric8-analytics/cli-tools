@@ -48,8 +48,13 @@ func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOu
 	if err != nil {
 		return hasVul, err
 	}
+	packagesToIgnore := make(map[string]map[string][]string)
 	ignore, err := matcher.IgnoreVulnerabilities(requestParams.RawManifestFile)
-	requestParams.Ignore = ignore
+	if len(ignore) != 0 {
+
+		packagesToIgnore["packages"] = ignore
+		requestParams.Ignore = packagesToIgnore
+	}
 
 	if err != nil {
 		log.Error().Msg("Failed to Fetch List of Vulnerabilities to Ignore " +
@@ -119,6 +124,7 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 		}
 		_ = writer.WriteField("ignore", string(jsonString))
 	}
+
 
 	err = writer.Close()
 	if err != nil {
@@ -208,12 +214,10 @@ func (mc *Controller) validateGetResponse(apiResponse *http.Response) (*driver.G
 	r := io.TeeReader(apiResponse.Body, &buf)
 	responseBodyContents, _ := ioutil.ReadAll(r)
 	err := json.NewDecoder(&buf).Decode(&body)
-
 	if err != nil {
 		log.Error().Msg("analyse failed: Stack Analyses Get Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")
 		return nil, fmt.Errorf("Message from Server: " + string(responseBodyContents))
 	}
-
 	if apiResponse.StatusCode != http.StatusOK {
 		log.Debug().Msgf("Status from Server: %d", apiResponse.StatusCode)
 		log.Error().Msgf("Stack Analyses Get Request Failed with status code %d.  Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.\"", apiResponse.StatusCode)

@@ -43,6 +43,8 @@ func getResultSummary(analysedResult *driver.GetResponseType) *StackSummary {
 		MediumVulnerabilities:              data.Severities.Medium,
 		LowVulnerabilities:                 data.Severities.Low,
 		ReportLink:                         utils.BuildReportLink(analysedResult.StackID),
+		TotalDirectVulnerabilitiesIgnored: data.TotalDirectIgnored,
+		TotalTransitiveVulnerabilitiesIgnored: data.TotalTransitiveIgnored,
 	}
 	return out
 }
@@ -53,9 +55,14 @@ func processVulnerabilities(analysedDeps []driver.AnalysedDepsType) ProcessVulne
 	for _, dep := range analysedDeps {
 		publicVul := len(dep.PublicVulnerabilities)
 		privateVul := len(dep.PrivateVulnerabilities)
+		ignoredDirectVulns := dep.IgnoredVulns
+		ignoredTransitiveVulns := dep.IgnoredTransitiveVulns
+
 		if publicVul+privateVul > 0 {
 			processedData.DirectVulnerableDependencies++
 		}
+		processedData.TotalDirectIgnored+=ignoredDirectVulns
+		processedData.TotalTransitiveIgnored+=ignoredTransitiveVulns
 		processedData.TotalTransitives += len(dep.Transitives)
 		processedData.Severities = getSeverity(dep.PublicVulnerabilities, processedData.Severities)
 		processedData.Severities = getSeverity(dep.PrivateVulnerabilities, processedData.Severities)
@@ -114,6 +121,8 @@ func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 		white("Total Scanned Transitive Dependencies: "), white(result.TotalScannedTransitiveDependencies), "\n",
 		white("Direct Vulnerable Dependencies: "), white(result.DirectVulnerableDependencies), "\n",
 		white("Total Vulnerabilities: "), white(result.TotalVulnerabilities), "\n",
+		white("Total Direct Vulnerabilities Ignored: "), white(result.TotalDirectVulnerabilitiesIgnored), "\n",
+		white("Total Transitive Vulnerabilities Ignored: "), white(result.TotalTransitiveVulnerabilitiesIgnored), "\n",
 		white("Publicly Available Vulnerabilities: "), white(result.PubliclyAvailableVulnerabilities), "\n",
 		white("Vulnerabilities Unique to Snyk: "), white(result.VulnerabilitiesUniqueToSynk), "\n",
 		red("Critical Vulnerabilities: "), red(result.CriticalVulnerabilities), "\n",

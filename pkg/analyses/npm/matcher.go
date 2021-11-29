@@ -72,7 +72,7 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 	}
 
 	type CRDAIgnore struct {
-		Ignore map[string][]string `json:"crdaignore,omitempty"`
+		Ignore map[string]map[string][]string `json:"ignore,omitempty"`
 	}
 
 	var crdaIgnore CRDAIgnore
@@ -81,17 +81,17 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 		return nil, err
 	}
 	var ignoreAllVulnerabilityPackages []string
-	for pkg, ignoreList := range crdaIgnore.Ignore {
+	for pkg, ignoreList := range crdaIgnore.Ignore["packages"] {
 		if len(ignoreList) == 1 && ignoreList[0] == "*" {
 			ignoreAllVulnerabilityPackages = append(ignoreAllVulnerabilityPackages, pkg)
 		}
 	}
 
 	for _, pkg := range ignoreAllVulnerabilityPackages {
-		crdaIgnore.Ignore[pkg] = nil
+		crdaIgnore.Ignore["packages"][pkg] = make([]string, 0)
 	}
 
-	return crdaIgnore.Ignore, nil
+	return crdaIgnore.Ignore["packages"], nil
 }
 
 // IsSupportedManifestFormat checks for Supported Formats

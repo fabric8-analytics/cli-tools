@@ -51,7 +51,7 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 
 			//if list of vulnerabilities are not provided, then return an empty list of vulnerabilities for that package
 			if strings.Contains(pkgVersionIgnore[len(pkgVersionIgnore)-1], utils.CRDAIGNORE) {
-				ignoreVulnerabilities[packageName] = listOfVulnerabilities
+				ignoreVulnerabilities[packageName] = make([]string, 0)
 				continue
 			}
 

@@ -21,6 +21,9 @@ type StackSummary struct {
 	HighVulnerabilities                int    `json:"high_vulnerabilities"`
 	CriticalVulnerabilities            int    `json:"critical_vulnerabilities"`
 	ReportLink                         string `json:"report_link"`
+	TotalDirectVulnerabilitiesIgnored  int	  `json:"total_direct_vulns_ignored"`
+	TotalTransitiveVulnerabilitiesIgnored int `json:"total_transitive_vulns_ignored"`
+
 }
 
 // ProcessVulnerabilities is arg type of processVulnerabilities
@@ -29,5 +32,7 @@ type ProcessVulnerabilities struct {
 	PrivateVul                   int
 	DirectVulnerableDependencies int
 	TotalTransitives             int
+	TotalDirectIgnored			 int
+	TotalTransitiveIgnored		 int
 	Severities                   SeverityType
 }
