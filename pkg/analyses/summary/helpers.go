@@ -32,18 +32,18 @@ func getResultSummary(analysedResult *driver.GetResponseType) *StackSummary {
 	totalDepsScanned := len(analysedResult.AnalysedDeps)
 	data := processVulnerabilities(analysedResult.AnalysedDeps)
 	out := &StackSummary{
-		TotalScannedDependencies:           totalDepsScanned,
-		TotalScannedTransitiveDependencies: data.TotalTransitives,
-		TotalVulnerabilities:               data.PublicVul + data.PrivateVul,
-		DirectVulnerableDependencies:       data.DirectVulnerableDependencies,
-		PubliclyAvailableVulnerabilities:   data.PublicVul,
-		VulnerabilitiesUniqueToSynk:        data.PrivateVul,
-		CriticalVulnerabilities:            data.Severities.Critical,
-		HighVulnerabilities:                data.Severities.High,
-		MediumVulnerabilities:              data.Severities.Medium,
-		LowVulnerabilities:                 data.Severities.Low,
-		ReportLink:                         utils.BuildReportLink(analysedResult.StackID),
-		TotalDirectVulnerabilitiesIgnored: data.TotalDirectIgnored,
+		TotalScannedDependencies:              totalDepsScanned,
+		TotalScannedTransitiveDependencies:    data.TotalTransitives,
+		TotalVulnerabilities:                  data.PublicVul + data.PrivateVul,
+		DirectVulnerableDependencies:          data.DirectVulnerableDependencies,
+		PubliclyAvailableVulnerabilities:      data.PublicVul,
+		VulnerabilitiesUniqueToSynk:           data.PrivateVul,
+		CriticalVulnerabilities:               data.Severities.Critical,
+		HighVulnerabilities:                   data.Severities.High,
+		MediumVulnerabilities:                 data.Severities.Medium,
+		LowVulnerabilities:                    data.Severities.Low,
+		ReportLink:                            utils.BuildReportLink(analysedResult.StackID),
+		TotalDirectVulnerabilitiesIgnored:     data.TotalDirectIgnored,
 		TotalTransitiveVulnerabilitiesIgnored: data.TotalTransitiveIgnored,
 	}
 	return out
@@ -61,8 +61,8 @@ func processVulnerabilities(analysedDeps []driver.AnalysedDepsType) ProcessVulne
 		if publicVul+privateVul > 0 {
 			processedData.DirectVulnerableDependencies++
 		}
-		processedData.TotalDirectIgnored+=ignoredDirectVulns
-		processedData.TotalTransitiveIgnored+=ignoredTransitiveVulns
+		processedData.TotalDirectIgnored += ignoredDirectVulns
+		processedData.TotalTransitiveIgnored += ignoredTransitiveVulns
 		processedData.TotalTransitives += len(dep.Transitives)
 		processedData.Severities = getSeverity(dep.PublicVulnerabilities, processedData.Severities)
 		processedData.Severities = getSeverity(dep.PrivateVulnerabilities, processedData.Severities)

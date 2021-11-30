@@ -44,8 +44,8 @@ type AnalysedDepsType struct {
 	Licenses               []interface{}         `json:"licenses"`
 	Name                   string                `json:"name"`
 	PrivateVulnerabilities []VulnerabilitiesType `json:"private_vulnerabilities"`
-	IgnoredTransitiveVulns int				      `json:"ignored_trans_vulnerability_count,omitempty"`
-	IgnoredVulns		   int 					  `json:"ignored_vulnerability_count,omitempty"`
+	IgnoredTransitiveVulns int                   `json:"ignored_trans_vulnerability_count,omitempty"`
+	IgnoredVulns           int                   `json:"ignored_vulnerability_count,omitempty"`
 	PublicVulnerabilities  []VulnerabilitiesType `json:"public_vulnerabilities"`
 	RecommendedVersion     string                `json:"recommended_version"`
 	Version                string                `json:"version"`

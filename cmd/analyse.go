@@ -18,8 +18,8 @@ var verboseOut bool
 
 // analyseCmd represents the analyse command
 var analyseCmd = &cobra.Command{
-	Use:   "analyse",
-	Short: "Get detailed report of vulnerabilities.",
+	Use:          "analyse",
+	Short:        "Get detailed report of vulnerabilities.",
 	SilenceUsage: true,
 	Long: `Get detailed report of vulnerabilities. Supported ecosystems are Pypi (Python), Maven (Java), Npm (Node) and Golang (Go).
 If stack has Vulnerabilities, command will exit with status code 2.`,

@@ -79,7 +79,7 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 			artifactRegExMatch := artifactRegEx.FindAllStringSubmatch(dependency, -1)
 			artifactId := artifactRegExMatch[0][1] //extract the artifact ID of the dependency
 
-			packageName := groupId + ":" + artifactId //create package name to send with group ID and artifact ID
+			packageName := groupId + ":" + artifactId            //create package name to send with group ID and artifact ID
 			dependencyDetails := strings.Split(dependency, "\n") //split to check which line 'crdaignore' is present in
 			var listOfVulnerabilities []string
 			for _, dependencyDetail := range dependencyDetails {
@@ -90,8 +90,8 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 						break
 					}
 					vulnerabilitiesToIgnore := dependencyDetail[strings.Index(dependencyDetail, "[")+1 : strings.Index(dependencyDetail, "]")] //extract list of vulnerabilities
-					vulnerabilitiesToIgnore = strings.ReplaceAll(vulnerabilitiesToIgnore, " ", "") //process to remove unnecessary empty spaces
-					listOfVulnerabilities = strings.Split(vulnerabilitiesToIgnore, ",") //get vulnerabilities separately in a slice
+					vulnerabilitiesToIgnore = strings.ReplaceAll(vulnerabilitiesToIgnore, " ", "")                                             //process to remove unnecessary empty spaces
+					listOfVulnerabilities = strings.Split(vulnerabilitiesToIgnore, ",")                                                        //get vulnerabilities separately in a slice
 					ignoreVulnerabilities[packageName] = listOfVulnerabilities
 				}
 			}

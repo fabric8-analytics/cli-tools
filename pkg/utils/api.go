@@ -16,13 +16,13 @@ type GenericPayload interface{}
 
 // HTTPRequestType is request type HTTPRequest Method accepts
 type HTTPRequestType struct {
-	Payload         GenericPayload      `json:"payload,omitempty"`
-	Method          string              `json:"method,omitempty"`
-	Endpoint        string              `json:"endpoint,omitempty"`
-	ThreeScaleToken string              `json:"threeScale,omitempty"`
-	Host            string              `json:"host,omitempty"`
-	UserID          string              `json:"user_id,omitempty"`
-	Client          string              `json:"client,omitempty"`
+	Payload         GenericPayload                 `json:"payload,omitempty"`
+	Method          string                         `json:"method,omitempty"`
+	Endpoint        string                         `json:"endpoint,omitempty"`
+	ThreeScaleToken string                         `json:"threeScale,omitempty"`
+	Host            string                         `json:"host,omitempty"`
+	UserID          string                         `json:"user_id,omitempty"`
+	Client          string                         `json:"client,omitempty"`
 	Ignore          map[string]map[string][]string `json:"ignore,omitempty"`
 }
 

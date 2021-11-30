@@ -125,7 +125,6 @@ func (mc *Controller) postRequest(requestParams driver.RequestType, filePath str
 		_ = writer.WriteField("ignore", string(jsonString))
 	}
 
-
 	err = writer.Close()
 	if err != nil {
 		return nil, errors.New("error closing Buffer Writer in Stack Analyses Request")
