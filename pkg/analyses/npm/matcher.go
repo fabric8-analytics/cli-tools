@@ -72,7 +72,7 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 	}
 
 	type CRDAIgnore struct {
-		Ignore map[string]map[string][]string `json:"ignore,omitempty"`
+		Ignore map[string]map[string][]string `json:"crdaignore,omitempty"`
 	}
 
 	var crdaIgnore CRDAIgnore
