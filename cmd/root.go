@@ -159,7 +159,6 @@ func initConfig() {
 	if !viper.IsSet("crda_host") {
 		viper.Set("crda_host", utils.CRDAHost)
 	}
-
 	if !viper.IsSet("crda_auth_token") {
 		viper.Set("crda_auth_token", utils.CRDAAuthToken)
 	}
