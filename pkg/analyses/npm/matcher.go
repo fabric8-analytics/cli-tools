@@ -2,7 +2,10 @@ package npm
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -50,13 +53,45 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 	npmList.Stderr = &stderr
 
 	if err := npmList.Run(); err != nil {
-		log.Debug().Msg("ERROR - Failed to Execute "+npmList.String()+"\n"+stderr.String())
+		log.Debug().Msg("ERROR - Failed to Execute " + npmList.String() + "\n" + stderr.String())
 		log.Fatal().Err(err).Msgf("Missing Dependencies. Hint: Please install the required dependencies with \"npm install\" from the directory of the manifest file")
 	}
 	npmList.Wait()
 
 	log.Debug().Msgf("Success: buildDepsTree at %s", treePath)
 	return treePath
+}
+
+func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]string, error) {
+	//Ignore Vulnerabilities for npm manifests
+	log.Debug().Msgf("Extracting Packages and Vulnerabilities to Ignore.")
+	manifestFile, err := ioutil.ReadFile(manifestPath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	type CRDAIgnore struct {
+		Ignore map[string]map[string][]string `json:"crdaignore,omitempty"`
+	}
+
+	var crdaIgnore CRDAIgnore
+	if err := json.Unmarshal(manifestFile, &crdaIgnore); err != nil {
+		err = errors.New("invalid 'crdaignore' format. Please enter packages and vulnerabilities to ignore in the right format")
+		return nil, err
+	}
+	var ignoreAllVulnerabilityPackages []string
+	for pkg, ignoreList := range crdaIgnore.Ignore["packages"] {
+		if len(ignoreList) == 1 && ignoreList[0] == "*" {
+			ignoreAllVulnerabilityPackages = append(ignoreAllVulnerabilityPackages, pkg)
+		}
+	}
+
+	for _, pkg := range ignoreAllVulnerabilityPackages {
+		crdaIgnore.Ignore["packages"][pkg] = make([]string, 0)
+	}
+
+	return crdaIgnore.Ignore["packages"], nil
 }
 
 // IsSupportedManifestFormat checks for Supported Formats

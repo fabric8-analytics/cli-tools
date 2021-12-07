@@ -1,6 +1,9 @@
 package golang
 
 import (
+	"errors"
+	"github.com/fabric8-analytics/cli-tools/pkg/utils"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -8,8 +11,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
 	gomanifest "github.com/fabric8-analytics/cli-tools/gomanifest/generator"
+	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
 )
 
 var (
@@ -24,6 +27,50 @@ func (*Matcher) Ecosystem() string { return "golang" }
 
 // DepsTreeFileName implements driver.Matcher.
 func (*Matcher) DepsTreeFileName() string { return "golist.json" }
+
+func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]string, error) {
+
+	//Ignore Vulnerabilities to be implemented for golang manifests
+	log.Debug().Msgf("Extracting Packages and Vulnerabilities to Ignore.")
+	ignoreVulnerabilities := make(map[string][]string)
+	manifestFile, err := ioutil.ReadFile(manifestPath)
+
+	if err != nil {
+		return ignoreVulnerabilities, err
+	}
+
+	manifestFileContents := string(manifestFile) // convert contents of manifest file from []byte to a string
+
+	//split the manifest file on the newline character to process each package, version, and vulnerabilities to ignore separately
+	packagesWithVersions := strings.Split(manifestFileContents, "\n")
+	for _, packageWithVersion := range packagesWithVersions {
+		if strings.Contains(packageWithVersion, utils.CRDAIGNORE) { //check if crdaignore comment is present in the line
+			packageWithVersion = strings.TrimSpace(packageWithVersion)
+			pkgVersionIgnore := strings.Split(packageWithVersion, " ") //split package, version and crdaignore for further processing
+			packageName := pkgVersionIgnore[0]                         // retrieve package from the slice after splitting
+			var listOfVulnerabilities []string
+
+			//if list of vulnerabilities are not provided, then return an empty list of vulnerabilities for that package
+			if strings.Contains(pkgVersionIgnore[len(pkgVersionIgnore)-1], utils.CRDAIGNORE) {
+				ignoreVulnerabilities[packageName] = make([]string, 0)
+				continue
+			}
+
+			//check if crdaignore with vulnerabilities is in the right format
+			if !(strings.Contains(packageWithVersion, "[") && (strings.Contains(packageWithVersion, "]"))) {
+				err := errors.New("invalid 'crdaignore' format. Please enter vulnerabilities to ignore in the appropriate format")
+				return ignoreVulnerabilities, err
+			}
+
+			//extract list of vulnerabilities between '[' and ']'
+			vulnerabilitiesToIgnore := packageWithVersion[strings.Index(packageWithVersion, "[")+1 : strings.Index(packageWithVersion, "]")]
+			vulnerabilitiesToIgnore = strings.ReplaceAll(vulnerabilitiesToIgnore, " ", "")
+			listOfVulnerabilities = strings.Split(vulnerabilitiesToIgnore, ",")
+			ignoreVulnerabilities[packageName] = listOfVulnerabilities
+		}
+	}
+	return ignoreVulnerabilities, nil
+}
 
 // generate is Generator for Golist.
 func generate(goExePath string, goModPath string, goManifestPath string) error {

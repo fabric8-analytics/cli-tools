@@ -8,6 +8,7 @@ type RequestType struct {
 	RawManifestFile string
 	DepsTreePath    string
 	Client          string
+	Ignore          map[string]map[string][]string
 }
 
 // PostResponseType is a argtype of RequestServer func
@@ -43,6 +44,8 @@ type AnalysedDepsType struct {
 	Licenses               []interface{}         `json:"licenses"`
 	Name                   string                `json:"name"`
 	PrivateVulnerabilities []VulnerabilitiesType `json:"private_vulnerabilities"`
+	IgnoredTransitiveVulns int                   `json:"ignored_trans_vulnerability_count,omitempty"`
+	IgnoredVulns           int                   `json:"ignored_vulnerability_count,omitempty"`
 	PublicVulnerabilities  []VulnerabilitiesType `json:"public_vulnerabilities"`
 	RecommendedVersion     string                `json:"recommended_version"`
 	Version                string                `json:"version"`
@@ -72,4 +75,5 @@ type StackAnalysisInterface interface {
 	Ecosystem() string
 	IsSupportedManifestFormat(string) bool
 	GeneratorDependencyTree(string) string
+	IgnoreVulnerabilities(string) (map[string][]string, error)
 }
