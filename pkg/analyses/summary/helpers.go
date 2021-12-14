@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
 	"os"
 
 	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
@@ -30,6 +31,10 @@ func ProcessSummary(ctx context.Context, analysedResult *driver.GetResponseType,
 // GetResultSummary processes result Summary
 func getResultSummary(analysedResult *driver.GetResponseType) *StackSummary {
 	totalDepsScanned := len(analysedResult.AnalysedDeps)
+	snykTokenStatus := false
+	if len(viper.GetString("crda_key")) > 0 {
+		snykTokenStatus = true
+	}
 	data := processVulnerabilities(analysedResult.AnalysedDeps)
 	out := &StackSummary{
 		TotalScannedDependencies:              totalDepsScanned,
@@ -45,6 +50,7 @@ func getResultSummary(analysedResult *driver.GetResponseType) *StackSummary {
 		ReportLink:                            utils.BuildReportLink(analysedResult.StackID),
 		TotalDirectVulnerabilitiesIgnored:     data.TotalDirectIgnored,
 		TotalTransitiveVulnerabilitiesIgnored: data.TotalTransitiveIgnored,
+		SnykTokenStatus: 					   snykTokenStatus,
 	}
 	return out
 }
@@ -124,6 +130,7 @@ func outputSummaryPlain(result *StackSummary, verboseMsg bool) {
 		white("Total Direct Vulnerabilities Ignored: "), white(result.TotalDirectVulnerabilitiesIgnored), "\n",
 		white("Total Transitive Vulnerabilities Ignored: "), white(result.TotalTransitiveVulnerabilitiesIgnored), "\n",
 		white("Publicly Available Vulnerabilities: "), white(result.PubliclyAvailableVulnerabilities), "\n",
+		white("Snyk Token Registered: "), white(result.SnykTokenStatus), "\n",
 		white("Vulnerabilities Unique to Snyk: "), white(result.VulnerabilitiesUniqueToSynk), "\n",
 		red("Critical Vulnerabilities: "), red(result.CriticalVulnerabilities), "\n",
 		magenta("High Vulnerabilities: "), magenta(result.HighVulnerabilities), "\n",

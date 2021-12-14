@@ -15,7 +15,7 @@ func TestAcceptanceTests(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	SetDefaultEventuallyTimeout(1 * time.Minute)
+	SetDefaultEventuallyTimeout(2 * time.Minute)
 	helper.CreateDataDir()
 	helper.CheckforSynkToken()
 })
