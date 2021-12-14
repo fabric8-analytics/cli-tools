@@ -23,6 +23,7 @@ type StackSummary struct {
 	ReportLink                            string `json:"report_link"`
 	TotalDirectVulnerabilitiesIgnored     int    `json:"total_direct_vulns_ignored"`
 	TotalTransitiveVulnerabilitiesIgnored int    `json:"total_transitive_vulns_ignored"`
+	SnykTokenStatus						  bool   `json:"snyk_token_status"`
 }
 
 // ProcessVulnerabilities is arg type of processVulnerabilities
