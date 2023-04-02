@@ -3,7 +3,6 @@ package pypi
 // This File contains Utility functions of Pypi Ecosystem
 
 import (
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -37,7 +36,7 @@ func checkExt(ext string) bool {
 func (m *Matcher) getPylistGenerator(pylistGenerator string) string {
 	log.Debug().Msgf("Executing: getPylistGenerator")
 	// Generating generate_pylist.py
-	err := ioutil.WriteFile(pylistGenerator, codeForPylist, 0644)
+	err := os.WriteFile(pylistGenerator, codeForPylist, 0644)
 	if err != nil {
 		log.Fatal().Msg("Error Generating generate_pylist.py")
 	}

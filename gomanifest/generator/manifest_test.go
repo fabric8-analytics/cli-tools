@@ -2,7 +2,7 @@ package generator
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -161,7 +161,7 @@ func TestSaveManifest(t *testing.T) {
 	manifest := BuildManifest(&testDepPackagesMap)
 	err := manifest.Write(&b)
 	assert.Equal(t, nil, err)
-	manifestContent, err := ioutil.ReadAll(&b)
+	manifestContent, err := io.ReadAll(&b)
 	assert.Equal(t, nil, err)
 
 	// Read output json and check for its size
