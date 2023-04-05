@@ -15,7 +15,7 @@ func TestSetError(t *testing.T) {
 
 	currentUser, err := user.Current()
 	assert.NoError(t, err)
-	configHome, err := homedir.Dir()
+	configHome, _ := homedir.Dir()
 	err = fmt.Errorf("cannot access storage file '%s/.crc/machines/crc/crc.qcow2' (as uid:64055, gid:129): Permission denied')", configHome)
 	assert.NotEqual(t, err.Error(), SetError(err))
 	assert.NotContains(t, SetError(err), configHome)

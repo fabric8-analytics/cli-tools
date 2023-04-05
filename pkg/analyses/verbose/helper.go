@@ -117,16 +117,12 @@ func getSeverity(vulnerability []driver.VulnerabilitiesType, severity SeverityTy
 		switch vul.Severity {
 		case "critical":
 			severity.Critical = append(severity.Critical, vul)
-			break
 		case "high":
 			severity.High = append(severity.High, vul)
-			break
 		case "medium":
 			severity.Medium = append(severity.Medium, vul)
-			break
 		case "low":
 			severity.Low = append(severity.Low, vul)
-			break
 		}
 	}
 	return severity
@@ -151,7 +147,7 @@ func outputVerbosePlain(result *StackVerbose) {
 	)
 	fmt.Fprintln(os.Stdout, cusColor.Green("Fixable Issues:"))
 	outputVulDeps(result.Dependencies)
-	fmt.Fprint(os.Stdout, fmt.Sprintf(cusColor.White("\n\n Full Report: ")+"%s \n\n", result.ReportLink))
+	fmt.Fprintf(os.Stdout, cusColor.White("\n\n Full Report: ")+"%s \n\n", result.ReportLink)
 	fmt.Fprint(os.Stdout, "\n(Powered by Snyk)\n\n")
 }
 
@@ -169,15 +165,11 @@ func outputVulDeps(deps []DependenciesType) {
 			outputVulType(dep.PubliclyAvailableVulnerabilities, pkgName, pkgName)
 		}
 		if len(dep.VulnerableTransitives) > 0 {
-			fmt.Fprint(os.Stdout,
-				fmt.Sprintf(cusColor.Cyan("\n\t Issues in Transitives:\n")),
-			)
+			fmt.Fprint(os.Stdout, cusColor.Cyan("\n\t Issues in Transitives:\n"))
 
 			for _, trans := range dep.VulnerableTransitives {
 				transName := fmt.Sprintf("%s@%s", cusColor.White(trans.Name), cusColor.White(trans.Version))
-				fmt.Fprint(os.Stdout,
-					fmt.Sprintf("\t \u2712 %s->%s\n", pkgName, transName),
-				)
+				fmt.Fprintf(os.Stdout,"\t \u2712 %s->%s\n", pkgName, transName)
 				trans.PubliclyAvailableVulnerabilities = append(trans.PubliclyAvailableVulnerabilities, trans.VulnerabilitiesUniqueToSynk...)
 				outputVulType(trans.PubliclyAvailableVulnerabilities, transName, pkgName)
 			}
@@ -211,19 +203,15 @@ func getSeverityIntesity(severity string) (color.Attribute, string) {
 	case "critical":
 		myColor = color.FgHiRed
 		vulText = "Critical Severity"
-		break
 	case "high":
 		myColor = color.FgHiMagenta
 		vulText = "High Severity"
-		break
 	case "medium":
 		myColor = color.FgHiYellow
 		vulText = "Medium Severity"
-		break
 	case "low":
 		myColor = color.FgHiBlue
 		vulText = "Low Severity"
-		break
 	}
 	return myColor, vulText
 

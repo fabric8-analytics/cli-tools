@@ -31,7 +31,6 @@ var setCmd = &cobra.Command{
 			return
 		}
 		fmt.Println("successfully set configuration value")
-		return
 	},
 }
 
