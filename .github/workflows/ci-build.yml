@@ -7,64 +7,86 @@ on:
     branches: [ main ]
 
 jobs:
-  goreport:
-    name: Refresh-goreport
+  report:
+    name: Refresh GoReportCard
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - uses: creekorful/goreportcard-action@v1.0
-  golangci-lint:
-    name: Linter
+    - name: Trigger report refresh
+      uses: creekorful/goreportcard-action@v1.0
+
+  lint:
+    name: Lint project
     runs-on: ubuntu-latest
+
     steps:
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v4
-        with:
-          go-version: ^1.19
-      - uses: actions/checkout@v3
-      - name: Get dependencies
-        run: go mod download
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.52
-          working-directory: gomanifest
-          skip-build-cache: true
-          skip-pkg-cache: true
-  golint:
-    name: go Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v4
-        with:
-          go-version: ^1.19
-      - uses: actions/checkout@v3
-      - name: go vet
-        run: go vet ./...
-      - name: go run staticcheck
-        run: go run honnef.co/go/tools/cmd/staticcheck@latest ./...
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+    - name: Checkout project
+      uses: actions/checkout@v3
+
+    - name: Setup Go 1.20
+      uses: actions/setup-go@v4
+      with:
+        go-version: "^1.20"
+
+    - name: Run golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: latest
+
+    - name: Run vet
+      run: go vet ./...
+
+    - name: Run staticcheck
+      run: go run honnef.co/go/tools/cmd/staticcheck@latest ./...
+
+  build_gomanifest:
+    name: Build GoManifest on ${{ matrix.os }}
+    needs: [lint]
     strategy:
-        matrix:
-            version:
-                - "1.18"
-                - "1.19"
-                - "1.20"
+      matrix:
+        os: [ "ubuntu-latest",  "macos-latest", "windows-latest" ]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: gomanifest
+
     steps:
-    - name: Set up Go 1.x
+    - name: Checkout project
+      uses: actions/checkout@v3
+
+    - name: Setup Go 1.15
+      uses: actions/setup-go@v4
+      with:
+        go-version: 1.15
+
+    - name: Build tool
+      run: go build -o ${{ runner.temp }}/gomanifest
+
+  build_module:
+    name: Build module
+    needs: [lint]
+    strategy:
+      matrix:
+        version: ["1.18",  "1.19", "1.20"]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout project
+      uses: actions/checkout@v3
+
+    - name: Setup Go ${{ matrix.version }}
       uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.version }}
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v3
-    - name: Check go mod
+
+    - name: Verify go.mod
       run: |
-          go mod tidy
-          git diff --exit-code go.mod
+        go mod tidy
+        git diff --exit-code go.mod
+
     - name: Unit Test
       run:  go test `go list ./... | grep -v acceptance-tests` -gcflags=-l -v  -coverprofile=coverage.txt -covermode=atomic
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
