@@ -32,7 +32,7 @@ var authCmd = &cobra.Command{
 	Use:   "auth",
 	Short: "Links uuid with Snyk token.",
 	Long: fmt.Sprintf(`Command maps Snyk Token with UUID and Outputs 'crda_key' for further Authentication.
-	
+
 	To get "Snyk Token" Please click here: %s`, snykURL),
 	RunE: runAuth,
 }
@@ -99,7 +99,7 @@ func promptForToken() (string, error) {
 		}
 		return nil
 	}
-	fmt.Println(fmt.Sprintf("To get Snyk Token, Please click %s\n", snykURL))
+	fmt.Printf("To get Snyk Token, Please click %s\n", snykURL)
 	promptValues := &promptVars{
 		Name:        "Snyk Token",
 		Description: "[Press Enter to continue]",

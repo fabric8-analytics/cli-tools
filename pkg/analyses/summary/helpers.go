@@ -90,16 +90,12 @@ func getSeverity(vulnerability []driver.VulnerabilitiesType, severity SeverityTy
 		switch vul.Severity {
 		case "critical":
 			severity.Critical++
-			break
 		case "high":
 			severity.High++
-			break
 		case "medium":
 			severity.Medium++
-			break
 		case "low":
 			severity.Low++
-			break
 		}
 	}
 	return severity

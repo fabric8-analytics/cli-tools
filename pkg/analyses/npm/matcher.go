@@ -56,7 +56,7 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 		log.Debug().Msg("ERROR - Failed to Execute " + npmList.String() + "\n" + stderr.String())
 		log.Fatal().Err(err).Msgf("Missing Dependencies. Hint: Please install the required dependencies with \"npm install\" from the directory of the manifest file")
 	}
-	npmList.Wait()
+	_ = npmList.Wait()
 
 	log.Debug().Msgf("Success: buildDepsTree at %s", treePath)
 	return treePath

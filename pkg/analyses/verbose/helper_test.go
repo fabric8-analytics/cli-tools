@@ -16,13 +16,13 @@ func data() *driver.GetResponseType {
 	var body driver.GetResponseType
 	// json.NewDecoder(apiResponse.Body).Decode(&body)
 	plan, _ := ioutil.ReadFile("testdata/getresponse.json")
-	json.Unmarshal(plan, &body)
+	_ = json.Unmarshal(plan, &body)
 	return &body
 }
 func verboseData() *StackVerbose {
 	var body StackVerbose
 	plan, _ := ioutil.ReadFile("testdata/verbosedata.json")
-	json.Unmarshal(plan, &body)
+	_ = json.Unmarshal(plan, &body)
 	return &body
 }
 

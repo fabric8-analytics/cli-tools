@@ -19,10 +19,10 @@ var ActiveConfigValues = &viperConfigs{}
 func ViperUnMarshal() *viperConfigs {
 	viper.AutomaticEnv()
 	// Have to bind individual variables: https://github.com/spf13/viper/issues/188
-	viper.BindEnv("CONSENT_TELEMETRY")
-	viper.BindEnv("CRDA_AUTH_TOKEN")
-	viper.BindEnv("CRDA_HOST")
-	viper.BindEnv("CRDA_KEY")
+	_ = viper.BindEnv("CONSENT_TELEMETRY")
+	_ = viper.BindEnv("CRDA_AUTH_TOKEN")
+	_ = viper.BindEnv("CRDA_HOST")
+	_ = viper.BindEnv("CRDA_KEY")
 	err := viper.Unmarshal(&ActiveConfigValues)
 	if err != nil {
 		log.Fatal().Msgf("unable to decode into struct, %v", err)
