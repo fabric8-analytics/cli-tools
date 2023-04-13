@@ -7,7 +7,6 @@ import (
 	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
 	"github.com/fabric8-analytics/cli-tools/pkg/utils"
 	"github.com/rs/zerolog/log"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -30,7 +29,7 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 
 	log.Debug().Msgf("Extracting Packages and Vulnerabilities to Ignore.")
 	ignoreVulnerabilities := make(map[string][]string)
-	manifestFile, err := ioutil.ReadFile(manifestPath)
+	manifestFile, err := os.ReadFile(manifestPath)
 
 	if err != nil {
 		return ignoreVulnerabilities, err

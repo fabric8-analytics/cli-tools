@@ -3,7 +3,6 @@ package golang
 import (
 	"errors"
 	"github.com/fabric8-analytics/cli-tools/pkg/utils"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -33,7 +32,7 @@ func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]strin
 	//Ignore Vulnerabilities to be implemented for golang manifests
 	log.Debug().Msgf("Extracting Packages and Vulnerabilities to Ignore.")
 	ignoreVulnerabilities := make(map[string][]string)
-	manifestFile, err := ioutil.ReadFile(manifestPath)
+	manifestFile, err := os.ReadFile(manifestPath)
 
 	if err != nil {
 		return ignoreVulnerabilities, err

@@ -3,7 +3,7 @@ package generator
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 
@@ -15,7 +15,7 @@ import (
 const testDataFolder = "./../../testdata/"
 
 func readFileContentForTesting(fileName string) string {
-	content, err := ioutil.ReadFile(testDataFolder + fileName)
+	content, err := os.ReadFile(testDataFolder + fileName)
 	if err != nil {
 		log.Fatal().Msgf("Exception: %v", err)
 	}
@@ -32,7 +32,7 @@ type FakeGoListCmd struct {
 // ReadCloser implements internal.GoList
 func (mock *FakeGoListCmd) ReadCloser() io.ReadCloser {
 	args := mock.Called()
-	return ioutil.NopCloser(strings.NewReader(args.String(0)))
+	return io.NopCloser(strings.NewReader(args.String(0)))
 }
 
 // Wait implements internal.GoList

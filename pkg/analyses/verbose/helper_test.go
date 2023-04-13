@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/fabric8-analytics/cli-tools/pkg/telemetry"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -15,13 +15,13 @@ import (
 func data() *driver.GetResponseType {
 	var body driver.GetResponseType
 	// json.NewDecoder(apiResponse.Body).Decode(&body)
-	plan, _ := ioutil.ReadFile("testdata/getresponse.json")
+	plan, _ := os.ReadFile("testdata/getresponse.json")
 	_ = json.Unmarshal(plan, &body)
 	return &body
 }
 func verboseData() *StackVerbose {
 	var body StackVerbose
-	plan, _ := ioutil.ReadFile("testdata/verbosedata.json")
+	plan, _ := os.ReadFile("testdata/verbosedata.json")
 	_ = json.Unmarshal(plan, &body)
 	return &body
 }

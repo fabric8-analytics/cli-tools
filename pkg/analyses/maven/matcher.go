@@ -6,7 +6,6 @@ import (
 	"github.com/fabric8-analytics/cli-tools/pkg/analyses/driver"
 	"github.com/fabric8-analytics/cli-tools/pkg/utils"
 	"github.com/rs/zerolog/log"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -59,7 +58,7 @@ func (m *Matcher) GeneratorDependencyTree(manifestFilePath string) string {
 func (m *Matcher) IgnoreVulnerabilities(manifestPath string) (map[string][]string, error) {
 	log.Debug().Msgf("Extracting Packages and Vulnerabilities to Ignore.")
 	ignoreVulnerabilities := make(map[string][]string)
-	manifestFile, err := ioutil.ReadFile(manifestPath)
+	manifestFile, err := os.ReadFile(manifestPath)
 
 	if err != nil {
 		return ignoreVulnerabilities, err

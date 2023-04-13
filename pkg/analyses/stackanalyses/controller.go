@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -40,7 +39,7 @@ const (
 	RegisteredStatus = "REGISTERED"
 )
 
-//StackAnalyses is main controller function for analyse command. This function is responsible for all communications between cmd and custom packages.
+// StackAnalyses is main controller function for analyse command. This function is responsible for all communications between cmd and custom packages.
 func StackAnalyses(ctx context.Context, requestParams driver.RequestType, jsonOut bool, verboseOut bool) (bool, error) {
 	log.Debug().Msgf("Executing StackAnalyses.")
 	var hasVul bool
@@ -211,7 +210,7 @@ func (mc *Controller) validateGetResponse(apiResponse *http.Response) (*driver.G
 
 	//use TeeReader to duplicate the contents of the Response Body of type io.ReaderCloser since data is streamed from the response body.
 	r := io.TeeReader(apiResponse.Body, &buf)
-	responseBodyContents, _ := ioutil.ReadAll(r)
+	responseBodyContents, _ := io.ReadAll(r)
 	err := json.NewDecoder(&buf).Decode(&body)
 	if err != nil {
 		log.Error().Msg("analyse failed: Stack Analyses Get Request Failed. Please retry after sometime. If issue persists, Please raise at https://github.com/fabric8-analytics/cli-tools/issues.")

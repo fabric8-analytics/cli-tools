@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/rs/zerolog/log"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -24,7 +24,7 @@ func mockServer() (chan []byte, *httptest.Server) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
-		bin, err := ioutil.ReadAll(r.Body)
+		bin, err := io.ReadAll(r.Body)
 		if err != nil {
 			log.Error().Msgf(err.Error())
 			return
@@ -40,7 +40,7 @@ func TestClientUploadWithContext(t *testing.T) {
 	defer server.Close()
 	defer close(body)
 
-	dir, err := ioutil.TempDir("", "cfg")
+	dir, err := os.MkdirTemp("", "cfg")
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
@@ -57,7 +57,7 @@ func TestClientUploadWithOutConsent(t *testing.T) {
 	defer server.Close()
 	defer close(body)
 
-	dir, err := ioutil.TempDir("", "cfg")
+	dir, err := os.MkdirTemp("", "cfg")
 	require.NoError(t, err)
 	defer os.RemoveAll(dir)
 
